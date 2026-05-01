@@ -77,7 +77,7 @@ Este guia é para desenvolvedores, administradores e pessoas que querem **instal
 
 ## 📦 Estrutura do repositório
   
-  ```
+  
   
   selix/
   ├── src/
@@ -96,7 +96,7 @@ Este guia é para desenvolvedores, administradores e pessoas que querem **instal
   ├── midias_sociais/     # posts prontos para LinkedIn, X, Instagram, YouTube
   └── .github/workflows/  # CI/CD (testes automáticos + GitHub Pages)
   
-  ```
+  
 
 ## 🔧 Setup para desenvolvimento local (Linux/Ubuntu)
 
