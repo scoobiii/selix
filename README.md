@@ -34,3 +34,5 @@
 
 ### 📄 Licença
 MIT – livre para usar, compartilhar e modificar.
+Copyright (c) 2026 Zeh Sobrinho, GOS3
+
