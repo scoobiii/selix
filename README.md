@@ -25,12 +25,10 @@ Basta clicar no link, autorizar e executar as células. O resultado aparece em s
 
 ## Como executar localmente (para quem tem Python)
 
-```
 git clone https://github.com/scoobiii/selix.git
 cd selix
 pip install -r requirements.txt
 python src/selix/core.py
-```
 
 Prova Lean 4 (Linux/Mac/WSL, opcional)
 
@@ -43,10 +41,9 @@ source ~/.profile
 
 Depois:
 
-```
 cd lean_proof
 lake env lean SELIX_simple.lean
-```
+
 
 Saída: 9.25
 
@@ -58,42 +55,34 @@ Dúvidas?
 
 Consultas automáticas via FAQ: https://scoobiii.github.io/selix/agents/level_0_faq_static/faq.html
 
----
 
 A SELIX é código aberto (MIT) – use, compartilhe, melhore.
 
-```
-
----
-
 ### 👨‍💻 README_DEVOPS.md
 
-```
 # Guia DevOps – SELIX
 
 Este guia é para desenvolvedores, administradores e pessoas que querem **instalar, testar, modificar ou fazer deploy** do projeto SELIX.
 
 ## 📦 Estrutura do repositório
   
-  
-  
-  selix/
-  ├── src/
-  │   ├── selix/          # modelo principal + prova Z3
-  │   └── api/            # servidor Flask (endpoint /selix)
-  ├── tests/              # testes unitários e integrado
-  ├── lean_proof/         # prova Lean 4 (versão simplificada)
-  ├── agents/             # automação (FAQ, Telegram, RAG, Chatbot)
-  ├── docs/               # documentação por público (BC, Congresso, mídia)
-  ├── notebooks/          # Colab, Kaggle, análise de sensibilidade
-  ├── scripts/            # setup_termux.sh, generate_certificate.py
-  ├── bin/                # wrappers para Linux (AMD64, ARM64)
-  ├── certs/              # certificados de validação
-  ├── evidencias/         # dados reais e endosso de prêmios Nobel
-  ├── papers/             # whitepaper (MD e PDF)
-  ├── midias_sociais/     # posts prontos para LinkedIn, X, Instagram, YouTube
-  └── .github/workflows/  # CI/CD (testes automáticos + GitHub Pages)
-  
+    selix/
+    ├── src/
+    │   ├── selix/          # modelo principal + prova Z3
+    │   └── api/            # servidor Flask (endpoint /selix)
+    ├── tests/              # testes unitários e integrado
+    ├── lean_proof/         # prova Lean 4 (versão simplificada)
+    ├── agents/             # automação (FAQ, Telegram, RAG, Chatbot)
+    ├── docs/               # documentação por público (BC, Congresso, mídia)
+    ├── notebooks/          # Colab, Kaggle, análise de sensibilidade
+    ├── scripts/            # setup_termux.sh, generate_certificate.py
+    ├── bin/                # wrappers para Linux (AMD64, ARM64)
+    ├── certs/              # certificados de validação
+    ├── evidencias/         # dados reais e endosso de prêmios Nobel
+    ├── papers/             # whitepaper (MD e PDF)
+    ├── midias_sociais/     # posts prontos para LinkedIn, X, Instagram, YouTube
+    └── .github/workflows/  # CI/CD (testes automáticos + GitHub Pages)
+    
   
 
 ## 🔧 Setup para desenvolvimento local (Linux/Ubuntu)
