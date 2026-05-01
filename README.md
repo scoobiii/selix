@@ -1,6 +1,4 @@
-📄 README 
-
-👤 README_USUARIO.md
+👤 README
 
 # SELIX – para usuários finais
 
@@ -27,7 +25,7 @@ Basta clicar no link, autorizar e executar as células. O resultado aparece em s
 
 ## Como executar localmente (para quem tem Python)
 
-```bash
+```
 git clone https://github.com/scoobiii/selix.git
 cd selix
 pip install -r requirements.txt
@@ -38,14 +36,14 @@ Prova Lean 4 (Linux/Mac/WSL, opcional)
 
 Instale o Lean 4:
 
-```bash
+```
 curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
 source ~/.profile
 ```
 
 Depois:
 
-```bash
+```
 cd lean_proof
 lake env lean SELIX_simple.lean
 ```
@@ -70,7 +68,7 @@ A SELIX é código aberto (MIT) – use, compartilhe, melhore.
 
 ### 👨‍💻 README_DEVOPS.md
 
-```markdown
+```
 # Guia DevOps – SELIX
 
 Este guia é para desenvolvedores, administradores e pessoas que querem **instalar, testar, modificar ou fazer deploy** do projeto SELIX.
@@ -100,7 +98,7 @@ Este guia é para desenvolvedores, administradores e pessoas que querem **instal
 
 ## 🔧 Setup para desenvolvimento local (Linux/Ubuntu)
 
-```bash
+```
 git clone https://github.com/scoobiii/selix.git
 cd selix
 python3 -m venv venv
@@ -118,19 +116,19 @@ Instalar dependências opcionais
 
 Unitários:
 
-```bash
+```
 pytest tests/ -v
 ```
 
 Teste integrado (Z3 + Lean4 + Python):
 
-```bash
+```
 python tests/test_integrado.py
 ```
 
 Prova Z3 isolada:
 
-```bash
+```
 python src/selix/z3_proof.py
 ```
 
@@ -138,13 +136,13 @@ python src/selix/z3_proof.py
 
 Use o script automatizado:
 
-```bash
+```
 bash scripts/setup_termux.sh
 ```
 
 Ou manualmente:
 
-```bash
+```
 pkg install python git
 pip install flask requests numpy pytest
 git clone https://github.com/scoobiii/selix.git
@@ -154,7 +152,7 @@ python src/selix/core.py
 
 🌀 Executar a prova Lean 4
 
-```bash
+```
 # Instalar elan
 curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
 source ~/.profile
@@ -165,7 +163,7 @@ lake env lean SELIX_simple.lean   # Saída: 9.25
 
 🌐 API Flask
 
-```bash
+```
 python src/api/server.py
 ```
 
