@@ -76,27 +76,27 @@ A SELIX é código aberto (MIT) – use, compartilhe, melhore.
 Este guia é para desenvolvedores, administradores e pessoas que querem **instalar, testar, modificar ou fazer deploy** do projeto SELIX.
 
 ## 📦 Estrutura do repositório
-
-```
-
-selix/
-├── src/
-│   ├── selix/          # modelo principal + prova Z3
-│   └── api/            # servidor Flask (endpoint /selix)
-├── tests/              # testes unitários e integrado
-├── lean_proof/         # prova Lean 4 (versão simplificada)
-├── agents/             # automação (FAQ, Telegram, RAG, Chatbot)
-├── docs/               # documentação por público (BC, Congresso, mídia)
-├── notebooks/          # Colab, Kaggle, análise de sensibilidade
-├── scripts/            # setup_termux.sh, generate_certificate.py
-├── bin/                # wrappers para Linux (AMD64, ARM64)
-├── certs/              # certificados de validação
-├── evidencias/         # dados reais e endosso de prêmios Nobel
-├── papers/             # whitepaper (MD e PDF)
-├── midias_sociais/     # posts prontos para LinkedIn, X, Instagram, YouTube
-└── .github/workflows/  # CI/CD (testes automáticos + GitHub Pages)
-
-```
+  
+  ```
+  
+  selix/
+  ├── src/
+  │   ├── selix/          # modelo principal + prova Z3
+  │   └── api/            # servidor Flask (endpoint /selix)
+  ├── tests/              # testes unitários e integrado
+  ├── lean_proof/         # prova Lean 4 (versão simplificada)
+  ├── agents/             # automação (FAQ, Telegram, RAG, Chatbot)
+  ├── docs/               # documentação por público (BC, Congresso, mídia)
+  ├── notebooks/          # Colab, Kaggle, análise de sensibilidade
+  ├── scripts/            # setup_termux.sh, generate_certificate.py
+  ├── bin/                # wrappers para Linux (AMD64, ARM64)
+  ├── certs/              # certificados de validação
+  ├── evidencias/         # dados reais e endosso de prêmios Nobel
+  ├── papers/             # whitepaper (MD e PDF)
+  ├── midias_sociais/     # posts prontos para LinkedIn, X, Instagram, YouTube
+  └── .github/workflows/  # CI/CD (testes automáticos + GitHub Pages)
+  
+  ```
 
 ## 🔧 Setup para desenvolvimento local (Linux/Ubuntu)
 
