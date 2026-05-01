@@ -29,20 +29,19 @@ Basta clicar no link, autorizar e executar as células. O resultado aparece em s
 
 ## Como executar localmente (para quem tem 
 ```bash
->>>>>>> 0b822a3 (feat: adiciona RAG inteligente com ChromaDB e Ollama (v3.2.2))
+ (feat: adiciona RAG inteligente com ChromaDB e Ollama (v3.2.2))
 git clone https://github.com/scoobiii/selix.git
 cd selix
 pip install -r requirements.txt
 python src/selix/core.py
 
 ```
->>>>>>> 0b822a3 (feat: adiciona RAG inteligente com ChromaDB e Ollama (v3.2.2))
+ (feat: adiciona RAG inteligente com ChromaDB e Ollama (v3.2.2))
 
 Prova Lean 4 (Linux/Mac/WSL, opcional)
 
 Instale o Lean 4:
 
-<<<<<<< HEAD
 ```
 curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
 source ~/.profile
