@@ -27,18 +27,14 @@ Ele usa 5 teoremas provados formalmente com ferramentas como Z3 (Microsoft) e Le
 
 Basta clicar no link, autorizar e executar as células. O resultado aparece em segundos.
 
-## Como executar localmente (para quem tem Python)
-
-<<<<<<< HEAD
-=======
+## Como executar localmente (para quem tem 
 ```bash
 >>>>>>> 0b822a3 (feat: adiciona RAG inteligente com ChromaDB e Ollama (v3.2.2))
 git clone https://github.com/scoobiii/selix.git
 cd selix
 pip install -r requirements.txt
 python src/selix/core.py
-<<<<<<< HEAD
-=======
+
 ```
 >>>>>>> 0b822a3 (feat: adiciona RAG inteligente com ChromaDB e Ollama (v3.2.2))
 
