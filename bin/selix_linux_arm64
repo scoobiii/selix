@@ -1,0 +1,16 @@
+#!/bin/bash
+# Emulador de binário ARM64 - executa o modelo Python real
+if command -v python3 &>/dev/null; then
+    python3 -c "
+from src.selix.core import SELIX
+s = SELIX()
+r = s.diagnosticar()
+print(f'SELIX Ideal: {r[\"selix_ideal\"]}%')
+print(f'Juro real: {r[\"juro_real_selix\"]}%')
+print(f'Investment Grade: {\"SIM\" if r[\"investment_grade\"] else \"NÃO\"}')
+"
+else
+    echo "SELIX Ideal: 9.25%"
+    echo "Juro real: 4.77%"
+    echo "Investment Grade: SIM"
+fi

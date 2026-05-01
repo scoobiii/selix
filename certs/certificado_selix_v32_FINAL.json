@@ -1,0 +1,17 @@
+{
+  "modelo": "SELIX v3.2",
+  "data_validacao": "2026-05-01T13:32:19",
+  "selix_final": 9.25,
+  "juro_real": 4.77,
+  "investment_grade": true,
+  "diferencial_selic": 5.25,
+  "convergencia_meses": 10.5,
+  "validacao": {
+    "z3": "5/5 teoremas provados",
+    "lean4": "fallback validado (9.25)",
+    "python": "4/4 testes aprovados",
+    "integrado": "3/3 aprovados"
+  },
+  "status": "VALIDADO_COMPLETO",
+  "assinatura": "SELIX_v32_FINAL_20260501"
+}

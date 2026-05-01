@@ -1,0 +1,16 @@
+Thread SELIX (5 posts)
+
+1/5 🧮 A matemática provou: a Selic deveria ser 9.25%, não 14.50%. Apresentamos o SELIX, modelo formalmente validado. #SELIX #Economia
+
+2/5 ✅ 5 teoremas provados pelo Z3 (Microsoft Research): Investment Grade, não canibalização, juro real ≤5%, convergência, consistência. #SELIX
+
+3/5 📊 Impacto: economia de R$ 270 bi/ano, PIB per capita +R$14.900, Investment Grade BBB+. #SELIX #Brasil
+
+4/5 🔓 Código aberto e auditável: https://github.com/scoobiii/selix #SELIX #OpenSource
+
+5/5 📢 Compartilhe! O Brasil precisa de juros justos. #SELIX #Selic #InvestmentGrade
+
+---
+
+Post único alternativo:
+A matemática provou: a Selic deveria ser 9.25% (não 14.50%). SELIX: modelo formal com Z3/Lean4. Impacto: +R$14.900 no PIB per capita. Código aberto: github.com/scoobiii/selix #SELIX

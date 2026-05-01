@@ -1,0 +1,21 @@
+🔴 SELIX: A Fórmula Matemática que Prova que a Selic Deveria Ser 9.25%
+
+📊 O que é SELIX?
+Sistema de Equilíbrio Linear de Juros e Investment Grade
+
+✅ Teoremas Provados:
+1. Investment Grade (≤9.99%)
+2. Não canibaliza produção (≤ROE×0.95)
+3. Juro real máximo (≤5%)
+4. Convergência (14.5%→9.25%)
+5. Consistência matemática
+
+📈 Impacto Econômico:
+- Economia anual: R$270 bilhões
+- PIB per capita: +R$14.900
+- Investment Grade: BBB+
+
+🔗 Código aberto:
+https://github.com/scoobiii/selix
+
+#SELIX #Economia #Selic #InvestmentGrade

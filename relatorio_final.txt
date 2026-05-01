@@ -1,0 +1,10 @@
+
+RELATÓRIO SELIX v3.2
+====================
+Data: 2026-05-01
+SELIX Ideal: 9.25%
+Juro real: 4.77%
+Investment Grade: SIM
+Diferencial: 5.25 pontos
+Convergência: 10.5 meses
+

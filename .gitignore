@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+.pytest_cache/
+
+# Ambiente virtual
+selix-env/
+
+# Notebooks (checagens)
+.ipynb_checkpoints/
+
+# Agentes (dados gerados localmente)
+agents/level_2_rag_langchain/chroma_db/
+agents/level_3_llm_chatbot/__pycache__/
+
+# Scripts temporários (não devem subir)
+*_faltantes.sh
+*_esqueleto.sh
+*.log
+
+# Binários compilados completos (apenas o wrapper está versionado)
+# O wrapper já está na pasta bin/ e será commitado.

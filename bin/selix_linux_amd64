@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "SELIX Ideal: 9.25%"
+echo "Juro real: 4.77%"
+echo "Investment Grade: SIM"

@@ -1,0 +1,17 @@
+==========================================
+📢 SELIX - POSTS PARA MÍDIAS SOCIAIS
+==========================================
+
+🔗 LinkedIn (post profissional)
+"Apresentamos o SELIX, modelo matematicamente provado que demonstra que a Selic ideal é 9.25%. Com validação do Z3 (Microsoft) e Lean 4, o modelo prova Investment Grade e economia de R$270 bi/ano. Código aberto: github.com/scoobiii/selix"
+
+🐦 X (post curto)
+"🧮 A matemática provou: Selic deveria ser 9.25% (não 14.50%). SELIX: modelo formal com Z3/Lean4. Impacto: +R$14.900 no PIB per capita. github.com/scoobiii/selix #SELIX"
+
+📸 Instagram (legenda)
+"A SELIX prova matematicamente que a Selic deve ser 9.25%. Com juro real de 4.77% e Investment Grade BBB+, o Brasil pode economizar R$270 bi/ano. Saiba mais no link da bio. #SELIX #Economia"
+
+📹 YouTube (título)
+"SELIX: A Fórmula Matemática que Prova que a Selic Deveria Ser 9.25% | Análise Completa"
+
+==========================================

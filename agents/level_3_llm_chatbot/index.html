@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head><title>SELIX Chatbot</title><meta charset="UTF-8"></head>
+<body>
+<h2>SELIX - Assistente Inteligente</h2>
+<div id="chat"></div>
+<input id="pergunta" size="50"><button onclick="enviar()">Enviar</button>
+<script>
+async function enviar() {
+    let pergunta = document.getElementById('pergunta').value;
+    if(!pergunta) return;
+    let chat = document.getElementById('chat');
+    chat.innerHTML += `<p><b>Você:</b> ${pergunta}</p>`;
+    let resp = await fetch('/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({pergunta})
+    });
+    let data = await resp.json();
+    chat.innerHTML += `<p><b>SELIX:</b> ${data.resposta}</p>`;
+    document.getElementById('pergunta').value = '';
+}
+</script>
+</body>
+</html>
