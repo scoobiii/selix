@@ -6,19 +6,6 @@
 Partindo da premissa que o câmbio flutua, o setor de energia flutua e o mix E30 pode atingir E42.
 a SELIX é um modelo matemático de tempo real que determina Selic de Tempo Real que prova que
 a **Taxa Selic ideal para o Brasil é 9,25% ao ano** (hoje está 14,50%) em maio/2026.  
-=======
-📄 README para Usuário Final e para DevOps
-
-Você pediu dois READMEs: um para usuário final (quem quer apenas executar e entender o resultado) e outro para DevOps (quem quer instalar, testar, modificar e fazer deploy). Vou gerar o conteúdo de cada um.
-
----
-
-👤 README_USUARIO.md
-
-```markdown
-# SELIX – para usuários finais
-
-## O que é SELIX?
 
 SELIX é um modelo matemático que prova que a **Taxa Selic ideal para o Brasil é 9,25% ao ano** (hoje está 14,50%).  
 >>>>>>> 0b822a3 (feat: adiciona RAG inteligente com ChromaDB e Ollama (v3.2.2))
