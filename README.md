@@ -10,10 +10,12 @@ Custo anual:  R$ 270.000.000.000,00
 ```
 
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
+!
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Lean 4](https://img.shields.io/badge/Proof-Lean%204-blue)](lean_proof/)
-[![Z3](https://img.shields.io/badge/Verified-Z3%20(Microsoft)-green)](src/selix/z3_proof.py)
 
+[![Lean 4](https://img.shields.io/badge/Proof-Lean%204-blue)](lean_proof/)
+[![Z3](https://img.shields.io/badge/Verified-Z3%20(Microsoft)
+-green)](https://github.com/scoobiii/selix/blob/main/scripts/z3_proof.py)
 </div>
 
 ---
