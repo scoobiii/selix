@@ -1,12 +1,7 @@
-📄 README para Usuário Final e para DevOps
-
-Você pediu dois READMEs: um para usuário final (quem quer apenas executar e entender o resultado) e outro para DevOps (quem quer instalar, testar, modificar e fazer deploy). Vou gerar o conteúdo de cada um.
-
----
+📄 README 
 
 👤 README_USUARIO.md
 
-```markdown
 # SELIX – para usuários finais
 
 ## O que é SELIX?
