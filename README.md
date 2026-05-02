@@ -9,8 +9,10 @@ Diferença:     5,25 pontos percentuais
 Custo anual:  R$ 270.000.000.000,00
 ```
 
-[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Colab Z3](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
+[![Colab Lean 4](https://img.shields.io/badge/Lean%204-Colab-orange?logo=github)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_lean4.ipynb)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/scoobiii/selix/blob/main/LICENSE)
+[![Z3](https://img.shields.io/badge/Verified-Z3%20(Microsoft)-green)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
 
 </div>
 
@@ -43,14 +45,14 @@ Código aberto. Reproduzível em 1 clique. Sem ideologia — só matemática.
 SELIX resolve um problema de **otimização restrita com 4 tetos simultâneos**:
 
 ```
-min(Selic) sujeito a:
+max(Selic) sujeito a:
   [1] Investment Grade mantido        →  juro real ≥ limiar soberano
-  [2] Juro real ≤ 5% (teto histórico IG)
+  [2] Juro real ≤ 5% (teto histórico IG)   ← restrição ativa
   [3] Selic ≤ ROE médio × 0.95       →  capital produtivo > especulativo
   [4] Selic ≤ média global ponderada  →  competitividade externa
 ```
 
-O mínimo que satisfaz todos os 4 tetos simultaneamente é **9,25%**.
+O máximo sustentável é **9,48%** → arredondado ao step COPOM (0,25pp) → **9,25%**.
 
 Cada restrição é um teorema. Cada teorema foi provado formalmente.
 
@@ -58,27 +60,24 @@ Cada restrição é um teorema. Cada teorema foi provado formalmente.
 
 ## Verificação independente — rode você mesmo
 
-### 🟡 1 clique (sem instalar nada)
+### 🟡 Z3 (Microsoft) — 1 clique
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
 
-### 🐍 Local (Python)
+### 🔵 Lean 4 — 1 clique
+
+[![Lean 4 Colab](https://img.shields.io/badge/Lean%204-Abrir%20no%20Colab-orange)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_lean4.ipynb)
+
+> ⏱️ Lean 4 instala em ~5 min na primeira execução.
+
+### 🐍 Local (Python + Z3)
 
 ```bash
 git clone https://github.com/scoobiii/selix.git
 cd selix
 pip install -r requirements.txt
-python src/selix/core.py
-# → SELIX: 9.25 | Juro real: 4.77 | IG: True
-```
-
-### 🔵 Prova formal (Lean 4)
-
-```bash
-curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
-source ~/.profile
-cd lean_proof && lake env lean SELIX_simple.lean
-# → 9.25
+python scripts/z3_proof.py
+# → SELIX: 9.25 | 5/5 teoremas OK
 ```
 
 ### 🟢 API REST
@@ -111,13 +110,16 @@ Boa pergunta. Não é matemática que falta.
 
 ```
 selix/
-├── src/selix/          # modelo principal + prova Z3
+├── src/selix/          # modelo principal
 ├── src/api/            # endpoint Flask /selix
-├── lean_proof/         # prova Lean 4 formal
-├── agents/             # FAQ, Telegram bot, RAG, chatbot Gemini
-├── tests/              # pytest + teste integrado Z3+Lean4+Python
-├── notebooks/          # Colab / Kaggle / análise de sensibilidade
-├── docs/               # versões por público: BC, Congresso, mídia, academia
+├── scripts/z3_proof.py # prova formal Z3 (standalone)
+├── lean_proof/         # prova Lean 4 (local)
+├── notebooks/
+│   ├── selix_colab.ipynb    # Z3 no Colab
+│   └── selix_lean4.ipynb    # Lean 4 no Colab
+├── agents/             # FAQ, Telegram bot, RAG, chatbot
+├── tests/              # pytest + integrado Z3+Python
+├── docs/               # versões por público
 ├── papers/             # whitepaper MD + PDF
 └── evidencias/         # dados reais + referências
 ```
@@ -130,9 +132,9 @@ selix/
 bash scripts/setup_termux.sh
 # ou manualmente:
 pkg install python git
-pip install flask requests numpy pytest
+pip install flask requests numpy pytest z3-solver
 git clone https://github.com/scoobiii/selix && cd selix
-python src/selix/core.py
+python scripts/z3_proof.py
 ```
 
 ---
