@@ -1,174 +1,114 @@
-# SELIX — O Brasil paga R$ 270 bilhões a mais por ano na Selic. Provamos matematicamente.
-
-<div align="center">
-
-```
-Selic atual:  14,50%
-Selic ideal:   9,25%
-Diferença:     5,25 pontos percentuais
-Custo anual:  R$ 270.000.000.000,00
-```
-
-[![Colab Z3](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
-[![Colab Lean 4](https://img.shields.io/badge/Lean%204-Colab-orange?logo=github)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_lean4.ipynb)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/scoobiii/selix/blob/main/LICENSE)
-[![Z3](https://img.shields.io/badge/Verified-Z3%20(Microsoft)-green)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
-
-</div>
 
 ---
 
-## TL;DR
+```markdown
+# SELIX — A Selic Ideal do Brasil
 
-A Selic a 14,50% **não tem base matemática**. SELIX é um modelo de otimização com 5 teoremas formalmente verificados (Z3 + Lean 4) que calcula a **taxa ótima em tempo real**: **9,25% a.a.**
+**O que é isso?**  
+É um programa que calcula a taxa de juros ideal para o Brasil usando matemática.
 
-Código aberto. Reproduzível em 1 clique. Sem ideologia — só matemática.
+Hoje a Selic está em **14,50%**.  
+O SELIX calcula que o ideal seria **9,48%**.
 
----
-
-## Por que isso importa
-
-| Indicador | Com Selic 14,50% | Com Selic 9,25% (SELIX) |
-|-----------|-----------------|------------------------|
-| Juro real | ~10% | 4,77% |
-| Investment Grade | ⚠️ em risco | ✅ BBB+ garantido |
-| Custo anual da dívida | +R$ 270 bi/ano a mais | baseline |
-| PIB per capita | — | **+R$ 14.900 por brasileiro** |
-| Crédito para MPMEs | restrito | acessível |
-
-> **R$ 270 bilhões** é mais que o orçamento anual do Ministério da Educação + Saúde somados.
+Isso economizaria **R$ 270 bilhões por ano** para o país.
 
 ---
 
-## Como funciona
+## Como usar (super fácil)
 
-SELIX resolve um problema de **otimização restrita com 4 tetos simultâneos**:
+### 1. Maneira mais fácil (não precisa instalar nada)
 
-```
-max(Selic) sujeito a:
-  [1] Investment Grade mantido        →  juro real ≥ limiar soberano
-  [2] Juro real ≤ 5% (teto histórico IG)   ← restrição ativa
-  [3] Selic ≤ ROE médio × 0.95       →  capital produtivo > especulativo
-  [4] Selic ≤ média global ponderada  →  competitividade externa
-```
+Clique neste botão e rode no navegador:
 
-O máximo sustentável é **9,48%** → arredondado ao step COPOM (0,25pp) → **9,25%**.
+[![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
 
-Cada restrição é um teorema. Cada teorema foi provado formalmente.
+- Clique em "Conectar"
+- Clique em "Executar tudo" (ou pressione Ctrl + F9)
+- Espere alguns segundos
+- Pronto! Vai aparecer o resultado: **9,48%**
 
 ---
 
-## Verificação independente — rode você mesmo
-
-### 🟡 Z3 (Microsoft) — 1 clique
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
-
-### 🔵 Lean 4 — 1 clique
-
-[![Lean 4 Colab](https://img.shields.io/badge/Lean%204-Abrir%20no%20Colab-orange)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_lean4.ipynb)
-
-> ⏱️ Lean 4 instala em ~5 min na primeira execução.
-
-### 🐍 Local (Python + Z3)
+### 2. Para quem gosta de instalar (DevOps / Programadores)
 
 ```bash
+# 1. Baixe o projeto
 git clone https://github.com/scoobiii/selix.git
 cd selix
+
+# 2. Instale as ferramentas
 pip install -r requirements.txt
-python scripts/z3_proof.py
-# → SELIX: 9.25 | 5/5 teoremas OK
+
+# 3. Rode o cálculo
+python src/selix/core.py
 ```
 
-### 🟢 API REST
+Pronto! O programa vai mostrar a Selic ideal.
+
+---
+
+### 3. Ver a prova matemática (opcional)
 
 ```bash
-python src/api/server.py
-curl http://localhost:5000/selix
-# → {"selix": 9.25, "juro_real": 4.77, "investment_grade": true}
+cd lean_proof
+
+# Rode a prova simples
+lake env lean SELIX_v4_simple.lean
 ```
 
----
-
-## FAQ rápido
-
-**"O câmbio não afeta o resultado?"**
-O câmbio afeta o Teto 4 (média global). Mas o teto mais restritivo hoje é o Teto 2 (juro real ≤ 5%), que depende só da inflação (~4,48%). Enquanto a inflação não explodir, a saída é 9,25%.
-
-**"Isso é política econômica ou matemática?"**
-É matemática. Os parâmetros são dados públicos (IBGE, Banco Central, FMI). Mude os inputs, o modelo recalcula.
-
-**"Banco Central já considerou isso?"**
-Não publicamente. Por isso o código é aberto — qualquer economista, jornalista ou parlamentar pode auditar.
-
-**"Por que não baixam então?"**
-Boa pergunta. Não é matemática que falta.
+Você vai ver vários `true` na tela — isso significa que a matemática está correta.
 
 ---
 
-## Estrutura do repositório
+## O que o SELIX faz?
 
-```
-selix/
-├── src/selix/          # modelo principal
-├── src/api/            # endpoint Flask /selix
-├── scripts/z3_proof.py # prova formal Z3 (standalone)
-├── lean_proof/         # prova Lean 4 (local)
-├── notebooks/
-│   ├── selix_colab.ipynb    # Z3 no Colab
-│   └── selix_lean4.ipynb    # Lean 4 no Colab
-├── agents/             # FAQ, Telegram bot, RAG, chatbot
-├── tests/              # pytest + integrado Z3+Python
-├── docs/               # versões por público
-├── papers/             # whitepaper MD + PDF
-└── evidencias/         # dados reais + referências
-```
+Ele responde a pergunta:  
+**"Qual é a taxa de juros ideal para o Brasil agora?"**
+
+Ele usa 4 regras importantes:
+1. Não pode ser alta demais (senão o país perde nota de crédito)
+2. O juro real não pode passar de 5%
+3. Não pode prejudicar empresas que geram emprego
+4. Tem que ser razoável comparado com outros países
+
+A resposta que respeita todas essas regras é **9,48%**.
 
 ---
 
-## Rodar no Android (Termux)
+## Para Crianças e Curiosos
 
-```bash
-bash scripts/setup_termux.sh
-# ou manualmente:
-pkg install python git
-pip install flask requests numpy pytest z3-solver
-git clone https://github.com/scoobiii/selix && cd selix
-python scripts/z3_proof.py
-```
+Imagine que o Brasil é uma grande casa.  
+A Selic é como a taxa de aluguel que o governo paga pela dívida.
 
----
+Hoje ele está pagando aluguel muito caro (14,50%).  
+O SELIX mostra que poderia pagar menos (9,48%) sem quebrar as regras da casa.
 
-## Contribua
-
-O modelo é auditável e extensível. Abra uma issue para:
-- Contestar um teorema (bem-vindo — traga a prova)
-- Propor novos parâmetros ou restrições
-- Traduzir docs para inglês / espanhol
-- Integrar com dados em tempo real (BCB SGS API)
-
-Pull requests são abertos. Licença MIT.
+Com o dinheiro economizado, daria para:
+- Construir mais escolas
+- Melhorar hospitais
+- Ajudar empresas a crescer
+- Sobrar dinheiro para outras coisas boas
 
 ---
 
-## Citação
+## Como ajudar
 
-```bibtex
-@software{selix2026,
-  title   = {SELIX: Real-Time Optimal Selic Rate via Formal Verification},
-  author  = {Sobrinho, José S.},
-  year    = {2026},
-  url     = {https://github.com/scoobiii/selix},
-  license = {MIT}
-}
-```
+- Rode o Colab e compartilhe o resultado
+- Dê "Star" no projeto
+- Conte para um professor, jornalista ou político
+- Se você sabe programar, pode ajudar a melhorar o código
 
 ---
 
-<div align="center">
+**Resumo em 1 linha:**
 
-**R$ 270 bilhões/ano. Todo ano. Matematicamente evitáveis.**
+> O Brasil está pagando juros altos demais. A matemática mostra que dá para baixar para 9,48% de forma segura.
 
-⭐ Star se você acha que o Brasil merece ver a conta.
+**Quer testar agora?**  
+[Clique aqui e rode em 20 segundos →](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
 
-</div>
+---
+
+**Licença:** MIT (pode usar, copiar e melhorar livremente)
+
+---
