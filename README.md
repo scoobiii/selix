@@ -1,5 +1,5 @@
 
-# SELIX — Sistema de Equilíbrio Linear de Juros e Investment Grade
+## SELIX — Sistema de Equilíbrio Linear de Juros e Investment Grade
 
 <div align="center">
 
@@ -157,43 +157,4 @@ MIT — Livre para usar, compartilhar e modificar.
 · Prova Lean 4: https://github.com/scoobiii/selix/blob/main/lean_proof/SELIX_v4_simple.lean
 · Colab (modelo): https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb
 · SELIX Predictor: https://github.com/scoobiii/selix/blob/main/src/energy/selix_predictor.py
-
-EOF
-
-echo "✅ README.md atualizado"
-
-```
-
----
-
-## 🔄 Commit da atualização
-
-```bash
-cd /root/selix
-git add README.md
-git commit -m "docs: atualiza README com SELIX Predictor e whitepaper v4.1
-
-- Adiciona seção do SELIX Predictor (ferramenta em tempo real)
-- Adiciona link para whitepaper v4.1 (PDF)
-- Atualiza estrutura do repositório (src/energy/)
-- Adiciona exemplo de execução do Predictor
-- Mantém todos os badges e links funcionais"
-
-git push origin main
-```
-
----
-
-✅ Resumo das atualizações do README
-
-Seção Conteúdo
-Badges Colab, Lean 4, MIT, Z3
-Tabela de impacto Selic ideal 9,48%
-5 teoremas T1-T5 provados
-Como executar Colab, Python, Lean 4, Z3, Predictor
-Estrutura Diretórios atualizados (src/energy/)
-Whitepapers v4.1 (PDF) e v4.0 (MD)
-Predictor Dados em tempo real, recomendação E40
-
----
 
