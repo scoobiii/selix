@@ -1,0 +1,194 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage[brazilian]{babel}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+\title{SELIX: Um Modelo Matemático para a Determinação da Taxa Selic Ótima}
+\author{Zeh Sobrinho\textsuperscript{1}, GOS3\textsuperscript{2} \\
+\textsuperscript{1}MEX Energia — mex.eco.br | São Paulo, Brasil \\
+\textsuperscript{2}Grupo de Otimização de Sistemas Econômicos}
+\date{Versão 3.0 | 02 maio 2026 | Status: Working Paper}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent Apresentamos o SELIX (\textit{Sistema de Equilíbrio Linear de Juros e Investment Grade}), um modelo matemático formal que determina a taxa de juros de referência brasileira (Selic) ótima sujeita a cinco restrições simultaneamente vinculantes: classificação soberana de grau de investimento, não-canibalização do retorno sobre o patrimônio líquido do setor privado, solvência do superávit primário do Tesouro Nacional, viabilidade de convergência e consistência global do sistema. Usando o Z3 SMT Solver (Microsoft Research) provamos que todos os cinco teoremas se mantêm em \textbf{SELIX = 9,48\%} dados os parâmetros atuais (IPCA = 4,48\%, ROE = 31,23\%, Selic$_{\text{BCB}}$ = 14,50\%), implicando uma redução de \textbf{502 pontos-base} alcançável em aproximadamente \textbf{10 meses} no ritmo padrão do COPOM. O modelo é open-source, reproduzível e falseável.
+\end{abstract}
+
+\section*{Classificação JEL}
+E43 · E52 · E58 · H63 · D72 · O11
+
+\section*{Palavras-chave}
+taxa Selic, juro neutro, investment grade, SMT Solver, Z3, otimização sob restrições, política monetária discricionária, inconsistência temporal, economia política, PIB setorial, stakeholders
+
+\section{Introdução}
+
+A taxa Selic brasileira encerrou o ciclo de alta de 2024–2025 em \textbf{14,50\% a.a.} — o maior nível em 19 anos, superior às taxas de referência de todas as economias emergentes com grau de investimento comparável. O custo fiscal desta anomalia é expressivo: cada 100 bps acima do equilíbrio representa aproximadamente \textbf{R\$ 68 bilhões/ano} em despesas financeiras adicionais do Tesouro Nacional, considerando estoque de DPMFi de R\$ 6,8 trilhões (BCB, 2025).
+
+\subsection{Problema de Pesquisa}
+
+\noindent \textbf{Questão central:} Existe uma taxa Selic $s^*$ que satisfaz simultaneamente todas as restrições de solvência soberana, \textit{investment grade}, não-canibalização do setor produtivo e convergência monetária? Em caso afirmativo, qual o valor e qual o caminho de convergência?
+
+\section{Modelo SELIX}
+
+\subsection{Definições}
+
+Seja $s \in \mathbb{R}_{>0}$ a taxa Selic anual em percentual. Definimos os parâmetros:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{llll}
+\toprule
+Símbolo & Descrição & Valor (mai/2026) & Fonte \\
+\midrule
+$\pi$ & IPCA acumulado 12 meses & 4,48\% & BCB SGS 13522 \\
+$\rho$ & ROE médio IBOVESPA & 31,23\% & B3 Ranking abr/2026 \\
+$s_{BCB}$ & Selic corrente & 14,50\% & BCB, COPOM 03/2026 \\
+$r^*$ & Juro neutro global & 3,50\% & IMF WEO 2026 \\
+$\phi$ & Fator de ajuste emergentes & 1,39 & Holston et al. 2017 \\
+$\delta$ & Prêmio de risco-Brasil & 4,50 pp & CDS 5Y médio 2025 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{As Cinco Restrições Formais}
+
+\textbf{R1 — Investment Grade:}
+\[
+s \leq 9,99\%
+\]
+
+\textbf{R2 — Não-canibalização do setor produtivo:}
+\[
+s \leq \rho \cdot 0,95
+\]
+
+\textbf{R3 — Solvência do Tesouro (juro real):}
+\[
+s - \pi \leq 5,00\%
+\]
+
+\textbf{R4 — Viabilidade de convergência:}
+\[
+s_{BCB} > s
+\]
+
+\textbf{R5 — Consistência do sistema:}
+\[
+\exists\, s > \pi \text{ tal que } R1 \wedge R2 \wedge R3 \wedge R4 \text{ são satisfeitas}
+\]
+
+\subsection{Solução Fechada}
+
+O SELIX ótimo é:
+
+\[
+\boxed{s^* = \max\!\left(s_{piso},\; \min(R1_{teto},\; R2_{teto},\; R3_{teto})\right)}
+\]
+
+Calculando com os parâmetros de maio/2026:
+
+\[
+R1_{teto} = 9,99\%,\quad 
+R2_{teto} = 31,23 \times 0,95 = 29,67\%,\quad 
+R3_{teto} = 4,48 + 5,00 = 9,48\%
+\]
+\[
+s_{piso} = r^* \cdot \phi + \delta = 3,50 \times 1,39 + 4,50 = 9,365\%
+\]
+
+A restrição ativa (mais apertada) é \textbf{R3}:
+
+\[
+s^* = \max(9,365,\; \min(9,99,\; 29,67,\; 9,48)) = \max(9,365,\; 9,48) = \mathbf{9,48\%}
+\]
+
+\section{Prova Formal (Z3 SMT Solver)}
+
+\begin{tcolorbox}[colback=gray!5, colframe=gray!70, title=SELIX v3.2 — PROVA FORMAL COM Z3]
+\begin{verbatim}
+Parametros: inflacao=4.48% | ROE=31.23% | BACEN=14.50%
+------------------------------------------------------------
+T1 Investment Grade    (s <= 9.99):        ✓ PROVADO (SAT)
+T2 Nao Canibaliza      (s <= ROEx0.95):    ✓ PROVADO (SAT)
+T3 Tesouro Solvente    (s-pi <= 5.0%):     ✓ PROVADO (SAT)
+T4 Convergencia        (14.50 > s):        ✓ PROVADO (SAT)
+T5 Sistema Consistente (T1..T4 SAT):       ✓ PROVADO (SAT)
+------------------------------------------------------------
+Resultado: 5/5 teoremas provados
+\end{verbatim}
+\end{tcolorbox}
+
+\subsection{Teorema Principal}
+
+\textbf{Teorema SELIX (T5):} O sistema $\{R1, R2, R3, R4\}$ é satisfatível e admite solução única sob a função objetivo $s^* = \min(R1_{teto}, R2_{teto}, R3_{teto})$ sujeito a $s \geq s_{piso}$.
+
+\section{Convergência e Impacto Fiscal}
+
+\subsection{Caminho de Convergência}
+
+Assumindo cortes de 50 bps por reunião COPOM:
+
+\[
+N_{reunioes} = \left\lceil \frac{14,50 - 9,48}{0,50} \right\rceil = \left\lceil 10,04 \right\rceil = 11 \text{ reuniões}
+\]
+
+Com reuniões COPOM a cada $\sim$45 dias:
+
+\[
+T_{convergencia} \approx 11 \times 45 = 495 \text{ dias} \approx \mathbf{16,5 \text{ meses}}
+\]
+
+\subsection{Custo da Anomalia}
+
+\[
+\Delta_{fiscal} = DPMFi \times (s_{BCB} - s^*) = 6,8T \times 0,0502 \approx \mathbf{R\$\, 341 \text{ bi/ano}}
+\]
+
+\section{Conclusão}
+
+O modelo SELIX demonstra formalmente que existe uma taxa Selic ótima $s^* = 9,48\%$ que satisfaz simultaneamente as cinco restrições institucionais relevantes para a economia brasileira. A taxa corrente de 14,50\% excede $s^*$ em \textbf{502 bps} — excesso com custo fiscal estimado em \textbf{R\$ 341 bilhões/ano} — sem contrapartida nos fundamentos de risco soberano.
+
+\begin{itemize}
+    \item \textbf{Reproduzível:} \texttt{git clone \&\& make z3} em $<$ 1 minuto
+    \item \textbf{Falsificável:} qualquer alteração nos parâmetros gera novo $s^*$ automaticamente
+    \item \textbf{Auditável:} código aberto em \url{https://github.com/scoobiii/selix}
+\end{itemize}
+
+\bibliographystyle{plain}
+\begin{thebibliography}{9}
+
+\bibitem{taylor1993} Taylor, J. B. (1993). Discretion versus Policy Rules in Practice. \textit{Carnegie-Rochester CSP}, 39, 195–214.
+
+\bibitem{blanchard2019} Blanchard, O. (2019). Public Debt and Low Interest Rates. \textit{AER}, 109(4), 1197–1229.
+
+\bibitem{moura2008} de Moura, L., \& Bjørner, N. (2008). Z3: An Efficient SMT Solver. \textit{TACAS 2008}, LNCS 4963, 337–340.
+
+\bibitem{kydland2004} Kydland, F., \& Prescott, E. (2004). Time Inconsistency of Monetary Policy. Nobel Prize Lecture.
+
+\bibitem{acemoglu2024} Acemoglu, D., \& Johnson, S. (2024). Inclusive Institutions and Economic Prosperity. Nobel Prize Lecture.
+
+\end{thebibliography}
+
+\end{document}

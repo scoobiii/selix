@@ -1,0 +1,38 @@
+[
+  {
+    "horizonte": 1,
+    "preco": 120.5,
+    "intervalo": "78.33-162.68",
+    "mistura": "E40",
+    "tempo": "24h",
+    "justif": "Emerg\u00eancia",
+    "economia": 30264.78
+  },
+  {
+    "horizonte": 3,
+    "preco": 117.8,
+    "intervalo": "76.57-159.03",
+    "mistura": "E35",
+    "tempo": "48h",
+    "justif": "Crise instalada",
+    "economia": 18207.17
+  },
+  {
+    "horizonte": 6,
+    "preco": 114.5,
+    "intervalo": "74.43-154.57",
+    "mistura": "E35",
+    "tempo": "48h",
+    "justif": "Crise instalada",
+    "economia": 17697.12
+  },
+  {
+    "horizonte": 12,
+    "preco": 108.1,
+    "intervalo": "70.27-145.94",
+    "mistura": "E35",
+    "tempo": "48h",
+    "justif": "Crise instalada",
+    "economia": 16707.94
+  }
+]

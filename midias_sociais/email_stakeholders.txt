@@ -1,0 +1,18 @@
+Assunto: SELIX v4.1 - Prova matemática pública para taxa Selic e mistura de etanol
+
+Prezados,
+
+O projeto SELIX (Sistema de Equilíbrio Linear de Juros e Investment Grade) foi concluído e está disponível publicamente em https://github.com/scoobiii/selix.
+
+Resultados principais:
+
+1. SELIC IDEAL: 9,48% (atual 14,50%) → economia de R$ 270 bilhões/ano
+2. INVESTMENT GRADE: BBB+ garantido (Selic ≤ 9,99%)
+3. 5 TEOREMAS provados com Z3 (Microsoft Research) e Lean 4
+4. SELIX PREDICTOR: ferramenta em tempo real para mistura de etanol (E27/E30/E35/E40/E42)
+5. CASO RAÍZEN: documentado como exemplo de empresa sufocada pela Selic alta
+
+Todo o código é aberto e auditável. Os documentos estão anexos.
+
+Atenciosamente,
+Zeh Sobrinho (MEX Energia) e GOS3

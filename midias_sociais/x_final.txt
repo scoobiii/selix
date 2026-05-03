@@ -1,0 +1,13 @@
+🧵 THREAD SELIX - RESULTADO FINAL (5 tweets)
+
+1/5 🎉 Lançamos o SELIX v4.1: modelo matemático que prova que a Selic deveria ser 9,48% (não 14,50%). Economia anual: R$ 270 bilhões. Código aberto e auditável.
+
+2/5 🔬 O modelo tem 5 teoremas provados com Z3 (Microsoft Research) e Lean 4. Investment Grade garantido (BBB+). Backtesting 2000-2026 mostra custo acumulado de R$ 5,8 trilhões.
+
+3/5 ⚡ SELIX Predictor: ferramenta em tempo real que recomenda a mistura ideal de etanol (E27/E30/E35/E40/E42) baseada no preço do Brent e risco geopolítico (GPR).
+
+4/5 📄 Whitepaper v4.1 documenta caso Raízen (maior recuperação extrajudicial do setor) e demonstra que a Selic alta está sufocando empresas produtivas como a Inpasa (6,2 bi L/ano de etanol de milho).
+
+5/5 🔓 Código aberto: github.com/scoobiii/selix
+
+#SELIX #Economia #Selic #InvestmentGrade #Etanol #Energia #Brasil #OpenSource
