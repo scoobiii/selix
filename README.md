@@ -153,8 +153,12 @@ MIT — Livre para usar, compartilhar e modificar.
 🔗 Links
 
 · Repositório: https://github.com/scoobiii/selix
+
 · Whitepaper v4.1 (PDF): https://github.com/scoobiii/selix/blob/main/papers/SELIX_v4.1_PT_COMPLETO.pdf
+
 · Prova Lean 4: https://github.com/scoobiii/selix/blob/main/lean_proof/SELIX_v4_simple.lean
+
 · Colab (modelo): https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb
+
 · SELIX Predictor: https://github.com/scoobiii/selix/blob/main/src/energy/selix_predictor.py
 
