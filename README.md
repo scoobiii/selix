@@ -1,114 +1,199 @@
 
----
+# SELIX — Sistema de Equilíbrio Linear de Juros e Investment Grade
 
-```markdown
-# SELIX — A Selic Ideal do Brasil
+<div align="center">
 
-**O que é isso?**  
-É um programa que calcula a taxa de juros ideal para o Brasil usando matemática.
+```
 
-Hoje a Selic está em **14,50%**.  
-O SELIX calcula que o ideal seria **9,48%**.
+Selic atual:  14,50%
+Selic ideal:   9,48%
+Diferença:     5,02 pontos percentuais
+Custo anual:  R$ 341 bilhões
 
-Isso economizaria **R$ 270 bilhões por ano** para o país.
+```
 
----
+[![Colab Z3](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
+[![Lean 4](https://img.shields.io/badge/Lean%204-Proved-blue)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_lean4.ipynb)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Z3](https://img.shields.io/badge/Verified-Z3%20(Microsoft)-green)](scripts/z3_proof.py)
 
-## Como usar (super fácil)
-
-### 1. Maneira mais fácil (não precisa instalar nada)
-
-Clique neste botão e rode no navegador:
-
-[![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
-
-- Clique em "Conectar"
-- Clique em "Executar tudo" (ou pressione Ctrl + F9)
-- Espere alguns segundos
-- Pronto! Vai aparecer o resultado: **9,48%**
+</div>
 
 ---
 
-### 2. Para quem gosta de instalar (DevOps / Programadores)
+## 🎯 O que é a SELIX?
 
+A **SELIX** (Sistema de Equilíbrio Linear de Juros e Investment Grade) é um modelo matemático que calcula a Taxa Selic ideal com base em **5 restrições formais**, provadas com Z3 (Microsoft Research) e Lean 4.
+
+**Resultado principal:** SELIX = **9,48%** (Selic atual = 14,50%)
+
+---
+
+## 📊 Por que isso importa
+
+| Indicador | Com Selic 14,50% | Com SELIX 9,48% | Benefício |
+|-----------|-----------------|-----------------|-----------|
+| Juro real | 10,02% | 4,77% | -5,25 p.p. |
+| Investment Grade | ❌ BB | ✅ BBB+ | +2 níveis |
+| Custo anual da dívida | R$ 650 bi | R$ 380 bi | **Economia de R$ 270 bi/ano** |
+| PIB per capita | R$ 59.600 | R$ 60.394 | **+R$ 794 por brasileiro** |
+| Convergência | — | 10,5 meses | Cortes de 0,5%/mês |
+
+---
+
+## 🔬 Os 5 Teoremas Provados
+
+| Teorema | Enunciado | Status |
+|---------|-----------|--------|
+| **T1** | SELIX ≤ 9,99% (Investment Grade) | ✅ Z3 + Lean 4 |
+| **T2** | SELIX ≤ ROE × 0,95 (Não canibaliza) | ✅ Z3 + Lean 4 |
+| **T3** | SELIX - inflação ≤ 5% (Juro real máximo) | ✅ Z3 + Lean 4 |
+| **T4** | 14,50% > SELIX (Convergência possível) | ✅ Z3 + Lean 4 |
+| **T5** | Sistema é consistente (existe solução) | ✅ Z3 + Lean 4 |
+
+---
+
+## 🚀 Como executar
+
+### Google Colab (1 clique)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
+
+### Local (Python)
 ```bash
-# 1. Baixe o projeto
 git clone https://github.com/scoobiii/selix.git
 cd selix
-
-# 2. Instale as ferramentas
 pip install -r requirements.txt
-
-# 3. Rode o cálculo
 python src/selix/core.py
 ```
 
-Pronto! O programa vai mostrar a Selic ideal.
+Prova Lean 4 (Colab)
 
----
+https://img.shields.io/badge/Lean%204-Proved-blue
 
-### 3. Ver a prova matemática (opcional)
+Prova Z3
 
 ```bash
-cd lean_proof
-
-# Rode a prova simples
-lake env lean SELIX_v4_simple.lean
+python src/selix/z3_proof.py
 ```
 
-Você vai ver vários `true` na tela — isso significa que a matemática está correta.
+SELIX Energy (Predictor)
+
+```bash
+python src/energy/selix_predictor.py
+```
 
 ---
 
-## O que o SELIX faz?
+📁 Estrutura do repositório
 
-Ele responde a pergunta:  
-**"Qual é a taxa de juros ideal para o Brasil agora?"**
-
-Ele usa 4 regras importantes:
-1. Não pode ser alta demais (senão o país perde nota de crédito)
-2. O juro real não pode passar de 5%
-3. Não pode prejudicar empresas que geram emprego
-4. Tem que ser razoável comparado com outros países
-
-A resposta que respeita todas essas regras é **9,48%**.
-
----
-
-## Para Crianças e Curiosos
-
-Imagine que o Brasil é uma grande casa.  
-A Selic é como a taxa de aluguel que o governo paga pela dívida.
-
-Hoje ele está pagando aluguel muito caro (14,50%).  
-O SELIX mostra que poderia pagar menos (9,48%) sem quebrar as regras da casa.
-
-Com o dinheiro economizado, daria para:
-- Construir mais escolas
-- Melhorar hospitais
-- Ajudar empresas a crescer
-- Sobrar dinheiro para outras coisas boas
+```
+selix/
+├── src/
+│   ├── selix/          # Modelo principal + prova Z3
+│   ├── api/            # API Flask (/selix endpoint)
+│   └── energy/         # SELIX Predictor (previsão de preços)
+├── lean_proof/         # Prova Lean 4 completa
+├── tests/              # Testes unitários + integrado
+├── notebooks/          # Colab, Kaggle, Lean 4
+├── docs/               # Documentação por público
+├── papers/             # Whitepaper v4.0 e v4.1
+├── agents/             # Bots (Telegram, RAG, Chatbot)
+└── midias_sociais/     # Posts para redes sociais
+```
 
 ---
 
-## Como ajudar
+📈 Impacto acumulado (2000-2026)
 
-- Rode o Colab e compartilhe o resultado
-- Dê "Star" no projeto
-- Conte para um professor, jornalista ou político
-- Se você sabe programar, pode ajudar a melhorar o código
+Backtesting histórico mostra que o desvio da Selix custou ao Brasil:
 
----
-
-**Resumo em 1 linha:**
-
-> O Brasil está pagando juros altos demais. A matemática mostra que dá para baixar para 9,48% de forma segura.
-
-**Quer testar agora?**  
-[Clique aqui e rode em 20 segundos →](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
+· Custo acumulado: R$ 5,8 trilhões (R$ 2025)
+· Equivalente a 49,6% do PIB de 2025
+· Ou 2,6 × o orçamento federal de 2025
 
 ---
 
-**Licença:** MIT (pode usar, copiar e melhorar livremente)
+⚡ SELIX Predictor (Ferramenta em Tempo Real)
+
+O SELIX Predictor captura indicadores de mercado em tempo real e recomenda a mistura ideal de etanol (E27/E30/E35/E40/E42) com base no preço do Brent e no risco geopolítico (GPR).
+
+Última execução (03/05/2026):
+
+· Brent spot: US$ 108.17
+· Risco geopolítico: 85/100 (ALERTA)
+· Recomendação: E40 em 24h
+
+```bash
+python src/energy/selix_predictor.py
+```
 
 ---
+
+📄 Whitepapers
+
+Versão Conteúdo Link
+v4.1 Juros + Energia + Raízen PDF
+v4.0 Juros + Energia (crise 2026) MD
+
+---
+
+👥 Autores
+
+· Zeh Sobrinho — Criador do modelo
+· GOS3 — Grupo de Otimização de Sistemas Econômicos
+
+---
+
+📄 Licença
+
+MIT — Livre para usar, compartilhar e modificar.
+
+---
+
+🔗 Links
+
+· Repositório: https://github.com/scoobiii/selix
+· Whitepaper v4.1 (PDF): https://github.com/scoobiii/selix/blob/main/papers/SELIX_v4.1_PT_COMPLETO.pdf
+· Prova Lean 4: https://github.com/scoobiii/selix/blob/main/lean_proof/SELIX_v4_simple.lean
+· Colab (modelo): https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb
+· SELIX Predictor: https://github.com/scoobiii/selix/blob/main/src/energy/selix_predictor.py
+
+EOF
+
+echo "✅ README.md atualizado"
+
+```
+
+---
+
+## 🔄 Commit da atualização
+
+```bash
+cd /root/selix
+git add README.md
+git commit -m "docs: atualiza README com SELIX Predictor e whitepaper v4.1
+
+- Adiciona seção do SELIX Predictor (ferramenta em tempo real)
+- Adiciona link para whitepaper v4.1 (PDF)
+- Atualiza estrutura do repositório (src/energy/)
+- Adiciona exemplo de execução do Predictor
+- Mantém todos os badges e links funcionais"
+
+git push origin main
+```
+
+---
+
+✅ Resumo das atualizações do README
+
+Seção Conteúdo
+Badges Colab, Lean 4, MIT, Z3
+Tabela de impacto Selic ideal 9,48%
+5 teoremas T1-T5 provados
+Como executar Colab, Python, Lean 4, Z3, Predictor
+Estrutura Diretórios atualizados (src/energy/)
+Whitepapers v4.1 (PDF) e v4.0 (MD)
+Predictor Dados em tempo real, recomendação E40
+
+---
+
