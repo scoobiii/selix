@@ -162,3 +162,6 @@ MIT — Livre para usar, compartilhar e modificar.
 
 · SELIX Predictor: https://github.com/scoobiii/selix/blob/main/src/energy/selix_predictor.py
 
+. Legislativo:
+https://github.com/scoobiii/TrampoForte
+
