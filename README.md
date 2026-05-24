@@ -140,6 +140,7 @@ v4.0 Juros + Energia (crise 2026) MD
 👥 Autores
 
 · Zeh Sobrinho — Criador do modelo
+
 · GOS3 — Grupo de Otimização de Sistemas Econômicos
 
 ---
