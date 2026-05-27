@@ -21,3 +21,4 @@ agents/level_3_llm_chatbot/__pycache__/
 
 # Binários compilados completos (apenas o wrapper está versionado)
 # O wrapper já está na pasta bin/ e será commitado.
+.env
