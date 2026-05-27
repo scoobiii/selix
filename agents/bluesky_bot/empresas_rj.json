@@ -1,0 +1,54 @@
+{
+  "empresas": [
+    {
+      "nome": "GPA (Pão de Açúcar)",
+      "setor": "Varejo",
+      "plr_devido": 2000000,
+      "trabalhadores": 45000,
+      "roi_estimado": 8.5,
+      "selic_atual": 14.5,
+      "status": "CRITICO",
+      "processo": "0812345-67.2026",
+      "ultima_atualizacao": "2026-05-27"
+    },
+    {
+      "nome": "Americanas",
+      "setor": "Varejo",
+      "plr_devido": 3500000,
+      "trabalhadores": 30000,
+      "roi_estimado": 7.2,
+      "selic_atual": 14.5,
+      "status": "CRITICO",
+      "processo": "0801234-56.2026",
+      "ultima_atualizacao": "2026-05-27"
+    },
+    {
+      "nome": "Light",
+      "setor": "Energia",
+      "plr_devido": 1500000,
+      "trabalhadores": 8000,
+      "roi_estimado": 6.8,
+      "selic_atual": 14.5,
+      "status": "CRITICO",
+      "processo": "0809876-54.2026",
+      "ultima_atualizacao": "2026-05-27"
+    },
+    {
+      "nome": "Oi",
+      "setor": "Telecom",
+      "plr_devido": 2800000,
+      "trabalhadores": 12000,
+      "roi_estimado": 5.5,
+      "selic_atual": 14.5,
+      "status": "CRITICO",
+      "processo": "0812345-78.2026",
+      "ultima_atualizacao": "2026-05-27"
+    }
+  ],
+  "autoridades_plr": [
+    "@mpt.bsky.social",
+    "@tst.bsky.social",
+    "@mte.bsky.social",
+    "@anpt.bsky.social"
+  ]
+}
