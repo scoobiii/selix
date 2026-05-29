@@ -1,0 +1,122 @@
+{
+  "empresas": [
+    {
+      "nome": "GPA (Pão de Açúcar)",
+      "codigo": "PCAR3",
+      "setor": "Varejo Alimentar",
+      "preco_atual": 1.96,
+      "preco_selix": 17.60,
+      "potencial": 798,
+      "funcionarios": 70000,
+      "plr_bloqueado": 140000000,
+      "processo": "0812345-67.2026",
+      "status": "CRITICO",
+      "roi": 8.5,
+      "divida": 4.5e9
+    },
+    {
+      "nome": "Americanas",
+      "codigo": "AMER3",
+      "setor": "Varejo",
+      "preco_atual": 0.85,
+      "preco_selix": 8.50,
+      "potencial": 900,
+      "funcionarios": 30000,
+      "plr_bloqueado": 60000000,
+      "processo": "0801234-56.2026",
+      "status": "CRITICO",
+      "roi": 6.2,
+      "divida": 8.0e9
+    },
+    {
+      "nome": "Light",
+      "codigo": "LIGT3",
+      "setor": "Energia",
+      "preco_atual": 3.50,
+      "preco_selix": 12.50,
+      "potencial": 257,
+      "funcionarios": 8000,
+      "plr_bloqueado": 16000000,
+      "processo": "0809876-54.2026",
+      "status": "CRITICO",
+      "roi": 6.8,
+      "divida": 6.0e9
+    },
+    {
+      "nome": "Oi",
+      "codigo": "OIBR3",
+      "setor": "Telecom",
+      "preco_atual": 0.42,
+      "preco_selix": 4.20,
+      "potencial": 900,
+      "funcionarios": 12000,
+      "plr_bloqueado": 24000000,
+      "processo": "0812345-78.2026",
+      "status": "CRITICO",
+      "roi": 5.5,
+      "divida": 12.0e9
+    },
+    {
+      "nome": "Casas Bahia (Via)",
+      "codigo": "VIIA3",
+      "setor": "Varejo",
+      "preco_atual": 0.62,
+      "preco_selix": 6.20,
+      "potencial": 900,
+      "funcionarios": 20000,
+      "plr_bloqueado": 40000000,
+      "processo": "0813456-89.2026",
+      "status": "CRITICO",
+      "roi": 5.8,
+      "divida": 3.5e9
+    },
+    {
+      "nome": "Marisa",
+      "codigo": "AMAR3",
+      "setor": "Varejo",
+      "preco_atual": 0.28,
+      "preco_selix": 2.80,
+      "potencial": 900,
+      "funcionarios": 8000,
+      "plr_bloqueado": 16000000,
+      "processo": "0814567-01.2026",
+      "status": "CRITICO",
+      "roi": 4.2,
+      "divida": 1.2e9
+    },
+    {
+      "nome": "CVC Brasil",
+      "codigo": "CVCB3",
+      "setor": "Turismo",
+      "preco_atual": 1.25,
+      "preco_selix": 8.75,
+      "potencial": 600,
+      "funcionarios": 5000,
+      "plr_bloqueado": 10000000,
+      "processo": "0815678-12.2026",
+      "status": "CRITICO",
+      "roi": 7.2,
+      "divida": 2.1e9
+    },
+    {
+      "nome": "IRB Brasil",
+      "codigo": "IRBR3",
+      "setor": "Seguros",
+      "preco_atual": 18.50,
+      "preco_selix": 45.00,
+      "potencial": 143,
+      "funcionarios": 3000,
+      "plr_bloqueado": 6000000,
+      "processo": "0816789-23.2026",
+      "status": "ATENÇÃO",
+      "roi": 9.5,
+      "divida": 5.0e9
+    }
+  ],
+  "resumo": {
+    "total_empresas": 8,
+    "total_funcionarios": 156000,
+    "total_plr_bloqueado": 296000000,
+    "total_divida": 42.5e9
+  }
+}
