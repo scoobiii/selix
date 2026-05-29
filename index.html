@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SELIX Pro - Inteligência de Mercado Antecipada</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3a 100%);
+            color: #fff;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { text-align: center; padding: 60px 20px; }
+        h1 { font-size: 3rem; margin-bottom: 20px; }
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50px;
+            padding: 8px 16px;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .price {
+            font-size: 48px;
+            font-weight: bold;
+            color: #00ff88;
+            margin: 20px 0;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .card h3 { margin-bottom: 15px; color: #00ff88; }
+        .btn {
+            display: inline-block;
+            background: #00ff88;
+            color: #0a0a2a;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: transform 0.3s;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .form-group { margin: 20px 0; }
+        input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+        }
+        footer {
+            text-align: center;
+            padding: 40px;
+            background: rgba(0,0,0,0.3);
+            margin-top: 60px;
+        }
+        .disclaimer {
+            font-size: 12px;
+            color: #888;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .price { font-size: 36px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <span class="badge">📊 SELIX | Selic Energy Real Time</span>
+                <span class="badge">🔬 Provada com Z3 + Lean 4</span>
+                <span class="badge">💰 9,48% | Economia de R$ 270 bi/ano</span>
+                <span class="badge">✅ Investment Grade BBB+</span>
+            </div>
+            <h1>Inteligência de Mercado<br>2 Horas Antes do Público</h1>
+            <p>Alertas de risco energético, projeções de valuation e análise macro<br>
+            baseada no modelo matemático SELIX (Z3 + Lean 4)</p>
+            <div class="price">R$ 29<span style="font-size: 18px;">/mês</span></div>
+        </header>
+
+        <div class="features">
+            <div class="card">
+                <h3>🚨 Alertas Antecipados</h3>
+                <p>Receba análises de Brent, Selic e risco geopolítico 2 horas antes da publicação pública no Bluesky.</p>
+            </div>
+            <div class="card">
+                <h3>📈 Projeções de Valuation</h3>
+                <p>Preço justo de ativos com cenário Selic 1 dígito (9.48%). GPA: R$1,96 → R$17,60 (+798%).</p>
+            </div>
+            <div class="card">
+                <h3>⚖️ TrampoForte</h3>
+                <p>Análise de impacto da prioridade do PLR sobre credores em recuperação judicial.</p>
+            </div>
+            <div class="card">
+                <h3>🔬 Modelo Matemático</h3>
+                <p>5 teoremas provados com Z3 (Microsoft Research) e Lean 4. Investment Grade BBB+.</p>
+            </div>
+            <div class="card">
+                <h3>📊 Dados em Tempo Real</h3>
+                <p>Brent (Yahoo Finance), Dólar (AwesomeAPI), Selic (BCB), Ações (B3).</p>
+            </div>
+            <div class="card">
+                <h3>🏛️ Pressão Institucional</h3>
+                <p>Tags automáticas para B3, BCB, MME, ANP, Senado, MPT e mais de 20 stakeholders.</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; background: rgba(0,255,136,0.1); border-radius: 16px; padding: 40px;">
+            <h2>📧 Receba a Newsletter Gratuitamente</h2>
+            <p>Teste por 30 dias. Cancele quando quiser.</p>
+            <form action="https://formsubmit.co/seu-email@dominio.com" method="POST" style="max-width: 400px; margin: 20px auto;">
+                <input type="hidden" name="_subject" value="Novo assinante SELIX Pro!">
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Seu melhor e-mail" required>
+                </div>
+                <button type="submit" class="btn">Assinar Agora</button>
+            </form>
+        </div>
+
+        <footer>
+            <p>🔗 github.com/scoobiii/selix</p>
+            <p>🐦 Bluesky: @selixbr.bsky.social</p>
+            <div class="disclaimer">
+                ⚠️ Não é recomendação de investimento. Projeções baseadas em modelo matemático SELIX (Selic 9.48% + TrampoForte).
+                Os resultados passados não garantem retornos futuros. Consulte um profissional qualificado antes de investir.
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
