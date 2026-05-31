@@ -1,17 +1,15 @@
-.PHONY: install test run clean all
+.PHONY: venv requirements run clean
 
-install:
-	pip3 install -r requirements.txt || pip install -r requirements.txt
+venv:
+	python3 -m venv venv
+	. venv/bin/activate && pip install --upgrade pip
 
-test:
-	pytest tests/ -v
+requirements: venv
+	. venv/bin/activate && pip install -r requirements.txt
 
-run:
-	python3 src/selix/core.py
+run: requirements
+	./run_selix.sh
 
 clean:
-	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
-	rm -rf .pytest_cache
-
-all: install test run
-	@echo "✅ SELIX - Todos os testes passaram!"
+	rm -rf venv selix.db worker.log __pycache__
+	find . -name "*.pyc" -delete
