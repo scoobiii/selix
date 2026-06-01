@@ -39,13 +39,22 @@ jobs:
       - name: Run Z3 proof
         run: python src/selix/z3_proof.py || echo "Z3 proof skipped (optional)"
 
+      - name: Start API in background
+        run: |
+          export PYTHONPATH=$PWD
+          export REQUESTS_CA_BUNDLE=$PWD/venv/lib/python3.13/site-packages/certifi/cacert.pem
+          python -m src.api.main_v4 &
+          sleep 5
+          curl --retry 5 --retry-delay 1 --retry-connrefused http://localhost:5000/v1/health
+
       - name: Run all tests with coverage
         run: |
           pytest tests/ -v \
             --cov=src \
             --cov=confidence \
             --cov-report=xml \
-            --cov-report=term
+            --cov-report=term \
+            --cov-fail-under=100
 
       - name: Upload coverage report (optional)
         uses: codecov/codecov-action@v4
