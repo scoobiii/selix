@@ -1,3 +1,6 @@
+# SELIX CI/CD Pipeline v4.0
+# Última atualização: 2026-06-01
+
 name: SELIX CI/CD
 
 on:
@@ -7,34 +10,53 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+env:
+  PYTHON_VERSION: '3.12'
+  SELIX_API_KEYS: 'test_key_123,ci_test_key'
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-    
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-        pip install pytest z3-solver
-    
-    - name: Run Python core
-      run: python src/selix/core.py
-    
-    - name: Run Z3 proof
-      run: python src/selix/z3_proof.py || echo "Z3 proof skipped"
-    
-    - name: Run unit tests
-      run: pytest tests/ -v
-    
-    - name: Generate certificate
-      run: |
-        echo "{\"status\":\"validated\",\"date\":\"$(date -Iseconds)\"}" > certs/latest.json
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov pytest-mock pydantic
+
+      - name: Run Python core (Selic calculation)
+        run: python src/selix/core.py
+
+      - name: Run Z3 proof
+        run: python src/selix/z3_proof.py || echo "Z3 proof skipped (optional)"
+
+      - name: Run all tests with coverage
+        run: |
+          pytest tests/ -v \
+            --cov=src \
+            --cov=confidence \
+            --cov-report=xml \
+            --cov-report=term
+
+      - name: Upload coverage report (optional)
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: false
+
+      - name: Generate validation certificate
+        run: |
+          mkdir -p certs
+          echo "{\"status\":\"validated\",\"date\":\"$(date -Iseconds)\"}" > certs/latest.json
 
   deploy-docs:
     needs: test
@@ -42,9 +64,12 @@ jobs:
     permissions:
       contents: write
     steps:
-    - uses: actions/checkout@v4
-    - uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs
-        publish_branch: gh-pages
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy documentation to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          publish_branch: gh-pages
