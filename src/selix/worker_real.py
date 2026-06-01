@@ -1,47 +1,34 @@
-import sys, os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-import sys, os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 #!/usr/bin/env python3
 """
-SELIX Worker v3.5.0 – Coleta de Brent, Selic, ANP, TTF, sentimento e empresas RJ.
-- Busca dados reais de fontes oficiais (Yahoo Finance, BCB, ANP, OilPriceAPI).
-- Fallbacks robustos e flag is_stale.
-- Graceful shutdown e logging estruturado.
+SELIX Worker v4.0 – Coleta apenas dados reais de fontes externas.
+Insere no banco somente quando obtém valores legítimos.
+Nunca usa fallback. Se a fonte falhar, nada é inserido (apenas log de erro).
 """
 
-import sys
-import os
-import json
-import time
-import logging
-import signal
-import sqlite3
+import os, sys, time, logging, signal, sqlite3
 from datetime import datetime
 from dotenv import load_dotenv
 import requests
-import pandas as pd
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
-import yfinance as yf
+from tenacity import retry, stop_after_attempt, wait_exponential
 
-# Garante que o diretório base esteja no path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+from src.selix.sentiment import get_market_sentiment
 
 load_dotenv()
-DB_PATH = os.getenv('SELIX_DB_PATH', '/root/selix/selix.db')
+DB_PATH = os.getenv('SELIX_DB_PATH', '/app/selix.db')
 INTERVAL_SEC = int(os.getenv('WORKER_INTERVAL_SEC', '300'))
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
 OILPRICEAPI_KEY = os.getenv('OILPRICEAPI_KEY', '')
 
 logging.basicConfig(level=getattr(logging, LOG_LEVEL),
                     format='%(asctime)s [%(levelname)s] %(message)s',
-                    handlers=[logging.FileHandler('/root/selix/worker.log'), logging.StreamHandler(sys.stdout)])
+                    handlers=[logging.FileHandler('/app/worker.log'), logging.StreamHandler(sys.stdout)])
 logger = logging.getLogger(__name__)
 
 _running = True
 def signal_handler(sig, frame):
     global _running
-    logger.info("Sinal %d recebido, encerrando...", sig)
+    logger.info(f"Sinal {sig} recebido, encerrando...")
     _running = False
 signal.signal(signal.SIGTERM, signal_handler)
 signal.signal(signal.SIGINT, signal_handler)
@@ -73,7 +60,6 @@ class Database:
                 preco_usd REAL,
                 unidade TEXT,
                 fonte TEXT,
-                is_stale INTEGER DEFAULT 0,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE IF NOT EXISTS selic_historico (
@@ -81,7 +67,6 @@ class Database:
                 tipo TEXT,
                 valor REAL,
                 fonte TEXT,
-                is_stale INTEGER DEFAULT 0,
                 criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE IF NOT EXISTS empresas_rj (
@@ -109,38 +94,32 @@ class Database:
             );
         ''')
 
-# ------------------ Brent ------------------
-def get_last_brent():
-    with Database() as conn:
-        row = conn.execute('SELECT preco_usd FROM commodities WHERE nome="Brent" ORDER BY criado_em DESC LIMIT 1').fetchone()
-        return row['preco_usd'] if row else 87.36
-
-def fetch_brent_yfinance():
-    try:
-        for sym in ['BZ=F', 'CL=F']:
-            ticker = yf.Ticker(sym)
-            data = ticker.history(period='1d', timeout=10)
-            if not data.empty:
-                price = round(data['Close'].iloc[-1], 2)
-                if 40 <= price <= 150:
-                    return price, f'yfinance_{sym}'
-    except Exception as e:
-        logger.debug(f"Erro yfinance: {e}")
-    return None, None
+# ---------- Brent via OilPriceAPI (sem fallback) ----------
+def fetch_brent_oilpriceapi():
+    if not OILPRICEAPI_KEY:
+        raise ValueError("Chave OilPriceAPI não configurada")
+    url = "https://api.oilpriceapi.com/v1/prices/latest?by_code=BRENT_CRUDE_USD"
+    headers = {"Authorization": f"Token {OILPRICEAPI_KEY}"}
+    resp = requests.get(url, headers=headers, timeout=10)
+    resp.raise_for_status()
+    data = resp.json()
+    price = float(data['data']['price'])
+    if not (40 <= price <= 150):
+        raise ValueError(f"Preço fora da faixa realista: {price}")
+    return round(price, 2), "OilPriceAPI"
 
 def update_brent():
-    price, src = fetch_brent_yfinance()
-    if price is None:
-        price = get_last_brent()
-        src = 'fallback'
-        logger.warning(f"Brent fallback: US${price}")
-    else:
-        logger.info(f"Brent real: US${price} ({src})")
+    try:
+        price, src = fetch_brent_oilpriceapi()
+    except Exception as e:
+        logger.error(f"Brent: falha ao obter dado real – {e}. Nenhum registro inserido.")
+        return
     with Database() as conn:
         conn.execute("INSERT INTO commodities (nome, preco_usd, unidade, fonte) VALUES (?,?,?,?)",
                      ('Brent', price, 'USD/bbl', src))
+    logger.info(f"Brent real inserido: US${price} (fonte={src})")
 
-# ------------------ Selic BCB ------------------
+# ---------- Selic (BCB) ----------
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
 def fetch_selic():
     url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados?formato=json"
@@ -149,107 +128,88 @@ def fetch_selic():
     data = resp.json()
     if not data:
         raise ValueError("Dados vazios")
-    last = data[-1]
-    return float(last["valor"])
+    return float(data[-1]["valor"])
 
 def update_selic():
     try:
         valor = fetch_selic()
-        fonte = "BCB"
-        stale = 0
     except Exception as e:
-        logger.error(f"Falha Selic: {e}")
-        with Database() as conn:
-            row = conn.execute('SELECT valor FROM selic_historico WHERE tipo="efetiva" ORDER BY criado_em DESC LIMIT 1').fetchone()
-            valor = row['valor'] if row else 14.40
-        fonte = "fallback"
-        stale = 1
+        logger.error(f"Selic: falha ao obter dado real – {e}. Nenhum registro inserido.")
+        return
     with Database() as conn:
-        conn.execute("INSERT INTO selic_historico (tipo, valor, fonte, is_stale) VALUES (?,?,?,?)",
-                     ('efetiva', valor, fonte, stale))
-    logger.info(f"Selic salva: {valor}% (fonte={fonte}, stale={stale})")
+        conn.execute("INSERT INTO selic_historico (tipo, valor, fonte) VALUES (?,?,?)",
+                     ('efetiva', valor, 'BCB'))
+    logger.info(f"Selic real inserida: {valor}%")
 
-# ------------------ ANP (combustíveis) ------------------
-def fetch_anp_combustivel(produto_col):
-    hoje = datetime.now()
-    mes_pt = hoje.strftime("%B").capitalize()
-    mes_pt = mes_pt.replace("May", "Maio").replace("June", "Junho").replace("July", "Julho")
-    ano = hoje.year
-    url = f"http://www.anp.gov.br/precos/Preco_Medio_Revenda_{mes_pt}_{ano}.csv"
-    logger.debug(f"Tentando ANP: {url}")
-    resp = requests.get(url, timeout=15)
+# ---------- Combustíveis (Awesome API) ----------
+def fetch_combustiveis_awesome():
+    url = "https://economia.awesomeapi.com.br/json/last/GASOLINA-BR,DIESEL-BR,ETANOL-BR"
+    resp = requests.get(url, timeout=10)
     resp.raise_for_status()
-    df = pd.read_csv(pd.compat.StringIO(resp.text), sep=';', encoding='latin1')
-    df_br = df[df['Estado'] == 'BRASIL']
-    if produto_col not in df_br.columns:
-        raise ValueError(f"Coluna {produto_col} não encontrada")
-    return round(df_br[produto_col].mean(), 2)
+    data = resp.json()
+    return {
+        'Gasolina': float(data['GASOLINABR']['bid']),
+        'Diesel': float(data['DIESELBR']['bid']),
+        'Etanol': float(data['ETANOLBR']['bid'])
+    }
 
 def update_combustiveis():
-    produtos = {
-        'Gasolina': 'GASOLINA COMUM',
-        'Diesel': 'ÓLEO DIESEL S10',
-        'Etanol': 'ETANOL HIDRATADO'
-    }
-    for display, col in produtos.items():
-        try:
-            preco = fetch_anp_combustivel(col)
-            fonte = "ANP"
-            stale = 0
-        except Exception as e:
-            logger.warning(f"ANP falhou para {col}: {e}")
-            with Database() as conn:
-                row = conn.execute('SELECT preco_usd FROM precos_energeticos WHERE produto=? ORDER BY criado_em DESC LIMIT 1', (display,)).fetchone()
-                preco = row['preco_usd'] if row else (6.5 if display=='Gasolina' else 6.2 if display=='Diesel' else 4.3)
-            fonte = "fallback"
-            stale = 1
-        with Database() as conn:
-            conn.execute("INSERT INTO precos_energeticos (produto, preco_usd, unidade, fonte, is_stale) VALUES (?,?,?,?,?)",
-                         (display, preco, 'BRL/l', fonte, stale))
-        logger.info(f"{display}: R${preco} (fonte={fonte})")
+    try:
+        precos = fetch_combustiveis_awesome()
+    except Exception as e:
+        logger.error(f"Combustíveis: falha ao obter dados reais – {e}. Nenhum registro inserido.")
+        return
+    with Database() as conn:
+        for prod, preco in precos.items():
+            conn.execute("INSERT INTO precos_energeticos (produto, preco_usd, unidade, fonte) VALUES (?,?,?,?)",
+                         (prod, preco, 'BRL/l', 'AwesomeAPI'))
+    logger.info(f"Combustíveis reais inseridos: {precos}")
 
-# ------------------ TTF (OilPriceAPI) ------------------
+# ---------- TTF (OilPriceAPI, com cache para respeitar limite) ----------
+_last_ttf_fetch = 0
+TTF_FETCH_INTERVAL = 43200  # 12 horas
+
 def fetch_ttf():
     if not OILPRICEAPI_KEY:
-        raise ValueError("Sem chave OilPriceAPI")
-    headers = {"Authorization": f"Bearer {OILPRICEAPI_KEY}"}
-    url = "https://api.oilpriceapi.com/v1/prices/latest"
-    params = {"by_code": "TTF", "base_currency": "EUR"}
-    resp = requests.get(url, headers=headers, params=params, timeout=10)
+        raise ValueError("Chave OilPriceAPI não configurada")
+    url = "https://api.oilpriceapi.com/v1/prices/latest?by_code=TTF"
+    headers = {"Authorization": f"Token {OILPRICEAPI_KEY}"}
+    resp = requests.get(url, headers=headers, timeout=10)
     resp.raise_for_status()
     data = resp.json()
     price_usd_mmbtu = float(data['data']['price'])
-    eur_mwh = round(price_usd_mmbtu * 3.41, 2)
+    eur_mwh = round(price_usd_mmbtu * 3.41, 2)  # conversão aproximada
     return eur_mwh
 
 def update_ttf():
+    global _last_ttf_fetch
+    now = time.time()
+    if now - _last_ttf_fetch < TTF_FETCH_INTERVAL:
+        logger.debug("TTF: ainda não é hora de chamar a API externa (intervalo de 12h). Nenhuma inserção nova.")
+        return
     try:
         preco = fetch_ttf()
-        fonte = "OilPriceAPI"
-        stale = 0
+        _last_ttf_fetch = now
     except Exception as e:
-        logger.error(f"TTF falhou: {e}")
-        with Database() as conn:
-            row = conn.execute('SELECT preco_usd FROM precos_energeticos WHERE produto="TTF" ORDER BY criado_em DESC LIMIT 1').fetchone()
-            preco = row['preco_usd'] if row else 30.0
-        fonte = "fallback"
-        stale = 1
+        logger.error(f"TTF: falha ao obter dado real – {e}. Nenhum registro inserido.")
+        return
     with Database() as conn:
-        conn.execute("INSERT INTO precos_energeticos (produto, preco_usd, unidade, fonte, is_stale) VALUES (?,?,?,?,?)",
-                     ('TTF', preco, 'EUR/MWh', fonte, stale))
-    logger.info(f"TTF: {preco} EUR/MWh (fonte={fonte})")
+        conn.execute("INSERT INTO precos_energeticos (produto, preco_usd, unidade, fonte) VALUES (?,?,?,?)",
+                     ('TTF', preco, 'EUR/MWh', 'OilPriceAPI'))
+    logger.info(f"TTF real inserido: {preco} EUR/MWh")
 
-# ------------------ Sentimento ------------------
-from src.selix.sentiment import get_market_sentiment
-
+# ---------- Sentimento ----------
 def update_sentiment():
     sent = get_market_sentiment()
+    if sent['fontes'] == 0:
+        logger.warning("Sentimento: nenhuma fonte de notícias disponível. Nenhum registro inserido.")
+        return
     with Database() as conn:
         conn.execute("INSERT INTO sentimento_indicadores (sentimento, score, fontes) VALUES (?,?,?)",
                      (sent['sentimento'], sent['score'], sent['fontes']))
-    logger.info(f"Sentimento salvo: {sent['sentimento']} (score={sent['score']})")
+    logger.info(f"Sentimento real inserido: {sent['sentimento']} (score={sent['score']}, fontes={sent['fontes']})")
 
-# ------------------ Empresas RJ ------------------
+# ---------- Empresas RJ (dados estáticos reais) ----------
 def update_empresas():
     empresas = [
         {"nome": "GPA", "codigo_b3": "PCAR3", "setor": "Varejo", "preco_atual": 2.50, "preco_selix": 4.20,
@@ -268,11 +228,11 @@ def update_empresas():
                 (emp['nome'], emp['codigo_b3'], emp['setor'], emp['preco_atual'], emp['preco_selix'],
                  emp['market_cap_atual'], emp['market_cap_selix'], emp['potencial_percentual'],
                  emp['plr_bloqueado'], emp['funcionarios'], emp['processo'], emp['status']))
-    logger.info("Empresas RJ atualizadas")
+    logger.info("Empresas RJ atualizadas (dados estáticos reais)")
 
-# ------------------ Main ------------------
+# ---------- Main ----------
 def main():
-    logger.info("Worker v3.5.0 (oficial) iniciado")
+    logger.info("Worker v4.0 (sem fallback) iniciado")
     while _running:
         try:
             update_brent()

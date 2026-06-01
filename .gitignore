@@ -1,44 +1,33 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyc
-.pytest_cache/
-
-# Ambiente virtual
-selix-env/
-
-# Notebooks (checagens)
-.ipynb_checkpoints/
-
-# Agentes (dados gerados localmente)
-agents/level_2_rag_langchain/chroma_db/
-agents/level_3_llm_chatbot/__pycache__/
-
-# Scripts temporários (não devem subir)
-*_faltantes.sh
-*_esqueleto.sh
-*.log
-
-# Binários compilados completos (apenas o wrapper está versionado)
-# O wrapper já está na pasta bin/ e será commitado.
-.env
-# Banco de dados
-*.db
-*.sqlite3
-
-# Logs
-*.log
-worker.log
-
-# Cache Python
-__pycache__/
-*.pyc
-
-# Ambiente virtual
 venv/
-ENV/
-
-# Arquivos temporários
+__pycache__/
+*.pyc
+*.log
+selix.db
+.env
+logs/
 *.aux
 *.out
-*.bkp
+*.csv
+*.png
+*.gguf
+models/
+data/
+htmlcov/
+.pytest_cache/
+# Banco de dados (WAL files)
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Editores
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Backup temporários
+*.bak
+*.tmp
+
+# Logs específicos
+*.log.*

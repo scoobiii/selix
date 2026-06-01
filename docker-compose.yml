@@ -6,29 +6,33 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - SELIX_DB_PATH=/data/selix.db
+      - SELIX_DB_PATH=/app/selix.db
       - OILPRICEAPI_KEY=${OILPRICEAPI_KEY}
     volumes:
-      - ./data:/data
-    command: python src/api/main_v3.py
+      - ./data:/app/data
+      - ./logs:/app/logs
+    command: python src/api/main_v4.py
     restart: unless-stopped
 
   worker:
     build: .
     environment:
-      - SELIX_DB_PATH=/data/selix.db
+      - SELIX_DB_PATH=/app/selix.db
       - OILPRICEAPI_KEY=${OILPRICEAPI_KEY}
     volumes:
-      - ./data:/data
-    command: python src/selix/worker_real.py
+      - ./data:/app/data
+      - ./logs:/app/logs
+    command: python src/selix/worker_v4.py
     restart: unless-stopped
 
-  cron:
+  bot:
     build: .
+    environment:
+      - SELIX_DB_PATH=/app/selix.db
+      - BLUESKY_USERNAME=${BLUESKY_USERNAME}
+      - BLUESKY_APP_PASSWORD=${BLUESKY_APP_PASSWORD}
     volumes:
-      - ./data:/data
-      - ./cron_tasks:/etc/cron.d/selix
-    entrypoint: |
-      sh -c "crontab /etc/cron.d/selix && crond -f -l 2"
-    depends_on:
-      - api
+      - ./data:/app/data
+      - ./logs:/app/logs
+    command: python agents/bluesky_bot/post_inteligente_v4.py
+    restart: unless-stopped

@@ -189,7 +189,7 @@ def test_python_core():
     print(f"   Investment Grade = {resultado['investment_grade']}")
     print(f"   Diferencial = {resultado['diferencial']} pontos")
     
-    return resultado['selix_ideal'] == 9.25
+    assert resultado['selix_ideal'] == 9.25
 
 def main():
     print("="*70)
@@ -222,7 +222,7 @@ def main():
         print("⚠️ Alguns testes falharam. Verifique as instalações.")
     
     print("="*70)
-    return results
+    assert results
 
 if __name__ == "__main__":
     main()

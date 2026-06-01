@@ -9,7 +9,7 @@ from src.selix.energy_predictor import EnergyPredictor
 
 app = Flask(__name__)
 CORS(app)
-DB_PATH = os.getenv('SELIX_DB_PATH', '/app/selix.db')
+DB_PATH = '/root/selix/selix.db'
 
 def get_db():
     conn = sqlite3.connect(DB_PATH, timeout=30)
@@ -136,7 +136,7 @@ def alertas_geral():
 def faq():
     import json
     pergunta = request.args.get('q', '').lower()
-    faq_file = '/app/agents/bluesky_bot/faq.json'
+    faq_file = '/root/selix/agents/bluesky_bot/faq.json'
     if not os.path.exists(faq_file):
         return jsonify({"erro": "FAQ não encontrado"}), 404
     with open(faq_file) as f:
@@ -145,6 +145,29 @@ def faq():
         if any(kw in pergunta for kw in item['keywords']):
             return jsonify({"pergunta": pergunta, "resposta": item['resposta']})
     return jsonify({"pergunta": pergunta, "resposta": "Não entendi. Consulte github.com/scoobiii/selix"}), 404
+
+@app.route('/v1/perguntar', methods=['POST'])
+def perguntar_selix():
+    """Endpoint para perguntar ao agente Selix"""
+    data = request.get_json()
+    if not data:
+        return jsonify({"erro": "Requisição inválida. Envie um JSON com 'pergunta'."}), 400
+    
+    pergunta = data.get('pergunta', '')
+    if not pergunta:
+        return jsonify({"erro": "Campo 'pergunta' é obrigatório."}), 400
+    
+    try:
+        from agents.llm_agent.agente_selix import responder
+        resposta = responder(pergunta)
+        return jsonify({
+            "pergunta": pergunta,
+            "resposta": resposta,
+            "timestamp": datetime.now().isoformat()
+        })
+    except Exception as e:
+        return jsonify({"erro": f"Erro ao processar: {str(e)}"}), 500
+
 
 if __name__ == '__main__':
     print("\n🚀 SELIX API v4.0 (sem fallback) – retorna 503 se dados ausentes")

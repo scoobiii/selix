@@ -6,7 +6,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Feeds RSS mais acessíveis (alguns podem exigir User-Agent)
 RSS_FEEDS = [
     "https://feeds.bloomberg.com/markets/news.rss",
     "https://www.valor.com.br/rss/economia",
@@ -39,10 +38,7 @@ def fetch_news_articles(hours_back=24):
 def analyze_sentiment(articles):
     if not articles:
         return {"sentimento": "NEUTRO", "score": 0.0, "fontes": 0}
-    scores = []
-    for art in articles:
-        blob = TextBlob(art['title'])
-        scores.append(blob.sentiment.polarity)
+    scores = [TextBlob(art['title']).sentiment.polarity for art in articles]
     avg = sum(scores) / len(scores)
     if avg > 0.1:
         sent = "POSITIVO"
