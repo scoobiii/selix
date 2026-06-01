@@ -1,63 +1,73 @@
-#!/data/data/com.termux/files/usr/bin/bash
-# SELIX Resilience – Prevayler-style recovery
+#!/bin/bash
+# SELIX Resilience - Monitor com tolerância de 20min e reinicialização apenas por processo/API
 
-LOG="/root/selix/resilience.log"
+LOG="/root/selix/logs/resilience.log"
 STATE_DIR="/root/selix/state"
+MAX_RETRIES=3
+RETRY_COUNT=0
 
-log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" >> "$LOG"; }
+mkdir -p "$STATE_DIR"
 
-# Verifica se o processo principal está rodando
-check_worker() {
-    pgrep -f "worker_v4.py" > /dev/null
-    return $?
-}
+log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG"; }
 
 check_api() {
-    curl -s http://localhost:5000/v1/health > /dev/null 2>&1
-    return $?
+    curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/v1/health | grep -q "200"
 }
 
-# Recupera estado do banco
-recover_db() {
-    if [ -f "$STATE_DIR/selix.db.backup" ]; then
-        log "Restaurando banco do backup..."
-        cp "$STATE_DIR/selix.db.backup" /root/selix/selix.db
+check_worker_process() {
+    pgrep -f "worker_v4" > /dev/null
+}
+
+check_data_freshness() {
+    local last_ts=$(sqlite3 /root/selix/selix.db "SELECT julianday('now') - julianday(criado_em) FROM commodities ORDER BY criado_em DESC LIMIT 1;" 2>/dev/null)
+    if [[ -z "$last_ts" ]]; then
+        return 1
+    fi
+    # converte dias para minutos e compara com 20
+    if (( $(echo "$last_ts * 1440 < 20" | bc -l) )); then
+        return 0
     else
-        log "Nenhum backup encontrado"
+        return 1
     fi
 }
 
-# Recupera conversas
-recover_conversations() {
-    if [ -f "$STATE_DIR/selix_state.pkl" ]; then
-        log "Ultimo estado: $(python -c "import pickle; print(pickle.load(open('$STATE_DIR/selix_state.pkl', 'rb')).get('last_action', 'N/A'))")"
-    fi
-}
-
-# Inicia serviços
-start_services() {
-    cd /root/selix
-    source venv/bin/activate
-    
-    log "Iniciando worker..."
-    nohup python src/selix/worker_v4.py >> /root/selix/logs/worker.log 2>&1 &
-    WORKER_PID=$!
-    
-    sleep 3
-    log "Iniciando API..."
-    nohup python src/api/main_v4.py >> /root/selix/logs/api.log 2>&1 &
-    API_PID=$!
-    
-    log "Servicos iniciados: worker=$WORKER_PID, api=$API_PID"
-}
-
-# Loop de monitoramento
 while true; do
-    if ! check_worker || ! check_api; then
-        log "Servico caiu! Recuperando..."
-        recover_db
-        recover_conversations
-        start_services
+    api_ok=false
+    worker_ok=false
+    data_ok=false
+
+    check_api && api_ok=true
+    check_worker_process && worker_ok=true
+    check_data_freshness && data_ok=true
+
+    # Apenas loga se os dados estiverem desatualizados, mas não reinicia
+    if ! $data_ok; then
+        log "⚠️ Dados desatualizados (último Brent > 20 min)"
     fi
-    sleep 10
+
+    if ! $api_ok || ! $worker_ok; then
+        log "⚠️ Problema: API=$api_ok Worker=$worker_ok (ignorando frescor dos dados)"
+        if [[ -f "$STATE_DIR/last_ok" ]]; then
+            last_ok=$(cat "$STATE_DIR/last_ok")
+            now=$(date +%s)
+            downtime=$((now - last_ok))
+            log "📉 Downtime: ${downtime}s ($((downtime/60))min)"
+        fi
+
+        RETRY_COUNT=$((RETRY_COUNT + 1))
+        if [[ $RETRY_COUNT -le $MAX_RETRIES ]]; then
+            log "🚨 Tentativa $RETRY_COUNT de reinicialização"
+            /root/selix/run_selix.sh
+            sleep 10
+        else
+            log "🛑 Máximo de tentativas. Aguardando 5min..."
+            sleep 300
+            RETRY_COUNT=0
+        fi
+    else
+        RETRY_COUNT=0
+        date +%s > "$STATE_DIR/last_ok"
+    fi
+
+    sleep 30
 done

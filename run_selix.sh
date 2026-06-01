@@ -4,7 +4,6 @@ cd "$(dirname "$0")"
 
 echo "🚀 SELIX v4.0 - Inicializando sistema (sem fallbacks)"
 
-# Ativa venv se existir, senão cria
 if [ ! -d "venv" ]; then
     echo "📦 Criando ambiente virtual..."
     python3 -m venv venv
@@ -21,11 +20,16 @@ mkdir -p logs
 pkill -f worker_v4 || true
 pkill -f main_v4 || true
 
-# Inicia worker em background
-nohup python src/selix/worker_v4.py > logs/worker.log 2>&1 &
+# Define PYTHONPATH para garantir importações
+export PYTHONPATH="/root/selix:$PYTHONPATH"
+export REQUESTS_CA_BUNDLE="/root/selix/venv/lib/python3.13/site-packages/certifi/cacert.pem"
+
+# Inicia worker em background (usando -m)
+nohup python -m src.selix.worker_v4 > logs/worker.log 2>&1 &
 echo "🔄 Worker iniciado (PID $!)"
 
-# Aguarda um pouco e inicia a API
 sleep 3
+
+# Inicia API em foreground (usando -m)
 echo "🌐 Iniciando API na porta 5000..."
-python src/api/main_v4.py
+python -m src.api.main_v4
