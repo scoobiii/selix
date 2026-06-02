@@ -1,0 +1,98 @@
+{
+  "jornalismo": [
+    {
+      "handle": "nexojornal.bsky.social",
+      "display_name": "Nexo Jornal",
+      "followers": 14701,
+      "did": "did:plc:oaphhbuutljmbuly356fyz6j"
+    },
+    {
+      "handle": "valoreconomico.bsky.social",
+      "display_name": "Valor Econômico",
+      "followers": 11731,
+      "did": "did:plc:w5ya7uenquf4b35iptqtkz36"
+    },
+    {
+      "handle": "infomoney.bsky.social",
+      "display_name": "InfoMoney",
+      "followers": 1063,
+      "did": "did:plc:bbol7ayzimcve6kbalb272od"
+    },
+    {
+      "handle": "braziljournal.bsky.social",
+      "display_name": "Brazil Journal",
+      "followers": 286,
+      "did": "did:plc:iuunx2shpswgc2mbhjxwbf2v"
+    },
+    {
+      "handle": "intercept.bsky.social",
+      "display_name": "amelia",
+      "followers": 74,
+      "did": "did:plc:ugyxr3lk7a3qatf53tktuckk"
+    }
+  ],
+  "economia_critica": [
+    {
+      "handle": "nelsonbarbosa.bsky.social",
+      "display_name": "Nelson Barbosa",
+      "followers": 154,
+      "did": "did:plc:le4pflzgplxjxljsej2ngjlq"
+    },
+    {
+      "handle": "guilhermemello.bsky.social",
+      "display_name": "Guilherme Mello",
+      "followers": 109,
+      "did": "did:plc:b3w6idmcqop4mumyp5pggjrt"
+    }
+  ],
+  "politica": [
+    {
+      "handle": "gleisi.bsky.social",
+      "display_name": "Gleisi Hoffmann",
+      "followers": 34389,
+      "did": "did:plc:em57cgm663tmkmfgek7tcgfj"
+    },
+    {
+      "handle": "senado.leg.br",
+      "display_name": "Senado Federal",
+      "followers": 9223,
+      "did": "did:plc:fztszzyfbsa5szfznw7cf4u7"
+    }
+  ],
+  "energia_clima": [
+    {
+      "handle": "wwfbrasil.bsky.social",
+      "display_name": "WWF-Brasil",
+      "followers": 2676,
+      "did": "did:plc:w5yhvcm7qtys7gx2hymx2hyu"
+    }
+  ],
+  "trabalhadores_financas": [
+    {
+      "handle": "gildovigor.bsky.social",
+      "display_name": "Gil do Vigor",
+      "followers": 40921,
+      "did": "did:plc:oorm4yg5xrbt6crbn2hcmbco"
+    },
+    {
+      "handle": "cutbrasil.bsky.social",
+      "display_name": "CUT Brasil 🚩🇧🇷",
+      "followers": 1434,
+      "did": "did:plc:lgyavd57odklq33slsl6qe74"
+    },
+    {
+      "handle": "cut.bsky.social",
+      "display_name": "Lye",
+      "followers": 54,
+      "did": "did:plc:xk5q6ja7cwhnn6zicwmtqduo"
+    }
+  ],
+  "mercado": [
+    {
+      "handle": "xpi.bsky.social",
+      "display_name": "Dr. Kristi DiClemente ",
+      "followers": 1725,
+      "did": "did:plc:n2ga6mbq7o72ioostmkhrvxh"
+    }
+  ]
+}

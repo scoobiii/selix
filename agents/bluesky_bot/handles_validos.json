@@ -1,0 +1,314 @@
+{
+  "jornalismo": {
+    "ativos": [
+      {
+        "handle": "nexojornal.bsky.social",
+        "display_name": "Nexo Jornal",
+        "followers": 14701,
+        "did": "did:plc:oaphhbuutljmbuly356fyz6j"
+      },
+      {
+        "handle": "valoreconomico.bsky.social",
+        "display_name": "Valor Econômico",
+        "followers": 11731,
+        "did": "did:plc:w5ya7uenquf4b35iptqtkz36"
+      },
+      {
+        "handle": "infomoney.bsky.social",
+        "display_name": "InfoMoney",
+        "followers": 1063,
+        "did": "did:plc:bbol7ayzimcve6kbalb272od"
+      },
+      {
+        "handle": "braziljournal.bsky.social",
+        "display_name": "Brazil Journal",
+        "followers": 286,
+        "did": "did:plc:iuunx2shpswgc2mbhjxwbf2v"
+      },
+      {
+        "handle": "intercept.bsky.social",
+        "display_name": "amelia",
+        "followers": 74,
+        "did": "did:plc:ugyxr3lk7a3qatf53tktuckk"
+      }
+    ],
+    "inativos": [
+      {
+        "handle": "cartacapital.bsky.social",
+        "display_name": "",
+        "followers": 7,
+        "did": "did:plc:dgbeosmrt3wbcs4vfrjo67tv"
+      }
+    ],
+    "nao_encontrados": [
+      "ageniciabrasil.bsky.social",
+      "folhadsp.bsky.social",
+      "folhadesp.bsky.social",
+      "estadao.bsky.social",
+      "piauirevista.bsky.social",
+      "agenciapublica.bsky.social",
+      "seudinheiro.bsky.social"
+    ]
+  },
+  "economia_critica": {
+    "ativos": [
+      {
+        "handle": "nelsonbarbosa.bsky.social",
+        "display_name": "Nelson Barbosa",
+        "followers": 154,
+        "did": "did:plc:le4pflzgplxjxljsej2ngjlq"
+      },
+      {
+        "handle": "guilhermemello.bsky.social",
+        "display_name": "Guilherme Mello",
+        "followers": 109,
+        "did": "did:plc:b3w6idmcqop4mumyp5pggjrt"
+      }
+    ],
+    "inativos": [
+      {
+        "handle": "laraResende.bsky.social",
+        "display_name": "Lara",
+        "followers": 11,
+        "did": "did:plc:xnm2gcdx6h7avrgsn4e75j3h"
+      },
+      {
+        "handle": "monicadebolle.bsky.social",
+        "display_name": "",
+        "followers": 22,
+        "did": "did:plc:fday7qqhcokmv4fvkbq54wej"
+      },
+      {
+        "handle": "lauracarvalho.bsky.social",
+        "display_name": "👩🏻‍💻",
+        "followers": 21,
+        "did": "did:plc:pp3lizfoomibcvwcvmakxzfw"
+      },
+      {
+        "handle": "ricardoamorim.bsky.social",
+        "display_name": "Ricardo Amorim",
+        "followers": 31,
+        "did": "did:plc:skve7kd6ldsvtrbav64dmurv"
+      },
+      {
+        "handle": "marciosimao.bsky.social",
+        "display_name": "Marcio Simão ",
+        "followers": 1,
+        "did": "did:plc:khclkm4jjiobwctpk665m5wn"
+      },
+      {
+        "handle": "pedroferreira.bsky.social",
+        "display_name": "Pedro Ferreira",
+        "followers": 13,
+        "did": "did:plc:emrkjqeljv54w2kmhbbstrfs"
+      }
+    ],
+    "nao_encontrados": [
+      "lauracarvalho.eco.br",
+      "persioarida.bsky.social",
+      "eduardofagnani.bsky.social",
+      "rodrigolirio.bsky.social"
+    ]
+  },
+  "politica": {
+    "ativos": [
+      {
+        "handle": "gleisi.bsky.social",
+        "display_name": "Gleisi Hoffmann",
+        "followers": 34389,
+        "did": "did:plc:em57cgm663tmkmfgek7tcgfj"
+      },
+      {
+        "handle": "senado.leg.br",
+        "display_name": "Senado Federal",
+        "followers": 9223,
+        "did": "did:plc:fztszzyfbsa5szfznw7cf4u7"
+      }
+    ],
+    "inativos": [
+      {
+        "handle": "jaques.bsky.social",
+        "display_name": "Gabu",
+        "followers": 7,
+        "did": "did:plc:7jit52rfbtgwjezrfah6dpf3"
+      },
+      {
+        "handle": "auria.bsky.social",
+        "display_name": "Auria",
+        "followers": 12,
+        "did": "did:plc:jijpwalogokg2iqfcgn6zmz5"
+      }
+    ],
+    "nao_encontrados": [
+      "gleisihoffmann.bsky.social",
+      "jaqueslevy.bsky.social",
+      "agluiz.bsky.social",
+      "alexmanente.bsky.social",
+      "camara.leg.br",
+      "fazenda.gov.br"
+    ]
+  },
+  "setor_produtivo": {
+    "ativos": [],
+    "inativos": [
+      {
+        "handle": "cni.bsky.social",
+        "display_name": null,
+        "followers": 1,
+        "did": "did:plc:htcawz5b2eoiwuudyswrnwpi"
+      },
+      {
+        "handle": "unica.bsky.social",
+        "display_name": "Sandra Rodríguez",
+        "followers": 27,
+        "did": "did:plc:wqykubdsbjneyr66d3fo7jvr"
+      },
+      {
+        "handle": "serasa.bsky.social",
+        "display_name": "asa",
+        "followers": 12,
+        "did": "did:plc:sb3bhgv4b5wsftvbaxymnxfr"
+      }
+    ],
+    "nao_encontrados": [
+      "cnibrasil.bsky.social",
+      "fiesp.bsky.social",
+      "abiodiesel.bsky.social",
+      "abeve.bsky.social",
+      "boa-vista.bsky.social",
+      "recuperacaojudicial.bsky.social"
+    ]
+  },
+  "energia_clima": {
+    "ativos": [
+      {
+        "handle": "wwfbrasil.bsky.social",
+        "display_name": "WWF-Brasil",
+        "followers": 2676,
+        "did": "did:plc:w5yhvcm7qtys7gx2hymx2hyu"
+      }
+    ],
+    "inativos": [
+      {
+        "handle": "ipam.bsky.social",
+        "display_name": "eupam♡",
+        "followers": 0,
+        "did": "did:plc:bdpplids7hrohgmnxav55xag"
+      },
+      {
+        "handle": "inpe.bsky.social",
+        "display_name": "Ilse",
+        "followers": 2,
+        "did": "did:plc:4vmcxtwor7fdcsuqt6qp2tk6"
+      },
+      {
+        "handle": "greenpeacebrasil.bsky.social",
+        "display_name": "",
+        "followers": 18,
+        "did": "did:plc:duaw6p36syk3wt767xoyzldx"
+      },
+      {
+        "handle": "greenpeace.bsky.social",
+        "display_name": "",
+        "followers": 7,
+        "did": "did:plc:ef33ypzwtdlnq4nc7y42i6zc"
+      },
+      {
+        "handle": "sosma.bsky.social",
+        "display_name": "SOS Mata Atlântica",
+        "followers": 47,
+        "did": "did:plc:uoxsaothbg36gnsuavqxxnqo"
+      }
+    ],
+    "nao_encontrados": [
+      "observatorioclima.bsky.social",
+      "oc.bsky.social",
+      "iclei.bsky.social",
+      "aneel.gov.br"
+    ]
+  },
+  "trabalhadores_financas": {
+    "ativos": [
+      {
+        "handle": "gildovigor.bsky.social",
+        "display_name": "Gil do Vigor",
+        "followers": 40921,
+        "did": "did:plc:oorm4yg5xrbt6crbn2hcmbco"
+      },
+      {
+        "handle": "cutbrasil.bsky.social",
+        "display_name": "CUT Brasil 🚩🇧🇷",
+        "followers": 1434,
+        "did": "did:plc:lgyavd57odklq33slsl6qe74"
+      },
+      {
+        "handle": "cut.bsky.social",
+        "display_name": "Lye",
+        "followers": 54,
+        "did": "did:plc:xk5q6ja7cwhnn6zicwmtqduo"
+      }
+    ],
+    "inativos": [
+      {
+        "handle": "nathaliaarcuri.bsky.social",
+        "display_name": "",
+        "followers": 16,
+        "did": "did:plc:b637azffutja6zfw3awrajl6"
+      },
+      {
+        "handle": "cgtb.bsky.social",
+        "display_name": "",
+        "followers": 8,
+        "did": "did:plc:bl7uduldemwa2ojzp6qliyfm"
+      }
+    ],
+    "nao_encontrados": [
+      "nathfinancas.bsky.social",
+      "mepoupenath.bsky.social",
+      "gilvigor.bsky.social",
+      "dieese.bsky.social"
+    ]
+  },
+  "mercado": {
+    "ativos": [
+      {
+        "handle": "xpi.bsky.social",
+        "display_name": "Dr. Kristi DiClemente ",
+        "followers": 1725,
+        "did": "did:plc:n2ga6mbq7o72ioostmkhrvxh"
+      }
+    ],
+    "inativos": [
+      {
+        "handle": "xpinvestimentos.bsky.social",
+        "display_name": "",
+        "followers": 1,
+        "did": "did:plc:3qg2veor6m5lrbgeor55c5qm"
+      },
+      {
+        "handle": "b3oficial.bsky.social",
+        "display_name": "",
+        "followers": 7,
+        "did": "did:plc:gtdi6kk7gwlvgk4zxlzlalss"
+      },
+      {
+        "handle": "cvm.bsky.social",
+        "display_name": "Cvm",
+        "followers": 27,
+        "did": "did:plc:styzaeivq4cwkup2wurtc7j6"
+      },
+      {
+        "handle": "nubank.bsky.social",
+        "display_name": "",
+        "followers": 6,
+        "did": "did:plc:zgfu2nrbaemk35qw7gsfiu4e"
+      }
+    ],
+    "nao_encontrados": [
+      "btgpactual.bsky.social",
+      "b3.bsky.social",
+      "anbima.bsky.social",
+      "cvm.gov.br"
+    ]
+  }
+}
