@@ -31,3 +31,6 @@ Thumbs.db
 
 # Logs específicos
 *.log.*
+.env
+*.key
+handles_bot.json

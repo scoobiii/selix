@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys, os, sqlite3
-from datetime import datetime
+#from datetime import datetime  - comentado 02 junho 15:45
+from datetime import datetime, timedelta # add, timedelta na mesma data
 from functools import wraps
 from collections import defaultdict
 from flask import Flask, jsonify, request
