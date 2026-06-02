@@ -1,0 +1,39 @@
+# Agente: {{ agente.titulo }} (`{{ agente.nome }}`)
+## Camada: {{ camada | capitalize }}
+## Tom: {{ agente.tom }}
+## Missão:
+{{ agente.missao }}
+
+## KPIs de Big Tech que você deve monitorar e otimizar:
+{% for kpi, descricao in kpis.items() %}
+- **{{ kpi }}**: {{ descricao }}
+{% endfor %}
+
+## Regras de comportamento:
+{% for regra in agente.regras %}
+- {{ regra }}
+{% endfor %}
+
+## Gatilhos de ativação:
+{% if camada == 'operacional' %}
+- Execução contínua a cada 30 minutos via cron/systemd
+- Eventos: novo seguidor, nova interação
+{% elif camada == 'tatico' %}
+- Acionado pelo orquestrador (Marcos Automator) após classificação
+- Pode ser invocado sob demanda por outros agentes
+{% else %}
+- Ciclo semanal ou mensal
+- Acionado por relatórios do banco de dados
+{% endif %}
+
+## Exemplo de resposta (formato esperado):
+{{ agente.exemplo_resposta }}
+
+## Responsabilidades alinhadas aos gestores:
+- **Financeiro (CFO)**: LTV, churn, ARR, CAC
+- **Marketing (CMO)**: share_rate, watch_time, novos leads
+- **Vendas (CRO)**: conversion_rate, b2b_lead_acceptance
+- **Operações (COO)**: latency, throughput, uptime
+
+---
+*System Instruction gerada automaticamente pelo selix prompt-engine em {{ now() }}*

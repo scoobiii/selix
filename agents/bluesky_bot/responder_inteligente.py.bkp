@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+import sqlite3
+import time
+import os
+from datetime import date, datetime
+from dotenv import load_dotenv
+from atproto import Client, models
+
+load_dotenv('/root/selix/.env')
+client = Client()
+client.login(os.getenv('BLUESKY_USERNAME'), os.getenv('BLUESKY_APP_PASSWORD'))
+
+DB_PATH = "/root/selix/selix.db"
+MAX_REPLIES_PER_RUN = 3
+PAUSE_BETWEEN_REPLIES = 5   # segundos
+
+def marcar_como_respondida(notif_uri):
+    # Opcional: você pode armazenar em uma tabela própria as notificações já respondidas
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("CREATE TABLE IF NOT EXISTS notificacoes_respondidas (uri TEXT PRIMARY KEY, respondido_em TIMESTAMP)")
+    conn.execute("INSERT OR IGNORE INTO notificacoes_respondidas (uri, respondido_em) VALUES (?, ?)", (notif_uri, datetime.now().isoformat()))
+    conn.commit()
+    conn.close()
+
+def ja_foi_respondida(notif_uri):
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.execute("SELECT 1 FROM notificacoes_respondidas WHERE uri = ?", (notif_uri,))
+    existe = cur.fetchone() is not None
+    conn.close()
+    return existe
+
+def buscar_resposta(pergunta):
+    pergunta_lower = pergunta.lower()
+    conn = sqlite3.connect(DB_PATH)
+    # Tenta primeiro por palavra‑chave na dor
+    cur = conn.execute("SELECT resposta, segmento FROM respostas_banco WHERE ? LIKE '%' || dor_keyword || '%'", (pergunta_lower,))
+    row = cur.fetchone()
+    if row:
+        resposta, segmento = row
+        conn.close()
+        return resposta, segmento
+    # Fallback: resposta genérica
+    cur = conn.execute("SELECT resposta, segmento FROM respostas_banco WHERE dor_keyword = 'default' LIMIT 1")
+    row = cur.fetchone()
+    if not row:
+        row = (f"Olá! O SELIX é um sistema que defende a redução da Selic para 9,25%. Mais info: github.com/scoobiii/selix", "geral")
+    conn.close()
+    return row[0], row[1]
+
+def responder_mencoes():
+    # Busca notificações (menções diretas) não lidas
+    try:
+        notifs = client.app.bsky.notification.list_notifications()
+    except Exception as e:
+        print(f"Erro ao buscar notificações: {e}")
+        return
+
+    reply_count = 0
+    for notif in notifs.notifications:
+        if reply_count >= MAX_REPLIES_PER_RUN:
+            break
+        if notif.reason != 'mention':
+            continue
+        if ja_foi_respondida(notif.uri):
+            continue
+
+        # Extrai o texto da menção
+        post_uri = notif.uri
+        # Obtém o texto do post original (via get_post_thread)
+        try:
+            thread = client.app.bsky.feed.get_post_thread(uri=post_uri)
+            if not thread.thread:
+                continue
+            post = thread.thread.post
+            pergunta = post.text
+            # Remove o handle do bot da pergunta
+            bot_handle = os.getenv('BLUESKY_USERNAME')
+            if bot_handle in pergunta:
+                pergunta = pergunta.replace(bot_handle, '').strip()
+        except:
+            continue
+
+        resposta, segmento = buscar_resposta(pergunta)
+        full_resposta = f"@{post.author.handle} {resposta}"
+        try:
+            client.send_post(full_resposta, reply_to=models.AppBskyFeedPost.ReplyRef(
+                parent=models.ComAtprotoRepoStrongRef.Main(uri=post.uri, cid=post.cid),
+                root=models.ComAtprotoRepoStrongRef.Main(uri=post.uri, cid=post.cid)
+            ))
+            marcar_como_respondida(notif.uri)
+            print(f"✅ Respondido a @{post.author.handle} (segmento: {segmento})")
+            reply_count += 1
+            time.sleep(PAUSE_BETWEEN_REPLIES)
+        except Exception as e:
+            print(f"❌ Erro ao responder: {e}")
+
+if __name__ == "__main__":
+    responder_mencoes()
