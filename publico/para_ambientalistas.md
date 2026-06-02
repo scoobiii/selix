@@ -1,34 +1,21 @@
-# SELIX para Ambientalistas
 
-## Mix energético otimizado
+SELIX para Ambientalistas
 
-| Brent | Etanol (E%) | Biodiesel (B%) |
-|-------|-------------|----------------|
-| < US$70 | 27% | 14% |
-| US$70–90 | 30% | 15% |
-| US$90–120 | 35% | 20% |
-| > US$120 | 40% | 25% |
+Mix energético otimizado
 
----
+Brent Etanol (E%) Biodiesel (B%)
+< US$70 27% 14%
+US$70-90 30% 15%
+US$90-120 35% 20%
+US$120 40% 25%
 
-## Matriz energética do Brasil
+Matriz energética do Brasil
 
-- **Hidro:** 65% (zero emissões)
-- **Eólica:** 12%
-- **Solar:** 8%
-- **Biomassa:** 8% (etanol, biodiesel, biogás)
+· Hidro: 65% (zero emissões)
+· Eólica: 12%
+· Solar: 8%
+· Biomassa: 8% (etanol, biodiesel, biogás)
 
----
+Redução de emissões
 
-## Redução de emissões
-
-Com o mix otimizado, o Brasil evita **200 milhões de toneladas de CO₂/ano**.
-
----
-
-## API de dados energéticos
-
-```bash
-curl https://api.selix.com/v1/energia/mistura
-curl https://api.selix.com/v1/energia/gatilhos
-```
+Com o mix otimizado, o Brasil evita 200 milhões de toneladas de CO₂/ano.
