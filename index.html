@@ -1,321 +1,146 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selix (Flex‑AI) – Inteligência Econômica Autônoma</title>
+    <title>SELIX Pro - Inteligência de Mercado Antecipada</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
-            background: linear-gradient(145deg, #0b1a2e 0%, #07121f 100%);
-            color: #eef4ff;
-            line-height: 1.5;
-            padding: 2rem 1rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3a 100%);
+            color: #fff;
+            line-height: 1.6;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        /* badges */
-        .badge-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-            justify-content: center;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { text-align: center; padding: 60px 20px; }
+        h1 { font-size: 3rem; margin-bottom: 20px; }
         .badge {
-            background: #1e2a3e;
-            padding: 0.3rem 0.8rem;
-            border-radius: 2rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #9ab3d5;
-            text-decoration: none;
-            transition: 0.2s;
-        }
-        .badge:hover {
-            background: #2d3e5a;
-            color: white;
-        }
-        /* header */
-        .header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-        h1 {
-            font-size: 2.8rem;
-            background: linear-gradient(135deg, #fff, #7aa9ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: 0.5rem;
-        }
-        .tagline {
-            font-size: 1.2rem;
-            color: #8aa9cc;
-            border-bottom: 1px solid #2a3a50;
             display: inline-block;
-            padding-bottom: 0.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50px;
+            padding: 8px 16px;
+            margin: 5px;
+            font-size: 14px;
         }
-        /* cards */
-        .stats {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+        .price {
+            font-size: 48px;
+            font-weight: bold;
+            color: #00ff88;
+            margin: 20px 0;
         }
-        .stat-card {
-            background: rgba(20, 30, 45, 0.7);
-            backdrop-filter: blur(8px);
-            border-radius: 1.5rem;
-            padding: 1.5rem 2rem;
-            text-align: center;
-            min-width: 180px;
-            border: 1px solid #2e4a6e;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #ffd966;
-        }
-        .stat-label {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #aac8ff;
-        }
-        .warning {
-            background: #3c2a1f;
-            border-left: 5px solid #ffaa33;
-            padding: 0.8rem 1.2rem;
-            border-radius: 1rem;
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
-        }
-        .section {
-            background: #0f1a24;
-            border-radius: 1.5rem;
-            padding: 1.8rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: #c4e0ff;
-            border-left: 4px solid #3b82f6;
-            padding-left: 1rem;
-        }
-        h3 {
-            font-size: 1.3rem;
-            margin: 1rem 0 0.5rem 0;
-            color: #a5c9ff;
-        }
-        .grid-2, .grid-3 {
+        .features {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
         }
-        .pilar {
-            background: #07121e;
-            padding: 1rem;
-            border-radius: 1rem;
+        .card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
         }
-        .pilar strong {
-            color: #ffd966;
-        }
+        .card h3 { margin-bottom: 15px; color: #00ff88; }
         .btn {
             display: inline-block;
-            background: #2563eb;
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 2rem;
+            background: #00ff88;
+            color: #0a0a2a;
+            padding: 15px 40px;
+            border-radius: 50px;
             text-decoration: none;
-            font-weight: 500;
-            transition: 0.2s;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: transform 0.3s;
         }
-        .btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
+        .btn:hover { transform: scale(1.05); }
+        .form-group { margin: 20px 0; }
+        input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
         }
         footer {
             text-align: center;
-            margin-top: 3rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #1f3243;
-            font-size: 0.8rem;
-            color: #6a8bb0;
+            padding: 40px;
+            background: rgba(0,0,0,0.3);
+            margin-top: 60px;
         }
-        @keyframes pulse {
-            0% { opacity: 0.6; }
-            100% { opacity: 1; }
+        .disclaimer {
+            font-size: 12px;
+            color: #888;
+            margin-top: 20px;
         }
-        .refreshing {
-            animation: pulse 0.6s ease-in-out infinite alternate;
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .price { font-size: 36px; }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="badge-container">
-        <span class="badge">🔬 Z3 + Lean4 provado</span>
-        <span class="badge">🤖 Bluesky Bot ativo</span>
-        <span class="badge">⚙️ Self‑healing watchdog</span>
-        <span class="badge">📊 63 testes ✓</span>
-        <a href="https://github.com/scoobiii/selix" class="badge">🐙 GitHub</a>
-        <a href="https://bsky.app/profile/zeh-sobrinho.bsky.social" class="badge">🦋 Bluesky @zeh-sobrinho</a>
-    </div>
+    <div class="container">
+        <header>
+            <div>
+                <span class="badge">📊 SELIX | Selic Energy Real Time</span>
+                <span class="badge">🔬 Provada com Z3 + Lean 4</span>
+                <span class="badge">💰 9,48% | Economia de R$ 270 bi/ano</span>
+                <span class="badge">✅ Investment Grade BBB+</span>
+            </div>
+            <h1>Inteligência de Mercado<br>2 Horas Antes do Público</h1>
+            <p>Alertas de risco energético, projeções de valuation e análise macro<br>
+            baseada no modelo matemático SELIX (Z3 + Lean 4)</p>
+            <div class="price">R$ 29<span style="font-size: 18px;">/mês</span></div>
+        </header>
 
-    <div class="header">
-        <h1>SELIX <span style="font-weight:400;">(Flex‑AI)</span></h1>
-        <div class="tagline">Inteligência econômica autônoma · zero fallback · auto‑cura</div>
-    </div>
-
-    <div id="warningMessage" class="warning" style="display: none;">
-        ⚠️ Não foi possível conectar à API local do Selix. Exibindo dados em cache (última coleta).  
-        Para dados em tempo real, acesse esta página no dispositivo onde o Selix está rodando ou configure um túnel (ngrok).
-    </div>
-
-    <div class="stats" id="statsCards">
-        <div class="stat-card"><div class="stat-number" id="selicAtual">--</div><div class="stat-label">Selic atual (%)</div></div>
-        <div class="stat-card"><div class="stat-number" id="selicIdeal">9,25</div><div class="stat-label">Selic ideal (Selix)</div></div>
-        <div class="stat-card"><div class="stat-number" id="economiaAnual">--</div><div class="stat-label">Economia anual (R$ bi)</div></div>
-        <div class="stat-card"><div class="stat-number" id="brent">--</div><div class="stat-label">Brent (US$/bbl)</div></div>
-    </div>
-
-    <div class="section">
-        <h2>🧠 O que é o SELIX?</h2>
-        <p>Sistema autônomo que monitora dados econômicos reais (Brent, Selic, sentimento de mercado), publica threads inteligentes no Bluesky e se mantém operacional mesmo em hardware limitado (A23 com Termux). Utiliza <strong>múltiplos provedores</strong>, <strong>zero fallback</strong> (nunca inventa dados) e <strong>watchdog</strong> para auto‑recuperação.</p>
-    </div>
-
-    <div class="section">
-        <h2>📐 Provas formais (5 teoremas)</h2>
-        <div class="grid-2">
-            <div class="pilar"><strong>T1 – Investment Grade</strong><br/>Selic ≤ 9,99% → rating A- em 3 anos</div>
-            <div class="pilar"><strong>T2 – Não canibalização</strong><br/>Selic ≤ ROE × 0,95 → capital produtivo preservado</div>
-            <div class="pilar"><strong>T3 – Solvência do Tesouro</strong><br/>Juro real ≤ 5% → dívida estabiliza</div>
-            <div class="pilar"><strong>T4 – Convergência</strong><br/>Selic atual > Selic ideal → caminho viável</div>
-            <div class="pilar"><strong>T5 – Consistência</strong><br/>Solução única: <strong>s* = 9,25%</strong></div>
+        <div class="features">
+            <div class="card">
+                <h3>🚨 Alertas Antecipados</h3>
+                <p>Receba análises de Brent, Selic e risco geopolítico 2 horas antes da publicação pública no Bluesky.</p>
+            </div>
+            <div class="card">
+                <h3>📈 Projeções de Valuation</h3>
+                <p>Preço justo de ativos com cenário Selic 1 dígito (9.48%). GPA: R$1,96 → R$17,60 (+798%).</p>
+            </div>
+            <div class="card">
+                <h3>⚖️ TrampoForte</h3>
+                <p>Análise de impacto da prioridade do PLR sobre credores em recuperação judicial.</p>
+            </div>
+            <div class="card">
+                <h3>🔬 Modelo Matemático</h3>
+                <p>5 teoremas provados com Z3 (Microsoft Research) e Lean 4. Investment Grade BBB+.</p>
+            </div>
+            <div class="card">
+                <h3>📊 Dados em Tempo Real</h3>
+                <p>Brent (Yahoo Finance), Dólar (AwesomeAPI), Selic (BCB), Ações (B3).</p>
+            </div>
+            <div class="card">
+                <h3>🏛️ Pressão Institucional</h3>
+                <p>Tags automáticas para B3, BCB, MME, ANP, Senado, MPT e mais de 20 stakeholders.</p>
+            </div>
         </div>
-    </div>
 
-    <div class="section">
-        <h2>🎯 Para quem?</h2>
-        <div class="grid-3">
-            <div class="pilar"><strong>👷 Trabalhadores</strong><br/>PLR travada? Selic 14,25% > ROI. Com 9,25% → PLR liberada e +1M empregos.</div>
-            <div class="pilar"><strong>📈 Investidores</strong><br/>GPA +68%, Raízen +76%, B3 → US$10 tri, WACC cai para ~11%.</div>
-            <div class="pilar"><strong>🌱 Ambientalistas</strong><br/>Selic 9,25% viabiliza +100 GW solares, mix E30/B15 hoje, E35/B20 se Brent >120.</div>
-            <div class="pilar"><strong>🏛️ Governo</strong><br/>Economia de R$270‑362 bi/ano, dívida/PIB estabiliza, investment grade A-.</div>
-            <div class="pilar"><strong>🤖 Desenvolvedores</strong><br/>API REST, testes 63/63, código aberto, fácil de auto‑hospedar.</div>
+        <div style="text-align: center; background: rgba(0,255,136,0.1); border-radius: 16px; padding: 40px;">
+            <h2>📧 Receba a Newsletter Gratuitamente</h2>
+            <p>Teste por 30 dias. Cancele quando quiser.</p>
+            <form action="https://formsubmit.co/seu-email@dominio.com" method="POST" style="max-width: 400px; margin: 20px auto;">
+                <input type="hidden" name="_subject" value="Novo assinante SELIX Pro!">
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Seu melhor e-mail" required>
+                </div>
+                <button type="submit" class="btn">Assinar Agora</button>
+            </form>
         </div>
+
+        <footer>
+            <p>🔗 github.com/scoobiii/selix</p>
+            <p>🐦 Bluesky: @selixbr.bsky.social</p>
+            <div class="disclaimer">
+                ⚠️ Não é recomendação de investimento. Projeções baseadas em modelo matemático SELIX (Selic 9.48% + TrampoForte).
+                Os resultados passados não garantem retornos futuros. Consulte um profissional qualificado antes de investir.
+            </div>
+        </footer>
     </div>
-
-    <div class="section">
-        <h2>🚀 Instalação e uso (Termux / Linux)</h2>
-        <pre style="background:#07121e; padding:1rem; border-radius:1rem; overflow-x:auto; font-size:0.85rem;">
-git clone https://github.com/scoobiii/selix.git
-cd selix
-./scripts/install.sh
-bash start_selix.sh
-python -m pytest tests/ -v
-        </pre>
-        <div style="margin-top:1rem;">
-            <a href="https://github.com/scoobiii/selix" class="btn">📦 Ver no GitHub</a>
-            <a href="https://bsky.app/profile/zeh-sobrinho.bsky.social" class="btn" style="background:#2c3e66;">🦋 Perfil no Bluesky</a>
-        </div>
-    </div>
-
-    <footer>
-        © 2026 – Selix (Flex‑AI) | MIT License | Desenvolvido por Zeh Sobrinho · GOS3 · MEX Energia<br/>
-        Dados atualizados via API local – <span id="lastUpdate">--</span>
-    </footer>
-</div>
-
-<script>
-    // Configuração: tenta buscar dados da API local (se disponível)
-    // Fallback: valores estáticos (últimos conhecidos)
-    const API_BASE = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
-        ? 'http://localhost:5000'
-        : 'https://api.selix.local';  // Altere para URL pública se expor a API via ngrok/túnel
-
-    let stats = {
-        selic: 14.25,
-        selicIdeal: 9.25,
-        economia: 270,
-        brent: 95.19
-    };
-
-    const selicAtualElem = document.getElementById('selicAtual');
-    const economiaElem = document.getElementById('economiaAnual');
-    const brentElem = document.getElementById('brent');
-    const lastUpdateSpan = document.getElementById('lastUpdate');
-    const warningDiv = document.getElementById('warningMessage');
-
-    async function fetchSelic() {
-        try {
-            const response = await fetch(`${API_BASE}/v1/selic`, {
-                headers: { 'X-API-Key': '10afec6a373e15a691f4698aea01f795257e4ae502090be8753399229e9effa9' }
-            });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            if (data && data.length > 0 && data[0].valor) {
-                stats.selic = parseFloat(data[0].valor);
-                return true;
-            }
-        } catch (err) {
-            console.warn('Erro ao buscar Selic:', err);
-        }
-        return false;
-    }
-
-    async function fetchBrent() {
-        try {
-            const response = await fetch(`${API_BASE}/v1/energia/mistura`, {
-                headers: { 'X-API-Key': '10afec6a373e15a691f4698aea01f795257e4ae502090be8753399229e9effa9' }
-            });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            if (data && data.brent_usd) {
-                stats.brent = data.brent_usd;
-                return true;
-            }
-        } catch (err) {
-            console.warn('Erro ao buscar Brent:', err);
-        }
-        return false;
-    }
-
-    async function updateDashboard() {
-        // Tentar buscar dados reais
-        const selicOk = await fetchSelic();
-        const brentOk = await fetchBrent();
-
-        if (!selicOk || !brentOk) {
-            warningDiv.style.display = 'block';
-            warningDiv.textContent = '⚠️ Não foi possível conectar à API local do Selix. Exibindo dados em cache (última coleta). Para dados em tempo real, acesse esta página no dispositivo onde o Selix está rodando ou configure um túnel (ngrok).';
-        } else {
-            warningDiv.style.display = 'none';
-        }
-
-        // Atualizar UI
-        selicAtualElem.textContent = stats.selic.toFixed(2);
-        economiaElem.textContent = stats.economia;
-        brentElem.textContent = stats.brent.toFixed(2);
-        lastUpdateSpan.textContent = new Date().toLocaleString();
-    }
-
-    // Auto‑refresh a cada 60 segundos
-    updateDashboard();
-    setInterval(updateDashboard, 60000);
-</script>
 </body>
 </html>
