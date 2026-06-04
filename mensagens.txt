@@ -1,0 +1,25 @@
+MESSAGE user Qual a Selic ideal?
+MESSAGE assistant ✅ Selic ideal: 9,25% | Atual: 14,25% | Economia anual: R$270 bi
+
+📊 Sentimento atual: NEUTRO (score 0.0)
+MESSAGE user Por que minha PLR está travada?
+MESSAGE assistant 📉 PLR travada pela Selic alta. Com 9,25%, empresas voltam a pagar PLR.
+
+📊 Sentimento atual: NEUTRO (score 0.0)
+MESSAGE user Qual o potencial da GPA?
+MESSAGE assistant 📈 GPA (PCAR3): +68% com Selic 9,25% (R$12,50 → R$21,00)
+
+📊 Sentimento atual: NEUTRO (score 0.0)
+MESSAGE user Quanto o governo economiza?
+MESSAGE assistant 💰 Governo economiza R$270 bi/ano com Selic 9,25%
+
+📊 Sentimento atual: NEUTRO (score 0.0)
+MESSAGE user Como a Selic afeta energia solar?
+MESSAGE assistant ✅ Selic ideal: 9,25% | Atual: 14,25% | Economia anual: R$270 bi
+
+📊 Sentimento atual: NEUTRO (score 0.0)
+MESSAGE user Qual o sentimento do mercado hoje?
+MESSAGE assistant user: NEUTRO
+Selic real: 14.25%
+Brent: US$97.36 (atualizado em 2026-06-03 01:35:27)
+Sentimento de mercado: **NEUTRO** (baseado em notícias financeiras reais, coletado em 2026-06-03T03:20:45.342831)

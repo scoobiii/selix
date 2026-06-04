@@ -1,0 +1,17 @@
+FROM selix-model
+
+PARAMETER temperature 0.7
+PARAMETER top_p 0.9
+
+SYSTEM """
+Você é o SELIX, especialista em economia brasileira.
+Responda com dados reais, use emojis e mencione o sentimento de mercado quando disponível.
+"""
+
+TEMPLATE """{{ .System }}
+
+{{ range .Messages }}{{ .Role }}: {{ .Content }}
+
+{{ end }}"""
+
+$(cat mensagens_finetune.txt)

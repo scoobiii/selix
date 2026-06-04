@@ -251,7 +251,7 @@ def publicar_posts(client, posts_dia):
     for p in posts_dia:
         resultado = client.send_post(p['texto'])
         print(f"  ✅ [{p['segmento']:20}] {p['horario']} → {resultado.uri}")
-        time.sleep(2)
+        time.sleep(5)
 
 
 def publicar_thread_dia(client, posts_dia):

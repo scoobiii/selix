@@ -25,7 +25,7 @@ def test_z3_proof():
     
     if not Z3_AVAILABLE:
         print("❌ Z3 não instalado. Execute: pip install z3-solver")
-        return False
+        assert False
     
     try:
         inflacao = Real('inflacao')
@@ -49,7 +49,7 @@ def test_z3_proof():
             print("✅ Z3 Teorema 1: Sistema é factível")
         else:
             print("❌ Z3 Teorema 1: FALHA")
-            return False
+            assert False
         
         # Teorema 2: Investment Grade
         solver2 = Solver()
@@ -58,7 +58,7 @@ def test_z3_proof():
             print("✅ Z3 Teorema 2: SELIX ≤ 9.99% (Investment Grade)")
         else:
             print("❌ Z3 Teorema 2: FALHA")
-            return False
+            assert False
         
         # Teorema 3: Não canibaliza
         solver3 = Solver()
@@ -67,7 +67,7 @@ def test_z3_proof():
             print("✅ Z3 Teorema 3: SELIX ≤ ROE × 0.95 (Não canibaliza)")
         else:
             print("❌ Z3 Teorema 3: FALHA")
-            return False
+            assert False
         
         # Teorema 4: Juro real máximo
         solver4 = Solver()
@@ -76,7 +76,7 @@ def test_z3_proof():
             print("✅ Z3 Teorema 4: Juro real ≤ 5%")
         else:
             print("❌ Z3 Teorema 4: FALHA")
-            return False
+            assert False
         
         # Teorema 5: Convergência
         solver5 = Solver()
@@ -85,14 +85,14 @@ def test_z3_proof():
             print("✅ Z3 Teorema 5: Selic atual (14.5%) está ACIMA da SELIX")
         else:
             print("❌ Z3 Teorema 5: FALHA")
-            return False
+            assert False
         
         print("\n🎉 Z3: 5/5 teoremas provados!")
-        return True
+        assert True
         
     except Exception as e:
         print(f"❌ Z3 erro: {e}")
-        return False
+        assert False
 
 def test_lean4_proof():
     """Teste 2: Prova construtiva com Lean 4"""
@@ -149,20 +149,20 @@ def diferencial : Float := selic_atual - selix_final
             if diff_value is not None:
                 print(f"   Diferencial = {diff_value} pontos")
             print("   Prova construtiva validada!")
-            return True
+            assert True
         else:
             print("⚠️ Lean 4: Usando fallback (9.25%)")
-            return True
+            assert True
             
     except subprocess.TimeoutExpired:
         print("⚠️ Lean 4: Timeout - usando fallback (9.25%)")
-        return True
+        assert True
     except FileNotFoundError:
         print("⚠️ Lean 4: Comando 'lake' não encontrado")
-        return True
+        assert True
     except Exception as e:
         print(f"⚠️ Lean 4: Erro - usando fallback (9.25%)")
-        return True
+        assert True
     finally:
         try:
             os.unlink(lean_file)

@@ -14,23 +14,3 @@ models/
 data/
 htmlcov/
 .pytest_cache/
-# Banco de dados (WAL files)
-*.db-journal
-*.db-wal
-*.db-shm
-
-# Editores
-*.swp
-*.swo
-.DS_Store
-Thumbs.db
-
-# Backup temporários
-*.bak
-*.tmp
-
-# Logs específicos
-*.log.*
-.env
-*.key
-handles_bot.json
