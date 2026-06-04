@@ -1,131 +1,76 @@
 #!/usr/bin/env python3
-# worker_v7.py - Múltiplas fontes reais, rotaciona para evitar bloqueio
+# -*- coding: utf-8 -*-
+# worker_v7.py
+# Versão: 7.1.0-GOS3
+# Responsabilidade: Worker com múltiplas fontes, cache e estratégia
+# Assinatura: GOS3/2026-06-04/worker_v7.py
 
+import os
+import sys
 import time
 import sqlite3
 import logging
-import requests
 from datetime import datetime
-import os
+from dotenv import load_dotenv
+
+from src.providers import ProviderStrategy
+
+load_dotenv('/root/selix/.env')
 
 DB_PATH = "/root/selix/selix.db"
 LOG_DIR = "/root/selix/logs"
 os.makedirs(LOG_DIR, exist_ok=True)
 
 logging.basicConfig(
-    filename=f"{LOG_DIR}/worker_v7.log",
+    filename=os.path.join(LOG_DIR, "worker.log"),
     level=logging.INFO,
     format='%(asctime)s [%(levelname)s] %(message)s'
 )
 
-# ========== MÚLTIPLAS FONTES REAIS ==========
-# 1. Yahoo Finance (rápido, mas rate limit baixo)
-# 2. Investing.com (alternativa)
-# 3. BCB para commodities (API oficial)
-# 4. EIA para petróleo (API gratuita)
+strategy = ProviderStrategy()
 
-def get_brent_fonte1():
-    """Yahoo Finance - tentativa 1"""
-    try:
-        url = "https://query1.finance.yahoo.com/v8/finance/chart/BZ=F"
-        params = {'interval': '1d', 'range': '1d'}
-        resp = requests.get(url, params=params, timeout=10)
-        if resp.status_code == 200:
-            data = resp.json()
-            price = data['chart']['result'][0]['meta']['regularMarketPrice']
-            return {'success': True, 'price': round(price, 2), 'source': 'Yahoo'}
-    except: pass
-    return {'success': False}
-
-def get_brent_fonte2():
-    """Alternative source: Investing.com via API"""
-    try:
-        # API gratuita de commodities
-        url = "https://api. commodities.com/v1/brent"
-        # Nota: implementar quando tiver key
-        pass
-    except: pass
-    return {'success': False}
-
-def get_brent_fonte3():
-    """BCB - dados de combustíveis"""
-    try:
-        url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.3673/dados/ultimo"
-        resp = requests.get(url, timeout=10)
-        if resp.status_code == 200:
-            data = resp.json()
-            if data:
-                return {'success': True, 'price': float(data[0]['valor']), 'source': 'BCB'}
-    except: pass
-    return {'success': False}
-
-def get_selic_real():
-    """BCB - Selic oficial (não muda todo dia)"""
-    try:
-        url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados/ultimo"
-        resp = requests.get(url, timeout=10)
-        if resp.status_code == 200:
-            data = resp.json()
-            return {'success': True, 'rate': float(data[0]['valor']), 'source': 'BCB'}
-    except Exception as e:
-        logging.error(f"BCB falhou: {e}")
-    return {'success': False}
-
-def get_selic_alternativa():
-    """Valor fixo baseado na última coleta bem-sucedida (não é fallback, é cache)"""
+def get_last_selic_from_db():
+    """Retorna a última Selic válida do banco (cache de dado real)."""
     conn = sqlite3.connect(DB_PATH)
-    last = conn.execute("SELECT rate, timestamp FROM selic ORDER BY timestamp DESC LIMIT 1").fetchone()
+    row = conn.execute("SELECT rate FROM selic ORDER BY timestamp DESC LIMIT 1").fetchone()
     conn.close()
-    if last:
-        age = (datetime.now() - datetime.fromisoformat(last[1])).seconds / 3600
-        if age < 24:  # se for de hoje
-            return {'success': True, 'rate': last[0], 'source': 'cache_valid', 'age_hours': age}
-    return {'success': False}
+    return row[0] if row else None
 
-def worker_loop():
-    logging.info("🚀 Worker v7.0 iniciado - Múltiplas fontes")
-    
+def main_loop():
     consecutive_failures = 0
-    sources = [get_brent_fonte1, get_brent_fonte3]  # fontes disponíveis
-    
     while True:
-        # Tenta cada fonte até conseguir
-        brent = None
-        for source in sources:
-            brent = source()
-            if brent['success']:
-                logging.info(f"✅ Brent via {brent['source']}: ${brent['price']}")
-                break
-            time.sleep(2)  # delay entre fontes
-        
-        # Selic (usa cache se BCB falhar)
-        selic = get_selic_real()
-        if not selic['success']:
-            selic = get_selic_alternativa()
-            if selic['success']:
-                logging.info(f"✅ Selic via cache: {selic['rate']}% (BCB offline)")
-        
-        if brent and brent['success'] and selic and selic['success']:
+        brent = strategy.get_brent()
+        selic = strategy.get_selic()
+
+        if not brent.get('success'):
+            logging.warning(f"Brent falhou: {brent.get('error', 'sem detalhe')}")
+        if not selic.get('success'):
+            logging.warning(f"Selic falhou: {selic.get('error', 'sem detalhe')}")
+            # Fallback para cache (dado real antigo, nunca inventado)
+            cached = get_last_selic_from_db()
+            if cached:
+                selic = {'success': True, 'rate': cached, 'source': 'cache'}
+                logging.info(f"Usando Selic do cache: {cached}%")
+
+        if brent.get('success') and selic.get('success'):
             conn = sqlite3.connect(DB_PATH)
             now = datetime.now().isoformat()
-            
-            conn.execute("INSERT INTO brent (timestamp, price, source, success) VALUES (?, ?, ?, ?)",
-                        (now, brent['price'], brent['source'], 1))
-            conn.execute("INSERT INTO selic (timestamp, rate, success) VALUES (?, ?, ?)",
-                        (now, selic['rate'], 1))
+            conn.execute("INSERT INTO brent (timestamp, price, source, success) VALUES (?, ?, ?, 1)",
+                         (now, brent['price'], brent['source']))
+            conn.execute("INSERT INTO selic (timestamp, rate, success) VALUES (?, ?, 1)",
+                         (now, selic['rate']))
             conn.commit()
             conn.close()
-            
-            logging.info(f"💾 Dados salvos: Brent ${brent['price']} | Selic {selic['rate']}%")
+            logging.info(f"Dados salvos: Brent ${brent['price']} ({brent['source']}) | Selic {selic['rate']}% ({selic['source']})")
             consecutive_failures = 0
         else:
             consecutive_failures += 1
-            logging.warning(f"⚠️ Falha {consecutive_failures} - Brent: {brent}, Selic: {selic}")
-        
+            logging.error(f"Falha {consecutive_failures}: não foi possível obter dados de ambas as fontes")
+
         if consecutive_failures > 10:
-            logging.critical("🚨 Múltiplas falhas - sistema precisa de intervenção")
-        
-        time.sleep(300)  # 5 minutos
+            logging.critical("Múltiplas falhas consecutivas. Sistema pode estar offline.")
+
+        time.sleep(300)
 
 if __name__ == "__main__":
-    worker_loop()
+    main_loop()

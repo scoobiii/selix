@@ -142,3 +142,37 @@ O SELIX **não mede acurácia do modelo** (não há simulação real). Mede a **
 **SELIX — Economia que prioriza quem trabalha** 🚀
 
 </div>
+
+## v4.0.0 (2026-06-04) – Resiliência e múltiplas fontes de dados
+
+### 🚀 Novas funcionalidades
+- **Arquitetura de provedores desacoplada** (Adapter + Strategy + Circuit Breaker)
+- **Múltiplas fontes de dados**:
+  - Yahoo Finance (Brent)
+  - Banco Central do Brasil (Selic)
+  - EIA (Brent alternativo, gratuito, com API key)
+- **Zero fallback**: nunca inventamos dados; se todas as fontes falharem, o worker reporta erro e não insere dados falsos.
+- **Watchdog aprimorado** (Termux nativo) monitora worker, API e supervisor, reiniciando automaticamente.
+- **Testes de integração do supervisor** (4/4 aprovados).
+- **Logging detalhado** com horários e próximo evento agendado.
+
+### 🔧 Correções
+- Correção do template do trabalhador (diferença de R$500).
+- Worker agora usa cache da Selic quando BCB offline (dado real, não mock).
+- Ajuste no cálculo do dia da campanha (rotação 1-30, não dia do ano).
+- Remoção de dependência de cron dentro do PRoot (substituído por loop interno).
+
+### 📦 Dependências adicionadas
+- `pytest-sugar`, `pytest-xdist`, `pytest-timeout` (testes mais rápidos e visuais)
+- `requests` (já existente)
+
+### 🔌 Configuração necessária
+- Adicionar `EIA_API_KEY=sua_chave` ao arquivo `.env` (obter gratuitamente em eia.gov).
+
+### ✅ Status
+- Testes: 39 unitários + 4 do supervisor = **43 testes aprovados**
+- Cobertura: ~55% (em evolução)
+- Postagens no Bluesky retomadas (agendamentos 9h, 13h, 18h)
+- Resiliência comprovada contra falhas de Yahoo e BCB.
+
+---
