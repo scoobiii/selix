@@ -10,26 +10,28 @@ if [ ! -d "venv" ]; then
 fi
 source venv/bin/activate
 
-# Instala dependências
 pip install -r requirements.txt
-
-# Cria diretórios
 mkdir -p logs
 
 # Mata processos antigos
 pkill -f worker_v4 || true
 pkill -f main_v4 || true
+pkill -f campaign_supervisor || true
 
-# Define PYTHONPATH para garantir importações
 export PYTHONPATH="/root/selix:$PYTHONPATH"
 export REQUESTS_CA_BUNDLE="/root/selix/venv/lib/python3.13/site-packages/certifi/cacert.pem"
 
-# Inicia worker em background (usando -m)
+# Worker
 nohup python -m src.selix.worker_v4 > logs/worker.log 2>&1 &
 echo "🔄 Worker iniciado (PID $!)"
 
-sleep 3
+# API
+nohup python -m src.api.main_v4 > logs/api.log 2>&1 &
+echo "🌐 API iniciada (PID $!)"
 
-# Inicia API em foreground (usando -m)
-echo "🌐 Iniciando API na porta 5000..."
-python -m src.api.main_v4
+# CAMPAIGN SUPERVISOR (posts automáticos) – É O QUE FALTAVA
+nohup python scripts/campaign_supervisor.py > logs/supervisor.log 2>&1 &
+echo "🤖 Campaign Supervisor iniciado (PID $!)"
+
+echo "✅ Todos os serviços rodando."
+echo "📋 Logs: logs/worker.log, logs/api.log, logs/supervisor.log"

@@ -1,16 +1,12 @@
 
 <div align="center">
 
-# 🤖 SELIX v5.0 — Sistema de Inteligência Econômica Autônoma (Flex‑AI)
+# 🤖 SELIX v5.0 — Sistema de Inteligência Econômica Autônoma
 
-**Selic atual:** 14,50% · **Selic ideal:** 9,25% · **Economia anual:** R$ 270 bi
+**Selic real:** 14,25% · **Selic ideal:** 9,25% · **Economia anual:** R$ 270 bi
 
-[![Colab Z3](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
-[![Lean 4](https://img.shields.io/badge/Lean%204-Proved-blue)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_lean4.ipynb)
 [![Bluesky Bot](https://img.shields.io/badge/Bluesky-@zeh--sobrinho-1DA1F2)](https://bsky.app/profile/zeh-sobrinho.bsky.social)
 [![API v5.0](https://img.shields.io/badge/API-v5.0-green)](https://github.com/scoobiii/selix)
-[![Tests](https://img.shields.io/badge/tests-83%2F83-brightgreen)](https://github.com/scoobiii/selix)
-[![Coverage](https://img.shields.io/badge/coverage-70%25-critical)](https://github.com/scoobiii/selix)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 </div>
@@ -19,104 +15,128 @@
 
 ## 🎯 O que é o SELIX?
 
-O **SELIX** é um sistema econômico experimental que:
+SELIX é um **bot autônomo** que:
+- Coleta dados reais de **Selic (BCB)** e **Brent (Yahoo Finance)**
+- Publica **threads econômicas no Bluesky** às 9h, 13h e 18h (BRT)
+- Oferece uma **API REST** para consulta de indicadores
+- É **resiliente**: watchdog reinicia serviços automaticamente
 
-1. **Calcula a Taxa Selic ideal** usando 5 teoremas provados com Z3 (Microsoft Research) e Lean 4.
-2. **Coleta dados reais** de mercado (Brent via Yahoo Finance, Selic via BCB) com **múltiplos provedores** e **zero fallback**.
-3. **Publica automaticamente** no Bluesky, separando fatos de cenários, com **threads diárias**.
-4. **Fornece API REST** (pública e administrativa) com proveniência de dados.
-5. **É resiliente**: watchdog no Termux nativo reinicia serviços automaticamente após falhas.
-
-**Resultado principal:** SELIX = **9,25%** (Selic atual = 14,50%)
-
----
-
-## 📊 Para quem é o SELIX?
-
-| Público | O que o SELIX oferece |
-|---------|----------------------|
-| **Trabalhadores** | Defesa da PLR, TrampoForte, threads no Bluesky |
-| **Investidores** | Valuation de empresas em RJ (GPA +68%, Raízen +76%) |
-| **Ambientalistas** | Mix energético E%/B%, emissões, solar, biogás |
-| **Governo** | Economia de R$270 bi/ano, investment grade |
-| **Desenvolvedores** | API REST, dados abertos, código versionado, testes 83/83 |
-
----
-
-## 🔬 Os 5 Teoremas Provados
-
-| Teorema | Enunciado | Status |
-|---------|-----------|--------|
-| **T1** | SELIX ≤ 9,99% (Investment Grade) | ✅ Z3 + Lean 4 |
-| **T2** | SELIX ≤ ROE × 0,95 | ✅ Z3 + Lean 4 |
-| **T3** | SELIX - inflação ≤ 5% | ✅ Z3 + Lean 4 |
-| **T4** | 14,50% > SELIX | ✅ Z3 + Lean 4 |
-| **T5** | Sistema é consistente | ✅ Z3 + Lean 4 |
+**Resultado principal:** Selic ideal = **9,25%** (Selic atual = 14,25%)
 
 ---
 
 ## 🤖 Bluesky Bot
 
-O bot publica **3 posts por dia** (9h, 13h, 18h BRT) em thread, alternando entre diferentes segmentos (trabalhadores, investidores, governo, ambientalistas). O supervisor garante que as postagens ocorram mesmo após reinicializações.
+Perfil: [@zeh-sobrinho.bsky.social](https://bsky.app/profile/zeh-sobrinho.bsky.social)
 
-**Perfil:** [@zeh-sobrinho.bsky.social](https://bsky.app/profile/zeh-sobrinho.bsky.social)
+O bot posta **3 threads por dia** com temas como:
+- Fact-check da Selic
+- Impacto nos trabalhadores e inadimplência
+- Comparação internacional
+- Oportunidades de investimento
 
----
-
-## 🛠️ Arquitetura e Resiliência
-
-- **Worker multi‑provedor**: Yahoo Finance (Brent) + BCB (Selic) + cache de último valor real. Zero dados inventados.
-- **Watchdog externo (Termux)**: monitora e reinicia worker, API, supervisor e metrics agent.
-- **Recuperação automática**: serviços persistem mesmo após queda de energia (com Termux:Boot).
-- **Testes**: 83 testes (administração, API, provedores, worker, segurança, métricas) – todos aprovados.
+O agendamento é feito internamente (biblioteca `schedule`), **sem depender de cron**.
 
 ---
 
-## 🚀 Instalação e uso (Termux / Linux)
+## 🛠️ Arquitetura
+
+| Componente | Função | Script |
+|------------|--------|--------|
+| **Worker** | Coleta Selic e Brent a cada 5 min | `worker_v7.py` |
+| **API** | Endpoints REST (opcional) | `src.api.main_v4` |
+| **Campaign Supervisor** | Agenda e publica threads | `scripts/campaign_supervisor.py` |
+| **Watchdog** | Monitora e reinicia serviços | `scripts/watchdog.sh` |
+
+Todos os serviços são iniciados em background pelo `run_selix.sh`.
+
+---
+
+## 🚀 Instalação e uso
+
+### 1. Clone o repositório
 
 ```bash
 git clone https://github.com/scoobiii/selix.git
 cd selix
-./scripts/install.sh
-bash start_selix.sh
 ```
 
-Para executar apenas os testes:
+2. Crie o ambiente virtual e instale dependências
 
 ```bash
+python3 -m venv venv
 source venv/bin/activate
-python -m pytest tests/ -v
+pip install -r requirements.txt
+```
+
+3. Configure as credenciais do Bluesky
+
+Crie um arquivo .env:
+
+```
+BLUESKY_USERNAME=zeh-sobrinho.bsky.social
+BLUESKY_APP_PASSWORD=senha_do_app
+```
+
+A senha de app é gerada no Bluesky em Configurações → Senhas de Aplicativo.
+
+4. Inicie o sistema
+
+```bash
+./run_selix.sh
+```
+
+O script inicia worker, API e campaign supervisor em segundo plano.
+Logs ficam em logs/worker.log, logs/api.log, logs/supervisor.log.
+
+5. Parar os serviços
+
+```bash
+pkill -f "worker_v7|main_v4|campaign_supervisor"
 ```
 
 ---
 
-📦 API REST
+📦 API REST (opcional)
 
 A API roda em http://localhost:5000. Endpoints principais:
 
 Endpoint Método Descrição
 /v1/health GET Status da API
-/v1/selic GET Última Selic (real)
+/v1/selic GET Última Selic real
 /v1/energia/mistura GET Brent e mix recomendado
-/v1/empresas/rj GET Empresas listadas em RJ
-/v1/admin/list_keys GET Lista chaves de API (admin)
-/v1/admin/generate_key POST Gera nova chave (admin)
 
-Chave mestra (admin) está no arquivo .env. Endpoints públicos não exigem chave.
+---
+
+🐧 Execução no Termux (Android)
+
+O SELIX roda dentro de um contêiner proot (Ubuntu).
+Para iniciar automaticamente após reinicialização do celular:
+
+1. Instale Termux:Boot pelo F-Droid
+2. Crie ~/.termux/boot/start_selix.sh:
+
+```bash
+#!/data/data/com.termux/files/usr/bin/bash
+sleep 20
+proot-distro login ubuntu -- bash -c "cd /root/selix && ./run_selix.sh"
+```
+
+3. Torne executável: chmod +x ~/.termux/boot/start_selix.sh
+
+---
+
+🧪 Testes
+
+```bash
+source venv/bin/activate
+pytest tests/ -v
+```
 
 ---
 
 📄 Licença
 
-MIT © 2026 – Zeh Sobrinho, GOS3, MEX Energia
-
----
-
-🔗 Links
-
-· Repositório: https://github.com/scoobiii/selix
-· Bluesky principal: @zeh-sobrinho.bsky.social
-· Bluesky de monitoramento: @selixbr.bsky.social
-· GitHub Pages: https://scoobiii.github.io/selix/
+MIT © 2026 – Zeh Sobrinho
 
 ```
