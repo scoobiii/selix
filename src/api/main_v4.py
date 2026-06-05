@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import sys, os, sqlite3
-#from datetime import datetime  - comentado 02 junho 15:45
-from datetime import datetime, timedelta # add, timedelta na mesma data
+from datetime import datetime, timedelta
 from functools import wraps
 from collections import defaultdict
 from flask import Flask, jsonify, request
@@ -9,6 +8,9 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from src.selix.energy_predictor import EnergyPredictor
 from src.api.key_manager import verify_api_key, create_api_key
+import threading
+import queue
+import uuid
 
 load_dotenv('/root/selix/.env')
 app = Flask(__name__)
@@ -16,7 +18,43 @@ CORS(app)
 DB_PATH = '/root/selix/selix.db'
 
 # ============================================================
-# RATE LIMITING E AUTENTICAÇÃO
+# FILA E WORKER PARA TAREFAS ASSÍNCRONAS (RESOLVE O GARGALO)
+# ============================================================
+task_queue = queue.Queue()
+task_results = {}
+task_lock = threading.Lock()
+
+def worker_loop():
+    """Worker de fundo que processa as perguntas de forma assíncrona."""
+    while True:
+        task_id, pergunta = task_queue.get()
+        try:
+            # ================================================
+            # AQUI VOCÊ DEVE COLOCAR O PROCESSAMENTO REAL
+            # (chamada ao LLM, providers, scraping, etc.)
+            # ================================================
+            import time
+            time.sleep(2)  # simula trabalho pesado (substituir pela lógica real)
+            resposta = f"Processando pergunta: {pergunta} (modo assíncrono via worker)"
+            status = "completed"
+        except Exception as e:
+            resposta = str(e)
+            status = "failed"
+        with task_lock:
+            task_results[task_id] = {
+                "status": status,
+                "resposta": resposta,
+                "timestamp": datetime.now().isoformat()
+            }
+        task_queue.task_done()
+
+# Inicia 2 workers em background (threads daemon)
+for _ in range(2):
+    t = threading.Thread(target=worker_loop, daemon=True)
+    t.start()
+
+# ============================================================
+# RATE LIMITING E AUTENTICAÇÃO (mantido igual)
 # ============================================================
 rate_limit_store = defaultdict(list)
 
@@ -26,20 +64,16 @@ def require_api_key(f):
         api_key = request.headers.get("X-API-Key")
         if not api_key:
             return jsonify({"erro": "API key não fornecida"}), 401
-
         client = verify_api_key(api_key)
         if not client:
             return jsonify({"erro": "API key inválida, inativa ou expirada"}), 401
-
         now = datetime.now()
         key_requests = rate_limit_store[client["id"]]
         key_requests = [ts for ts in key_requests if ts > now - timedelta(minutes=1)]
         if len(key_requests) >= client["rate_limit_per_minute"]:
             return jsonify({"erro": "Limite de requisições excedido"}), 429
-
         key_requests.append(now)
         rate_limit_store[client["id"]] = key_requests
-
         return f(*args, **kwargs)
     return decorated
 
@@ -53,16 +87,13 @@ def require_master_key(f):
         return f(*args, **kwargs)
     return decorated
 
-# ============================================================
-# AUXILIAR
-# ============================================================
 def get_db():
     conn = sqlite3.connect(DB_PATH, timeout=30)
     conn.row_factory = sqlite3.Row
     return conn
 
 # ============================================================
-# ENDPOINTS PÚBLICOS (sem chave)
+# ENDPOINTS PÚBLICOS (mantidos iguais)
 # ============================================================
 @app.route('/v1/health', methods=['GET'])
 def health():
@@ -92,7 +123,7 @@ def get_gatilhos():
     })
 
 # ============================================================
-# ENDPOINTS PRIVADOS (exigem API key)
+# ENDPOINTS PRIVADOS (mantidos iguais)
 # ============================================================
 @app.route('/v1/energia/mistura', methods=['GET'])
 @require_api_key
@@ -205,21 +236,35 @@ def faq():
             return jsonify({"pergunta": pergunta, "resposta": item['resposta']})
     return jsonify({"pergunta": pergunta, "resposta": "Não entendi. Consulte github.com/scoobiii/selix"}), 404
 
+# ============================================================
+# ENDPOINT ASSÍNCRONO /perguntar (NOVO)
+# ============================================================
 @app.route('/v1/perguntar', methods=['POST'])
 @require_api_key
-def perguntar_selix():
-    try:
-        from src.api.schemas import PerguntaRequest
-        data = PerguntaRequest(**request.get_json())
-    except Exception as e:
-        return jsonify({"erro": str(e)}), 400
-    pergunta = data.pergunta
-    # aqui você pode integrar com Groq ou RAG
-    resposta = f"Processando pergunta: {pergunta} (modo placeholder)"
-    return jsonify({"pergunta": pergunta, "resposta": resposta, "timestamp": datetime.now().isoformat()})
+def perguntar_async():
+    data = request.get_json()
+    if not data or 'pergunta' not in data:
+        return jsonify({"erro": "Campo 'pergunta' é obrigatório"}), 400
+    pergunta = data['pergunta']
+    task_id = str(uuid.uuid4())
+    task_queue.put((task_id, pergunta))
+    return jsonify({
+        "task_id": task_id,
+        "status": "queued",
+        "message": "Sua pergunta está sendo processada em segundo plano."
+    }), 202
+
+@app.route('/v1/task/<task_id>', methods=['GET'])
+@require_api_key
+def get_task_result(task_id):
+    with task_lock:
+        result = task_results.get(task_id)
+    if not result:
+        return jsonify({"status": "not_found"}), 404
+    return jsonify(result)
 
 # ============================================================
-# ADMIN – GERAR CHAVE DE API
+# ADMIN – GERAR CHAVE DE API (mantido)
 # ============================================================
 MASTER_API_KEY = os.getenv("MASTER_API_KEY", "")
 
@@ -284,7 +329,6 @@ def admin_renew_key():
     row = cur.fetchone()
     if not row:
         return jsonify({"erro": "Chave não encontrada"}), 404
-    from datetime import datetime, timedelta
     new_expiry = datetime.fromisoformat(row['expires_at']) + timedelta(days=extra_days)
     conn.execute("UPDATE api_keys SET expires_at = ? WHERE key_hash = ?", (new_expiry.isoformat(), key_hash))
     conn.commit()
@@ -311,12 +355,11 @@ def stripe_webhook():
 
     if event['type'] == 'invoice.paid':
         customer_email = event['data']['object']['customer_email']
-        # Procura a chave do cliente pelo email (campo client_name)
         conn = get_db()
         cur = conn.execute("SELECT key_hash FROM api_keys WHERE client_name = ?", (customer_email,))
         row = cur.fetchone()
         if row:
-            new_expiry = datetime.now() + timedelta(days=30)  # ou o período do plano
+            new_expiry = datetime.now() + timedelta(days=30)
             conn.execute("UPDATE api_keys SET expires_at = ? WHERE key_hash = ?", (new_expiry.isoformat(), row['key_hash']))
             conn.commit()
         conn.close()

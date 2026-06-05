@@ -1,18 +1,41 @@
-venv/
+# Python
 __pycache__/
-*.pyc
-*.log
-selix.db
+*.py[cod]
+*.so
+venv/
 .env
+
+# Logs
+*.log
 logs/
-*.aux
-*.out
-*.csv
-*.png
-*.gguf
-models/
-data/
+
+# Banco de dados
+*.db
+*.db-*
+selix.db*
+*.db.backup
+
+# Arquivos temporários
+*.tmp
+nohup.out
+*.pid
+
+# Testes
+*.results.json
+stress_results.json
 htmlcov/
+.coverage
 .pytest_cache/
-k6-v0.52.0-linux-arm64/
-*.json
+
+# Swagger (se houver no futuro)
+static/
+
+# Arquivos locais (não devem ir para o repo)
+auditoria_*.json
+fix_*.sh
+run_*_pro.sh
+start_*_full.sh
+test_*.py
+generate_swagger.py
+*.bak
+*.backup

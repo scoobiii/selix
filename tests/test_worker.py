@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# test_worker.py
-# Testes para worker_v7.py (funções auxiliares)
+import sys
+import os
+# Adiciona o diretório raiz do projeto ao path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pytest
 from unittest.mock import patch, MagicMock
