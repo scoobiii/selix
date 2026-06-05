@@ -1,6 +1,8 @@
-
 flask>=2.3.0
 flask-cors>=4.0.0
+flask-swagger-ui>=4.11.1
+apispec>=6.6.1
+marshmallow>=3.20.0
 requests>=2.31.0
 gunicorn>=21.2.0
 z3-solver>=4.12.0
@@ -15,3 +17,5 @@ pandas>=2.0.0
 tenacity>=8.0.0
 feedparser>=6.0.0
 textblob>=0.17.0
+schedule>=1.2.0
+stripe>=5.0.0
