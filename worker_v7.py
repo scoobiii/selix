@@ -11,6 +11,13 @@ import os
 from diskcache import Cache
 cache = Cache("/root/selix/cache")
 
+import hashlib
+
+def validate_api_key(api_key):
+    key_hash = hashlib.sha256(api_key.encode()).hexdigest()
+    # Busca no banco onde key_hash = key_hash
+
+
 @cache.memoize(expire=300)   # 5 minutos
 def get_brent_cached():
     return strategy.get_brent()
