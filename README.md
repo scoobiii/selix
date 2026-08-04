@@ -1,8 +1,6 @@
-```bash
-cat > README.md << 'EOF'
 # 🤖 SELIX v6.1 — Modelo Regime-Dependente com Multiplicador de Credibilidade
 
-**Selic real:** 14,25% · **Selic ideal:** 9,25% · **Economia anual:** R$ 345 bi  
+**Selic real:** 14,25% · **Selic ideal:** 9,25% · **Economia anual:** R$ 345 bi
 *(Cálculo: Dívida pública R$ 6,9 tri × 5,00 p.p. de redução)*
 
 [![Bluesky Bot](https://img.shields.io/badge/Bluesky-@zeh--sobrinho-1DA1F2)](https://bsky.app/profile/zeh-sobrinho.bsky.social)
@@ -203,6 +201,18 @@ T11: Multiplicador de Credibilidade
 
 ---
 
+🏆 Roadmap — SELIX v7.0 (Accountability Total)
+
+Item Descrição Status
+API Focus Integração com expectativas de mercado do Relatório Focus ⏳ Planejado
+EMBI+ em tempo real Derivação endógena do prêmio de risco via API ⏳ Planejado
+Credibilidade endógena Modelo baseado no histórico de cumprimento da meta ⏳ Planejado
+Choques exógenos Oil/TTF como variáveis de estado no modelo ⏳ Planejado
+Intervalos de confiança 86% de credibilidade com derivados de incerteza ⏳ Planejado
+Accountability total Derivação endógena formalizada no Lean ⏳ Planejado
+
+---
+
 🤝 Contribuição
 
 1. Fork o projeto
@@ -239,6 +249,3 @@ v5.0.0 2026-07-28 Lançamento inicial com API, bot, worker
 ---
 
 O SELIX v6.1 está 100% completo e pronto para produção! 🚀🏆
-EOF
-
-```
