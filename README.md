@@ -5,13 +5,14 @@
 
 # 🤖 SELIX v5.3.0 — Sistema de Inteligência Econômica Autônoma
 
-**Selic real:** 14,25% · **Selic ideal:** 9,25% · **Economia anual:** R$ 270 bi
+**Selic real:** 14,25% · **Selic ideal:** 9,25% · **Economia anual:** R$ 345 bi (dívida pública R$ 6,9 tri × 5,00 p.p.)
 
 [![Bluesky Bot](https://img.shields.io/badge/Bluesky-@zeh--sobrinho-1DA1F2)](https://bsky.app/profile/zeh-sobrinho.bsky.social)
 [![API v5.0](https://img.shields.io/badge/API-v5.3.0-green)](https://github.com/scoobiii/selix)
 [![Tests](https://img.shields.io/badge/tests-93%2F93-brightgreen)](https://github.com/scoobiii/selix)
 [![Stress Test](https://img.shields.io/badge/stress-80%20VUs%20%7C%20p95%3C200ms-blue)](https://github.com/scoobiii/selix)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/scoobiii/selix)
 
 </div>
 
