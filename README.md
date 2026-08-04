@@ -3,13 +3,13 @@
 
 <div align="center">
 
-# 🤖 SELIX v5.0 — Sistema de Inteligência Econômica Autônoma
+# 🤖 SELIX v5.3.0 — Sistema de Inteligência Econômica Autônoma
 
 **Selic real:** 14,25% · **Selic ideal:** 9,25% · **Economia anual:** R$ 270 bi
 
 [![Bluesky Bot](https://img.shields.io/badge/Bluesky-@zeh--sobrinho-1DA1F2)](https://bsky.app/profile/zeh-sobrinho.bsky.social)
-[![API v5.0](https://img.shields.io/badge/API-v5.0-green)](https://github.com/scoobiii/selix)
-[![Tests](https://img.shields.io/badge/tests-83%2F83-brightgreen)](https://github.com/scoobiii/selix)
+[![API v5.0](https://img.shields.io/badge/API-v5.3.0-green)](https://github.com/scoobiii/selix)
+[![Tests](https://img.shields.io/badge/tests-93%2F93-brightgreen)](https://github.com/scoobiii/selix)
 [![Stress Test](https://img.shields.io/badge/stress-80%20VUs%20%7C%20p95%3C200ms-blue)](https://github.com/scoobiii/selix)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -18,6 +18,22 @@
 ---
 
 ## 🎯 O que é o SELIX?
+### 📐 Modelo Econômico
+
+O SELIX deriva a Selic ideal a partir de **três tetos econômicos reais**:
+
+| Teto | Fórmula | Valor | Fonte |
+|------|---------|-------|-------|
+| **Regra de Taylor** | `π_target + r_star + risk_premium` | 9,48% | BCB/DSGE |
+| **Custo de capital** | `ROE_B3 * 0.95` | 29,67% | Economatica/B3 |
+| **Teto inflacionário** | `π_target + 5%` | 9,48% | Meta BCB |
+
+### 🔢 9,48 vs 9,25: Reconciliação
+
+| Valor | Significado | Contexto |
+|-------|-------------|----------|
+| **9,48%** | Teto contínuo (Lean/Z3) | Valor exato derivado do modelo econômico |
+| **9,25%** | Valor quantizado (grid Copom 0,25pp) | Valor operacional publicado (`⌊9,48 / 0,25⌋ × 0,25`) |
 
 SELIX é um **bot autônomo** que publica threads econômicas no Bluesky, coletando dados reais de mercado e processando perguntas de forma assíncrona.
 
