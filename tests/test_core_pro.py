@@ -1,60 +1,51 @@
-from selix.core import SELIX
+#!/usr/bin/env python3
+"""
+Testes adicionais para core.py — SELIX
+"""
 
-def test_1_calculo_base():
-    selix = SELIX()
-    assert selix.calcular_selix() == 6.25
+import pytest
+from src.selix.core import (
+    SelixInputs,
+    calcular_juro_real_necessario,
+    calcular_selix,
+    quantizar_copom,
+    BASELINE_ATUAL,
+)
 
-def test_2_teto_1_digito():
-    selix = SELIX(inflacao=10.0, roe=50.0)
-    assert selix.calcular_selix() <= 9.99
 
-def test_3_teto_juro_real():
-    selix = SELIX(inflacao=2.0, roe=30.0)
-    result = selix.calcular_selix()
-    assert result <= 7.0
-    assert result == 4.0
+def test_baseline_nao_muda_sem_aviso():
+    """Trava: se o baseline mudar, o teste quebra e força revisão."""
+    assert BASELINE_ATUAL.inflacao_esperada == 4.48
+    assert BASELINE_ATUAL.premio_risco == 1.25
+    assert BASELINE_ATUAL.credibilidade == 0.50
+    assert BASELINE_ATUAL.gap_produto == 0.50
 
-def test_4_teto_roe():
-    selix = SELIX(inflacao=5.0, roe=8.0)
-    result = selix.calcular_selix()
-    assert result <= 7.6
-    assert result == 7.0
 
-def test_5_quantizacao_025():
-    for i in range(50):
-        inf = 3.0 + (i * 0.1)
-        selix = SELIX(inflacao=inf)
-        result = selix.calcular_selix()
-        assert abs(result * 4 - round(result * 4)) < 1e-9
-
-def test_6_diagnostico_estrutura():
-    selix = SELIX()
-    diag = selix.diagnosticar()
-    required = [
-        "selix_continuo", "selix_ideal", "selic_atual",
-        "diferencial", "juro_real_atual", "juro_real_selix",
-        "investment_grade", "convergencia_meses"
+def test_cenarios_alternativos():
+    """Testa diferentes cenários de credibilidade e gap"""
+    cenarios = [
+        (SelixInputs(4.48, 1.25, 0.30, 0.50), "credibilidade baixa"),
+        (SelixInputs(4.48, 1.25, 0.70, 0.50), "credibilidade media"),
+        (SelixInputs(4.48, 1.25, 0.95, 0.50), "credibilidade alta"),
     ]
-    for key in required:
-        assert key in diag
+    for inputs, _ in cenarios:
+        r = calcular_juro_real_necessario(inputs)
+        assert r > 0
 
-def test_7_convergencia_calculo():
-    selix = SELIX(selic_bacen=11.25)
-    diag = selix.diagnosticar()
-    esperado = abs(11.25 - 6.25) / 0.5
-    assert abs(diag["convergencia_meses"] - esperado) < 0.1
 
-def test_8_investment_grade_false():
-    selix = SELIX(inflacao=15.0)
-    diag = selix.diagnosticar()
-    assert diag["investment_grade"] is True
-    assert diag["selix_ideal"] <= 9.99
+def test_selic_quantizada_sempre_multiplo_025():
+    for i in range(100):
+        valor = 5.0 + i * 0.07
+        q = quantizar_copom(valor)
+        assert (q * 100) % 25 == 0
 
-def test_9_juro_real_seguranca():
-    selix = SELIX(inflacao=4.0)
-    result = selix.calcular_selix()
-    assert (result - 4.0) <= 5.0 + 1e-9
 
-def test_10_cobertura_total():
-    from selix.core import main
-    main()
+def test_diferencial_negativo_quando_selic_abaixo_do_ideal():
+    r = calcular_selix(BASELINE_ATUAL, selic_atual=5.0)
+    assert r["diferencial_pp"] < 0
+
+
+def test_gap_produto_afeta_juro_real():
+    base = SelixInputs(4.48, 1.25, 0.50, 0.50)
+    gap_negativo = SelixInputs(4.48, 1.25, 0.50, -0.50)
+    assert calcular_juro_real_necessario(gap_negativo) < calcular_juro_real_necessario(base)
