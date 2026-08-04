@@ -54,12 +54,14 @@ class SELIX:
         self.selic_bacen = selic_bacen
         self.teto_juro_real = self.inflacao + self.JURO_REAL_MAXIMO
         self.teto_roe = self.roe * self.FOLGA_ROE
+        self.teto_global = (self.RELACAO_GLOBAL * self.inflacao) + self.PREMIO_RISCO_BRASIL
 
     def calcular_selix_continuo(self):
         return min(
             self.TETO_1_DIGITO,
             self.teto_juro_real,
-            self.teto_roe
+            self.teto_roe,
+            self.teto_global
         )
 
     @staticmethod
