@@ -39,7 +39,7 @@ tools = {
 # 4. SKILLS
 skills = {
     "valuation_empresas": "GPA: R$2,60 → R$17,60 (+577%)",
-    "analise_macro": "Selic 14,5%→9,48%: economia de R$270 bi/ano",
+    "analise_macro": "Selic 14,5%→9,48%: economia de R$345 bi/ano",
     "trampoforte": "PLR prioritário sobre credores em RJ",
     "energia": "Recomendação E40 para Brent > US$120",
 }
@@ -64,7 +64,7 @@ class LuziaAgent:
             "trampoforte": "PLR prioritário sobre credores em recuperação judicial",
             "selic ideal": "9.48% (teorema provado com Z3 + Lean 4)",
             "b3 valuation": "R$ 231 bilhões (+238% com SELIX)",
-            "economia selic": "R$ 270 bilhões/ano com Selic 9,48%",
+            "economia selic": "R$ 345 bilhões/ano com Selic 9,48%",
         }
     
     def responder(self, pergunta):

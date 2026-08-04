@@ -40,7 +40,7 @@
 | Juro real | 4.77% |
 | Investment Grade | SIM (BBB+) |
 | Convergência | 10.5 meses |
-| Economia anual | R$ 270 bilhões |
+| Economia anual | R$ 345 bilhões |
 | Impacto PIB per capita | +R$ 14.900 |
 
 ## 5. Status de Validação

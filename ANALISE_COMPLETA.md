@@ -56,7 +56,7 @@ cat > ANALISE_COMPLETA.md << 'EOF'
 | Juro real | 4.77% (vs 10%) | Tesouro paga principal |
 | Investment Grade | BBB+ (vs BB) | Captação barata |
 | Convergência | 10.5 meses | Cortes de 0.5%/mês |
-| Economia anual | R$ 270 bilhões | Financia Renda Básica |
+| Economia anual | R$ 345 bilhões | Financia Renda Básica |
 
 ## 📁 PROJETO ENTREGUE
 
