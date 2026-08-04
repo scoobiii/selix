@@ -7,7 +7,7 @@
 1. **Investment Grade** - SELIX ≤ 9.99%
 2. **Não canibalização** - SELIX ≤ ROE × 0.95
 3. **Juro real máximo** - SELIX - inflação ≤ 5%
-4. **Convergência** - 14.5% → 9.25%
+4. **Convergência** - 14.25% → 9.25%
 5. **Consistência do sistema** - Solução existe
 
 ## Lean 4 (Provador Interativo)

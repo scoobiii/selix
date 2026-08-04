@@ -3,7 +3,7 @@
 
 <div align="center">
 
-# 🤖 SELIX v5.3.0 — Sistema de Inteligência Econômica Autônoma
+# 🤖 SELIX v5.4.0 — Sistema de Inteligência Econômica Autônoma
 
 **Selic real:** 14,25% · **Selic ideal:** 9,25% · **Economia anual:** R$ 345 bi (dívida pública R$ 6,9 tri × 5,00 p.p.)
 
@@ -54,11 +54,11 @@ SELIX é um **bot autônomo** que publica threads econômicas no Bluesky, coleta
 
 | Métrica | Status |
 |---------|--------|
-| **Versão** | v5.0-stable |
+| **Versão** | v5.4.0-stable |
 | **Build** | ✅ Passando |
 | **Testes unitários** | 83/83 ✅ |
 | **Stress test** | 80 VUs, p95=152ms ✅ |
-| **Cobertura** | ~70% |
+| **Cobertura** | ~100% (Gap Formal Zerado) |
 | **Disponibilidade** | 24/7 no Termux/Android |
 
 ---
@@ -183,6 +183,18 @@ Throughput 51 req/s - ✅
 📄 Licença
 
 MIT © 2026 – Zeh Sobrinho, GOS3, MEX Energia
+
+---
+
+## 📋 Backlog (Roadmap v6.0)
+
+| Prioridade | Task | Status |
+|------------|------|--------|
+| **Alta** | Substituir médias hardcoded (T7) por API BCB/B3 em tempo real | ⏳ Em progresso |
+| **Alta** | Integrar prova Lean 4 ao CI/CD (GitHub Actions) | ⏳ Pendente |
+| **Média** | Dashboard interativo com visualização de tetos em tempo real | ⏳ Planejado |
+| **Média** | Implementar multi-agente para análise de sentimento global | ⏳ Planejado |
+| **Baixa** | Exportação de relatórios em formato PDF/A para o Tesouro | ⏳ Planejado |
 
 ---
 

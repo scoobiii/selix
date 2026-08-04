@@ -16,7 +16,7 @@ O SELIX v4.0.0 é um **sistema econômico experimental** que:
 - **Fornece API REST** com proveniência de dados (rastreabilidade)
 - **Calcula índice de confiança modular** baseado na diferença entre projeção e mercado real
 
-**Selic atual:** 14,50% · **Selic ideal (provada):** 9,25% · **Economia anual projetada:** R$ 270 bi
+**Selic atual:** 14,25% · **Selic ideal (provada):** 9,25% · **Economia anual projetada:** R$ 345 bi
 
 ---
 

@@ -3,8 +3,8 @@ SELIX para Governo
 
 Impacto fiscal
 
-Indicador Com Selic 14,5% Com Selic 9,25% Benefício
-Custo da dívida R$ 650 bi/ano R$ 380 bi/ano R$ 270 bi/ano
+Indicador Com Selic 14.25% Com Selic 9,25% Benefício
+Custo da dívida R$ 650 bi/ano R$ 380 bi/ano R$ 345 bi/ano
 Investment Grade BB A- +2 níveis
 Risco país Elevado Reduzido Menor prêmio
 

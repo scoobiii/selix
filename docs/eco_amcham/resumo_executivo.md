@@ -2,10 +2,10 @@
 
 ## Resumo
 
-O SELIX é um sistema experimental que prova formalmente (Z3 + Lean4) que a Selic ideal do Brasil deveria ser 9,25% ao ano (vs 14,50% atual). Ele coleta dados reais de mercado (Brent, Selic, TTF, combustíveis), publica automaticamente no Bluesky segmentando por público (trabalhadores, investidores, governo, ambientalistas) e fornece API REST com proveniência de dados.
+O SELIX é um sistema experimental que prova formalmente (Z3 + Lean4) que a Selic ideal do Brasil deveria ser 9,25% ao ano (vs 14,25% atual). Ele coleta dados reais de mercado (Brent, Selic, TTF, combustíveis), publica automaticamente no Bluesky segmentando por público (trabalhadores, investidores, governo, ambientalistas) e fornece API REST com proveniência de dados.
 
 ## Impacto econômico
-- Economia anual projetada: R$ 270 bilhões
+- Economia anual projetada: R$ 345 bilhões
 - Investment Grade: BBB+ → A-
 - B3 Market Cap: US$ 10 trilhões (cenário)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Análise do Market Cap da B3 (B3SA3)
-Cenários: Hoje (Selic 14.5%) vs SELIX (9.48%) vs TrampoForte
+Cenários: Hoje (Selic 14.25%) vs SELIX (9.48%) vs TrampoForte
 """
 
 class MarketCapB3:
@@ -22,7 +22,7 @@ class MarketCapB3:
         # Cenários macroeconômicos
         self.cenarios = {
             "hoje": {
-                "selic": 0.145,      # 14.5%
+                "selic": 0.145,      # 14.25%
                 "risco_brasil": 0.035,  # 350bps
                 "confidence": 0.65,   # 65% confiança
                 "ipos_ano": 0,        # IPOs congelados
@@ -123,7 +123,7 @@ class MarketCapB3:
         # Tabela comparativa
         print("\n📊 TABELA COMPARATIVA")
         print("-" * 80)
-        print(f"{'Indicador':<25} {'Hoje (14.5%)':<20} {'SELIX':<20} {'TrampoForte':<20}")
+        print(f"{'Indicador':<25} {'Hoje (14.25%)':<20} {'SELIX':<20} {'TrampoForte':<20}")
         print("-" * 80)
         
         for indicador, key in [
@@ -218,7 +218,7 @@ class MarketCapB3:
 🏦 MARKET CAP B3 (B3SA3):
 
 ┌─────────────────────────────────────────────────────────────────┐
-│  HOJE (Selic 14.5%, IPOs congelados)                            │
+│  HOJE (Selic 14.25%, IPOs congelados)                            │
 │  → Market Cap: R$ {hoje_mc:.0f}B                                 │
 │  → Preço: R$ {resultados['hoje']['preco']:.2f}                   │
 ├─────────────────────────────────────────────────────────────────┤

@@ -19,11 +19,11 @@ def s_star : Float := min2 teto1 (min2 teto2 teto3)
 -- T3: Juro real máximo (s - π ≤ 5%)
 #eval s_star - inflacao ≤ 5.0
 
--- T4: Convergência (14.5% > s)
-#eval s_star < 14.50
+-- T4: Convergência (14.25% > s)
+#eval s_star < 14.25
 
 -- T5: Sistema consistente (todos os anteriores)
-#eval (s_star ≤ teto1 && s_star ≤ teto2 && s_star - inflacao ≤ 5.0 && s_star < 14.50)
+#eval (s_star ≤ teto1 && s_star ≤ teto2 && s_star - inflacao ≤ 5.0 && s_star < 14.25)
 
 -- Valor da SELIX
 #eval s_star

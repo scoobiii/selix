@@ -32,7 +32,7 @@ print(f"✅ Conectado: @{client.me.handle}")
 # Versão 1 - Tom geral (diretão) - 296 caracteres
 POST_GERAL = """GPA: trabalhadores sem PLR de R$2 mil. Empresa renegocia R$4,5bi com bancos.
 
-Causa: Selic 14,5% (juro real 10%) > ROI do negócio.
+Causa: Selic 14.25% (juro real 10%) > ROI do negócio.
 
 Solução: SELIX (Selic 1 dígito, 9,48%) + TrampoForte.
 
@@ -40,7 +40,7 @@ Solução: SELIX (Selic 1 dígito, 9,48%) + TrampoForte.
 #SELIX #TrampoForte #GPA #PLR"""
 
 # Versão 2 - Curta e direta - 152 caracteres
-POST_CURTO = """GPA: juros evaporam caixa. Selic 14,5% > ROI.
+POST_CURTO = """GPA: juros evaporam caixa. Selic 14.25% > ROI.
 
 Funcionários sem PLR. Rentismo vence.
 
@@ -65,7 +65,7 @@ POST_MENCOES = """@secsp.bsky.social @cut.bsky.social
 
 Apoiamos a luta dos trabalhadores do GPA pela PLR.
 
-Causa: Selic 14,5% > ROI.
+Causa: Selic 14.25% > ROI.
 
 Solução: SELIX (9,48%) + TrampoForte.
 
@@ -73,7 +73,7 @@ Solução: SELIX (9,48%) + TrampoForte.
 #SELIX #GPA #PLR"""
 
 # Thread (3 posts)
-THREAD_POST1 = "🧵 GPA: trabalhadores sem PLR de R$2 mil. Empresa renegocia R$4,5bi com bancos. Causa: Selic 14,5% > ROI."  # 115 chars
+THREAD_POST1 = "🧵 GPA: trabalhadores sem PLR de R$2 mil. Empresa renegocia R$4,5bi com bancos. Causa: Selic 14.25% > ROI."  # 115 chars
 THREAD_POST2 = "Empresa é viável no operacional, mas rentismo (juros) come resultado antes do trabalhador receber."  # 91 chars
 THREAD_POST3 = "Solução: SELIX (9,48%) + TrampoForte. 🔗 github.com/scoobiii/selix #SELIX #TrampoForte #GPA"  # 97 chars
 

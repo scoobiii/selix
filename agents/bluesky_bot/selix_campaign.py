@@ -111,7 +111,7 @@ def gerar_calendario(d, link_agent=None):
             f"🧵 SELIX — Economia que prioriza quem trabalha\n\n🌍 Brent: US${brent} | 📉 Selic: {sv}% | 📰 {sent}\n💰 Meta ideal: 9,25% (razão global 1,14×)\n🔗 {R}\n\nFio completo 👇",
             f"📊 SELIX atualizado\n\nBrent US${brent} • Selic {sv}% • Meta global: 9,25%\n\nO BCB cobra 2,7× mais que a média mundial. Quem paga essa conta?\n🔗 {R}",
             f"🤖 SELIX — IA + Lean 4 + Z3\n\nProva formal: Selic deveria ser 9,25%.\nBrent US${brent} confirma: sentimento {sent}.\n\nVeja o estudo completo:\n🔗 {R}",
-            f"📡 SELIX — dados de hoje\n\n🛢️ Brent: US${brent}\n📉 Selic: {sv}% (deveria: 9,25%)\n🌱 Mix: E{em}/B{bm}\n💸 Custo extra/ano: R$270 bi\n🔗 {R}",
+            f"📡 SELIX — dados de hoje\n\n🛢️ Brent: US${brent}\n📉 Selic: {sv}% (deveria: 9,25%)\n🌱 Mix: E{em}/B{bm}\n💸 Custo extra/ano: R$345 bi\n🔗 {R}",
         ],
         "trabalhadores": [
             f"👷 Trabalhador, a Selic te cobra caro\n\nCom {sv}%, seu empréstimo de R$10k custa R$1.425/ano só de juros.\nCom 9,25%: R$925. Diferença: R$500/ano no seu bolso.\n\n#TrampoForte #Selix\n🔗 {R}{cc('trabalhadores')}",
@@ -126,9 +126,9 @@ def gerar_calendario(d, link_agent=None):
             f"🌍 Brasil vs mundo\n\nRazão juros/inflação global: 1,14×\nBrasil atual: 2,7×\nBrasil Selix: 1,14×\n\nConvergência = entrada maciça de capital estrangeiro.\n🔗 {R}{cc('mercado')}",
         ],
         "governo": [
-            f"🏛️ Governo economiza R$270 bi/ano\n\nDívida pública: R$6,9 tri\nCom Selic {sv}%: R$1 tri/ano em juros\nCom Selix 9,25%: R$638 bi/ano\nEconomia: R$362 bi para saúde, educação, infraestrutura.\n🔗 {R}{cc('governo')}",
+            f"🏛️ Governo economiza R$345 bi/ano\n\nDívida pública: R$6,9 tri\nCom Selic {sv}%: R$1 tri/ano em juros\nCom Selix 9,25%: R$638 bi/ano\nEconomia: R$362 bi para saúde, educação, infraestrutura.\n🔗 {R}{cc('governo')}",
             f"📉 Dívida/PIB cai com Selix\n\nHoje: dívida/PIB cresce ~3pp/ano\nCom 9,25%: estabiliza no 1º ano\nInvestment Grade A- em 3 anos\nCusto de captação externa cai 200bps\n🔗 {R}{cc('governo')}",
-            f"🏗️ Haddad quer R$2 tri em data centers\nBCB cobra 14,5% de capital\nIRR de data center: ~12%\n\n❌ 14,5% > 12% = projeto inviável\n✅ 9,25% < 12% = projeto viável\n\nSelix desbloqueia o investimento.\n🔗 {R}{cc('governo')}",
+            f"🏗️ Haddad quer R$2 tri em data centers\nBCB cobra 14.25% de capital\nIRR de data center: ~12%\n\n❌ 14.25% > 12% = projeto inviável\n✅ 9,25% < 12% = projeto viável\n\nSelix desbloqueia o investimento.\n🔗 {R}{cc('governo')}",
             f"⚡ PAC vs Selic\n\nO governo anuncia R$1,7 tri em obras.\nO BCB cobra R$1 tri/ano em juros.\n\nÉ como encher banheira com torneira aberta.\nSelix 9,25% fecha a torneira.\n🔗 {R}{cc('governo')}",
         ],
         "politicos": [
@@ -159,7 +159,7 @@ def gerar_calendario(d, link_agent=None):
             f"🎓 Teoria por trás do Selix\n\nNão é MMT nem ortodoxia.\nÉ calibração: razão J/I global 1,14×\naplicada ao IPCA projetado (4%).\n= 4,56% como piso neutro.\n\nDetalhes: {R}{cc('academia')}",
             f"📐 Lean 4 + Z3 como prova formal\n\ntheorem selicReal : nominal - ipca = real\ntheorem metaOtima : ipca * 1.14 = 4.56\ntheorem premioRisco : 14.25 - 4.56 = 9.69\n\nVerificável em: {R}{cc('academia')}",
             f"🔬 Taxa neutra vs Selic atual\n\nTaxa neutra BCB: ~5,5% real\nCom IPCA 4%: neutro nominal = 9,5%\nSelic atual: {sv}% = +{round(sv-9.5,2)}pp de aperto\n\nQuem justifica esse aperto além do BCB?\n🔗 {R}{cc('academia')}",
-            f"📚 Literatura sobre captura regulatória\n\nStigler (1971): agências capturadas por regulados.\nBCB → sistema financeiro = porta giratória.\nSelix quantifica o custo: R$270 bi/ano.\n\nArtigo completo: {R}{cc('academia', 'midia')}",
+            f"📚 Literatura sobre captura regulatória\n\nStigler (1971): agências capturadas por regulados.\nBCB → sistema financeiro = porta giratória.\nSelix quantifica o custo: R$345 bi/ano.\n\nArtigo completo: {R}{cc('academia', 'midia')}",
         ],
         "rj_recuperacao": [
             f"⚖️ 5.680 empresas em RJ em 2025\n\n+24% vs 2024. Sem recessão declarada.\nCausa: Selic {sv}% > ROI médio 11%.\n\nSelix 9,25% = viabilidade para 4.200 dessas empresas.\n🔗 {R}{cc('rj_empresas')}",

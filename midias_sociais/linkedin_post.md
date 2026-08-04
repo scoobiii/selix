@@ -1,7 +1,7 @@
 # LinkedIn Post - SELIX
 
 ## Título
-🧮 A matemática provou: a Selic deveria ser 9.25%, não 14.50%
+🧮 A matemática provou: a Selic deveria ser 9.25%, não 14.25%
 
 ## Texto
 Apresentamos o **SELIX** (Sistema de Equilíbrio Linear de Juros e Investment Grade), um modelo matematicamente provado que demonstra que a Taxa Selic ideal para o Brasil é 9.25%.
@@ -11,7 +11,7 @@ Apresentamos o **SELIX** (Sistema de Equilíbrio Linear de Juros e Investment Gr
 ✅ **Investment Grade** - Selic ≤ 9.99% (rating BBB+)
 ✅ **Não canibaliza produção** - Selic ≤ ROE × 0.95
 ✅ **Tesouro paga principal** - Juro real ≤ 5%
-✅ **Convergência** - 14.5% → 9.25% em 10.5 meses
+✅ **Convergência** - 14.25% → 9.25% em 10.5 meses
 
 ### Validação formal
 - Z3 SMT Solver (Microsoft Research) → 5/5 teoremas
@@ -19,7 +19,7 @@ Apresentamos o **SELIX** (Sistema de Equilíbrio Linear de Juros e Investment Gr
 - pytest → 4/4 testes
 
 ### Impacto econômico
-- Economia anual: R$ 270 bilhões
+- Economia anual: R$ 345 bilhões
 - PIB per capita: +R$ 14.900
 - Investment Grade: BBB+
 

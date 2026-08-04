@@ -5,7 +5,7 @@
 | Indicador | Valor | Fonte |
 |-----------|-------|-------|
 | Inflação (IPCA-12) | 4.48% | API BCB SGS 13522 |
-| Selic Atual | 14.50% | Copom (29/04/2026) |
+| Selic Atual | 14.25% | Copom (29/04/2026) |
 | ROE IBOVESPA | 31.23% | Ranking B3 |
 
 ## 2. Endosso Conceitual - Prêmios Nobel
@@ -40,7 +40,7 @@
 | Juro real | 4.77% |
 | Investment Grade | SIM (BBB+) |
 | Convergência | 10.5 meses |
-| Economia anual | R$ 270 bilhões |
+| Economia anual | R$ 345 bilhões |
 | Impacto PIB per capita | +R$ 14.900 |
 
 ## 5. Status de Validação

@@ -21,7 +21,7 @@ class ProjecaoEmpresas:
                 "p_l": 6.07,                     # 6.07x
                 "roe": 0.165,                    # 16.5%
                 "roi": 0.085,                    # 8.5%
-                "selic_impacto": 0.145,          # 14.5%
+                "selic_impacto": 0.145,          # 14.25%
                 "trampoforte_beneficio": 0.30    # 30% redução risco
             },
             "RAIZEN": {
@@ -37,7 +37,7 @@ class ProjecaoEmpresas:
                 "p_l": 4.80,                    # 4.80x
                 "roe": 0.208,                   # 20.8%
                 "roi": 0.112,                   # 11.2%
-                "selic_impacto": 0.145,         # 14.5%
+                "selic_impacto": 0.145,         # 14.25%
                 "trampoforte_beneficio": 0.25   # 25% redução risco
             }
         }
@@ -169,7 +169,7 @@ class ProjecaoEmpresas:
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │ FATORES APLICADOS:                                                          │
 │                                                                             │
-│ 1. REDUÇÃO DA SELIC (14.5% → 9.48%)                                         │
+│ 1. REDUÇÃO DA SELIC (14.25% → 9.48%)                                         │
 │    → Custo de capital 35% menor                                             │
 │    → Empresas valem mais com juros baixos                                   │
 │                                                                             │

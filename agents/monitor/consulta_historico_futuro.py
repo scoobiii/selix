@@ -12,7 +12,7 @@ from typing import Dict, List, Optional
 class ConsultaHistoricoFuturo:
     def __init__(self):
         self.selic_selix = 9.48
-        self.selic_atual = 14.5
+        self.selic_atual = 14.25
         self.cache = {}
     
     # ============================================================

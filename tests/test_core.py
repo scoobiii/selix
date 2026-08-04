@@ -1,8 +1,8 @@
 from selix.core import SELIX
 
 def test_selix_calculo():
-    selix = SELIX(inflacao=4.48, roe=31.23, selic_bacen=14.50)
-    assert selix.calcular_selix() == 6.25
+    selix = SELIX(inflacao=4.48, roe=31.23, selic_bacen=14.25)
+    assert selix.calcular_selix() == 9.25
 
 def test_tetos_respeitados():
     selix = SELIX()

@@ -93,7 +93,7 @@ Brasil paga R$ 341 bilhões/ano em juros excessivos
 | Custo | Valor | Responsável |
 |-------|-------|-------------|
 | Importações desnecessárias (118 dias) | R$ 15-20 bi | CNPE |
-| Juros excessivos (Selic 14,5% vs 9,48%) | R$ 341 bi/ano | BACEN |
+| Juros excessivos (Selic 14.25% vs 9,48%) | R$ 341 bi/ano | BACEN |
 | **TOTAL DA LAMBANÇA** | **R$ 356-361 bi/ano** | **CNPE + BACEN** |
 
 ---

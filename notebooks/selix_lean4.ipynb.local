@@ -103,8 +103,8 @@ def selix_star : Float :=
 -- Teorema 4: 9.50 viola o teto1 (9.50 > 9.48)
 #eval (9.50 > teto1)                    -- deve ser true
 
--- Teorema 5: Selic BCB (14.50) viola o teto1
-#eval (14.50 > teto1)                   -- deve ser true
+-- Teorema 5: Selic BCB (14.25) viola o teto1
+#eval (14.25 > teto1)                   -- deve ser true
 
 -- Resultado final
 #eval selix_star
@@ -149,8 +149,8 @@ def selix_star : Float :=
     "-- Teorema 4: 9.50 viola o teto1 (9.50 > 9.48)\n",
     "#eval (9.50 > teto1)                    -- deve ser true\n",
     "\n",
-    "-- Teorema 5: Selic BCB (14.50) viola o teto1\n",
-    "#eval (14.50 > teto1)                   -- deve ser true\n",
+    "-- Teorema 5: Selic BCB (14.25) viola o teto1\n",
+    "#eval (14.25 > teto1)                   -- deve ser true\n",
     "\n",
     "-- Resultado final\n",
     "#eval selix_star\n",
@@ -213,7 +213,7 @@ def selix_star : Float :=
     "    'Teorema 2 — Intervalo não-vazio (piso < teto)',\n",
     "    'Teorema 3 — 9.25 dentro do intervalo',\n",
     "    'Teorema 4 — 9.50 viola o teto',\n",
-    "    'Teorema 5 — Selic 14.50 viola o teto',\n",
+    "    'Teorema 5 — Selic 14.25 viola o teto',\n",
     "    'SELIX ótimo',\n",
     "]\n",
     "\n",

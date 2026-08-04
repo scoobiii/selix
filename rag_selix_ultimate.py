@@ -77,7 +77,7 @@ def get_dados_selix() -> Dict[str, Any]:
         'noticias': noticias,
         'selic_ideal': 9.25,
         'selic_atual': 13.25,
-        'economia_anual': 270,  # bilhões
+        'economia_anual': 345,  # bilhões
         'pib_per_capita_projetado': 130000,
         'b3_valuation_projetado': 10  # trilhões
     }

@@ -106,7 +106,7 @@ class APIsReais:
             
             # Dados reais do mercado
             resultado = {
-                "selic": 14.5,
+                "selic": 14.25,
                 "meta_inflacao": 3.0,
                 "ipca_anual": 4.5,
                 "fonte": "BCB - Expectativas de Mercado",

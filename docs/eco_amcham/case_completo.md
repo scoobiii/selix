@@ -1,7 +1,7 @@
 # SELIX – Case Completo para o Prêmio ECO Amcham 2026
 
 ## 1. Contexto e Motivação
-A Selic alta (14,5%) é um entrave ao crescimento, à geração de empregos e ao pagamento de direitos trabalhistas. O SELIX nasce para **provar matematicamente** qual seria a taxa justa e **monitorar em tempo real** o impacto no mercado de energia e nos trabalhadores.
+A Selic alta (14.25%) é um entrave ao crescimento, à geração de empregos e ao pagamento de direitos trabalhistas. O SELIX nasce para **provar matematicamente** qual seria a taxa justa e **monitorar em tempo real** o impacto no mercado de energia e nos trabalhadores.
 
 ## 2. Arquitetura e Tecnologia
 - **Prova formal**: Z3 + Lean4 (5 teoremas).

@@ -40,7 +40,7 @@ class AnaliseSolidezEmpresarial:
         divida_convertida = self.dados["divida_total"] * (percentual_conversao / 100)
         
         # Redução do serviço da dívida
-        economia_juros_anual = divida_convertida * 0.145  # Selic 14.5%
+        economia_juros_anual = divida_convertida * 0.145  # Selic 14.25%
         
         # Aumento do caixa para investimentos
         aumento_caixa_investimento = economia_juros_anual

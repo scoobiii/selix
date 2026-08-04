@@ -33,7 +33,7 @@
 \maketitle
 
 \begin{abstract}
-\noindent Apresentamos o SELIX (\textit{Sistema de Equilíbrio Linear de Juros e Investment Grade}), um modelo matemático formal que determina a taxa de juros de referência brasileira (Selic) ótima sujeita a cinco restrições simultaneamente vinculantes: classificação soberana de grau de investimento, não-canibalização do retorno sobre o patrimônio líquido do setor privado, solvência do superávit primário do Tesouro Nacional, viabilidade de convergência e consistência global do sistema. Usando o Z3 SMT Solver (Microsoft Research) provamos que todos os cinco teoremas se mantêm em \textbf{SELIX = 9,48\%} dados os parâmetros atuais (IPCA = 4,48\%, ROE = 31,23\%, Selic$_{\text{BCB}}$ = 14,50\%), implicando uma redução de \textbf{502 pontos-base} alcançável em aproximadamente \textbf{10 meses} no ritmo padrão do COPOM. O modelo é open-source, reproduzível e falseável.
+\noindent Apresentamos o SELIX (\textit{Sistema de Equilíbrio Linear de Juros e Investment Grade}), um modelo matemático formal que determina a taxa de juros de referência brasileira (Selic) ótima sujeita a cinco restrições simultaneamente vinculantes: classificação soberana de grau de investimento, não-canibalização do retorno sobre o patrimônio líquido do setor privado, solvência do superávit primário do Tesouro Nacional, viabilidade de convergência e consistência global do sistema. Usando o Z3 SMT Solver (Microsoft Research) provamos que todos os cinco teoremas se mantêm em \textbf{SELIX = 9,48\%} dados os parâmetros atuais (IPCA = 4,48\%, ROE = 31,23\%, Selic$_{\text{BCB}}$ = 14,25\%), implicando uma redução de \textbf{502 pontos-base} alcançável em aproximadamente \textbf{10 meses} no ritmo padrão do COPOM. O modelo é open-source, reproduzível e falseável.
 \end{abstract}
 
 \section*{Classificação JEL}
@@ -44,7 +44,7 @@ taxa Selic, juro neutro, investment grade, SMT Solver, Z3, otimização sob rest
 
 \section{Introdução}
 
-A taxa Selic brasileira encerrou o ciclo de alta de 2024–2025 em \textbf{14,50\% a.a.} — o maior nível em 19 anos, superior às taxas de referência de todas as economias emergentes com grau de investimento comparável. O custo fiscal desta anomalia é expressivo: cada 100 bps acima do equilíbrio representa aproximadamente \textbf{R\$ 68 bilhões/ano} em despesas financeiras adicionais do Tesouro Nacional, considerando estoque de DPMFi de R\$ 6,8 trilhões (BCB, 2025).
+A taxa Selic brasileira encerrou o ciclo de alta de 2024–2025 em \textbf{14,25\% a.a.} — o maior nível em 19 anos, superior às taxas de referência de todas as economias emergentes com grau de investimento comparável. O custo fiscal desta anomalia é expressivo: cada 100 bps acima do equilíbrio representa aproximadamente \textbf{R\$ 68 bilhões/ano} em despesas financeiras adicionais do Tesouro Nacional, considerando estoque de DPMFi de R\$ 6,8 trilhões (BCB, 2025).
 
 \subsection{Problema de Pesquisa}
 
@@ -64,7 +64,7 @@ Símbolo & Descrição & Valor (mai/2026) & Fonte \\
 \midrule
 $\pi$ & IPCA acumulado 12 meses & 4,48\% & BCB SGS 13522 \\
 $\rho$ & ROE médio IBOVESPA & 31,23\% & B3 Ranking abr/2026 \\
-$s_{BCB}$ & Selic corrente & 14,50\% & BCB, COPOM 03/2026 \\
+$s_{BCB}$ & Selic corrente & 14,25\% & BCB, COPOM 03/2026 \\
 $r^*$ & Juro neutro global & 3,50\% & IMF WEO 2026 \\
 $\phi$ & Fator de ajuste emergentes & 1,39 & Holston et al. 2017 \\
 $\delta$ & Prêmio de risco-Brasil & 4,50 pp & CDS 5Y médio 2025 \\
@@ -128,12 +128,12 @@ s^* = \max(9,365,\; \min(9,99,\; 29,67,\; 9,48)) = \max(9,365,\; 9,48) = \mathbf
 
 \begin{tcolorbox}[colback=gray!5, colframe=gray!70, title=SELIX v3.2 — PROVA FORMAL COM Z3]
 \begin{verbatim}
-Parametros: inflacao=4.48% | ROE=31.23% | BACEN=14.50%
+Parametros: inflacao=4.48% | ROE=31.23% | BACEN=14.25%
 ------------------------------------------------------------
 T1 Investment Grade    (s <= 9.99):        ✓ PROVADO (SAT)
 T2 Nao Canibaliza      (s <= ROEx0.95):    ✓ PROVADO (SAT)
 T3 Tesouro Solvente    (s-pi <= 5.0%):     ✓ PROVADO (SAT)
-T4 Convergencia        (14.50 > s):        ✓ PROVADO (SAT)
+T4 Convergencia        (14.25 > s):        ✓ PROVADO (SAT)
 T5 Sistema Consistente (T1..T4 SAT):       ✓ PROVADO (SAT)
 ------------------------------------------------------------
 Resultado: 5/5 teoremas provados
@@ -151,7 +151,7 @@ Resultado: 5/5 teoremas provados
 Assumindo cortes de 50 bps por reunião COPOM:
 
 \[
-N_{reunioes} = \left\lceil \frac{14,50 - 9,48}{0,50} \right\rceil = \left\lceil 10,04 \right\rceil = 11 \text{ reuniões}
+N_{reunioes} = \left\lceil \frac{14,25 - 9,48}{0,50} \right\rceil = \left\lceil 10,04 \right\rceil = 11 \text{ reuniões}
 \]
 
 Com reuniões COPOM a cada $\sim$45 dias:
@@ -168,7 +168,7 @@ T_{convergencia} \approx 11 \times 45 = 495 \text{ dias} \approx \mathbf{16,5 \t
 
 \section{Conclusão}
 
-O modelo SELIX demonstra formalmente que existe uma taxa Selic ótima $s^* = 9,48\%$ que satisfaz simultaneamente as cinco restrições institucionais relevantes para a economia brasileira. A taxa corrente de 14,50\% excede $s^*$ em \textbf{502 bps} — excesso com custo fiscal estimado em \textbf{R\$ 341 bilhões/ano} — sem contrapartida nos fundamentos de risco soberano.
+O modelo SELIX demonstra formalmente que existe uma taxa Selic ótima $s^* = 9,48\%$ que satisfaz simultaneamente as cinco restrições institucionais relevantes para a economia brasileira. A taxa corrente de 14,25\% excede $s^*$ em \textbf{502 bps} — excesso com custo fiscal estimado em \textbf{R\$ 341 bilhões/ano} — sem contrapartida nos fundamentos de risco soberano.
 
 \begin{itemize}
     \item \textbf{Reproduzível:} \texttt{git clone \&\& make z3} em $<$ 1 minuto

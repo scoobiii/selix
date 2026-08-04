@@ -40,7 +40,7 @@ POSTS = {
         "nome": "geral",
         "texto": """GPA: trabalhadores sem PLR de R$2 mil. Empresa renegocia R$4,5bi com bancos.
 
-Causa: Selic 14,5% (juro real 10%) > ROI do negócio.
+Causa: Selic 14.25% (juro real 10%) > ROI do negócio.
 
 Solução: SELIX (Selic 1 dígito, 9,48%) + TrampoForte.
 
@@ -50,7 +50,7 @@ Solução: SELIX (Selic 1 dígito, 9,48%) + TrampoForte.
     },
     2: {
         "nome": "curto",
-        "texto": """GPA: juros evaporam caixa. Selic 14,5% > ROI.
+        "texto": """GPA: juros evaporam caixa. Selic 14.25% > ROI.
 
 Funcionários sem PLR. Rentismo vence.
 
@@ -79,7 +79,7 @@ Empresa respira, trabalhador recebe PLR.
 
 Apoiamos a luta dos trabalhadores do GPA pela PLR.
 
-Causa: Selic 14,5% > ROI.
+Causa: Selic 14.25% > ROI.
 
 Solução: SELIX (9,48%) + TrampoForte.
 
@@ -90,7 +90,7 @@ Solução: SELIX (9,48%) + TrampoForte.
     5: {
         "nome": "thread",
         "posts": [
-            "🧵 GPA: trabalhadores sem PLR de R$2 mil. Causa: Selic 14,5% > ROI.",
+            "🧵 GPA: trabalhadores sem PLR de R$2 mil. Causa: Selic 14.25% > ROI.",
             "Empresa viável, mas rentismo come resultado antes do trabalhador.",
             "Solução: SELIX (9,48%) + TrampoForte. 🔗 github.com/scoobiii/selix #SELIX #GPA"
         ],

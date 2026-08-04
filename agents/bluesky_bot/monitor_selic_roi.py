@@ -23,7 +23,7 @@ with open('empresas_rj.json', 'r') as f:
     EMPRESAS = dados['empresas']
     AUTORIDADES_PLR = dados['autoridades_plr']
 
-SELIC_ATUAL = 14.5
+SELIC_ATUAL = 14.25
 SELIX_IDEAL = 9.48
 
 def verificar_impacto_selic(empresa):

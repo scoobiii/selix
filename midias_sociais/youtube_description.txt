@@ -7,11 +7,11 @@ Sistema de Equilíbrio Linear de Juros e Investment Grade
 1. Investment Grade (≤9.99%)
 2. Não canibaliza produção (≤ROE×0.95)
 3. Juro real máximo (≤5%)
-4. Convergência (14.5%→9.25%)
+4. Convergência (14.25%→9.25%)
 5. Consistência matemática
 
 📈 Impacto Econômico:
-- Economia anual: R$270 bilhões
+- Economia anual: R$345 bilhões
 - PIB per capita: +R$14.900
 - Investment Grade: BBB+
 

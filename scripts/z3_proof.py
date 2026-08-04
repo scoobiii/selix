@@ -56,10 +56,10 @@ def provar_selix():
     # TEOREMA 5: Selic atual está acima
     selic_bacen = Real('selic_bacen')
     solver5 = Solver()
-    solver5.add(restricoes + [selic_bacen == 14.5, selix >= selic_bacen])
+    solver5.add(restricoes + [selic_bacen == 14.25, selix >= selic_bacen])
     print("\n📋 TEOREMA 5: Selic atual precisa ser reduzida")
     if solver5.check() == unsat:
-        print("   ✅ PROVADO - Selic atual (14.5%) está ACIMA da SELIX")
+        print("   ✅ PROVADO - Selic atual (14.25%) está ACIMA da SELIX")
     else:
         print("   ❌ FALHA")
 

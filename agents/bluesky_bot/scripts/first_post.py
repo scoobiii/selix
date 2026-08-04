@@ -22,7 +22,7 @@ THREAD = [
     # POST 1 — Gancho (hook)
     # 287 chars
     (
-        "🇧🇷 A Selic deveria ser 9,48% — não 14,50%.\n\n"
+        "🇧🇷 A Selic deveria ser 9,48% — não 14,25%.\n\n"
         "Não é opinião. É prova matemática formal.\n\n"
         "5 teoremas. Código aberto. Verificável em 30 segundos.\n\n"
         "Custo do desvio: R$ 341 bilhões por ano.\n\n"
@@ -48,7 +48,7 @@ THREAD = [
         "T1 Investment Grade (s ≤ 9,99%) ✅ SAT\n"
         "T2 Não canibaliza (s ≤ ROE×0,95%) ✅ SAT\n"
         "T3 Tesouro solvente (s−π ≤ 5%) ✅ SAT\n"
-        "T4 Convergência (14,50 > s) ✅ SAT\n"
+        "T4 Convergência (14,25 > s) ✅ SAT\n"
         "T5 Sistema consistente ✅ SAT\n\n"
         "Execução: 31ms."
     ),

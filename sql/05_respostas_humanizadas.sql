@@ -14,10 +14,10 @@ DELETE FROM respostas_banco;
 
 INSERT INTO respostas_banco (segmento, dor_keyword, resposta, cc_handles, thread_json) VALUES
 ('trabalhadores', 'plr',
- '👷 Tá sem PLR? A Selic alta (14,5%) é um dos motivos. Com 9,25% — provado pelo SELIX — sobrariam R$270bi/ano pra economia real. Exija #TrampoForte! 🧵',
+ '👷 Tá sem PLR? A Selic alta (14.25%) é um dos motivos. Com 9,25% — provado pelo SELIX — sobrariam R$345bi/ano pra economia real. Exija #TrampoForte! 🧵',
  '@cut.org.br.bsky.social,@forcasindical.bsky.social',
  '[
-   "👷 Tá sem PLR? A Selic alta (14,5%) é um dos motivos. Com 9,25% — provado pelo SELIX — sobrariam R$270bi/ano pra economia real. Exija #TrampoForte! 🧵 (1/3)",
+   "👷 Tá sem PLR? A Selic alta (14.25%) é um dos motivos. Com 9,25% — provado pelo SELIX — sobrariam R$345bi/ano pra economia real. Exija #TrampoForte! 🧵 (1/3)",
    "📊 O SELIX usa 5 teoremas formais (Z3 + Lean4) pra provar que a taxa justa é 9,25%. Não é opinião — é matemática verificada. (2/3)",
    "🔗 Veja os dados, a API e o código aberto: github.com/scoobiii/selix\nCC: @cut.org.br.bsky.social @forcasindical.bsky.social #Selix #PLR (3/3)"
  ]');
@@ -28,7 +28,7 @@ INSERT INTO respostas_banco (segmento, dor_keyword, resposta, cc_handles, thread
  '@cut.org.br.bsky.social,@mte.gov.br.bsky.social',
  '[
    "💰 Salário não estica? Inflação + Selic alta corroem seu poder de compra todo mês. O SELIX prova: com 9,25% isso muda. 🧵 (1/3)",
-   "📉 Cada 1% a menos na Selic = R$27bi devolvidos à economia real. Com -5,25pp (de 14,5% pra 9,25%) = R$270bi/ano. Pra você, não pro rentismo. (2/3)",
+   "📉 Cada 1% a menos na Selic = R$27bi devolvidos à economia real. Com -5,25pp (de 14.25% pra 9,25%) = R$345bi/ano. Pra você, não pro rentismo. (2/3)",
    "🔗 github.com/scoobiii/selix\nCC: @cut.org.br.bsky.social @mte.gov.br.bsky.social #TrampoForte #Selix (3/3)"
  ]');
 
@@ -100,11 +100,11 @@ INSERT INTO respostas_banco (segmento, dor_keyword, resposta, cc_handles, thread
 
 INSERT INTO respostas_banco (segmento, dor_keyword, resposta, cc_handles, thread_json) VALUES
 ('governo', 'divida',
- '🏛️ Dívida pública custando R$650bi/ano. Com Selic 9,25% (SELIX), cai pra R$380bi. R$270bi livres pra investimento. 🧵',
+ '🏛️ Dívida pública custando R$650bi/ano. Com Selic 9,25% (SELIX), cai pra R$380bi. R$345bi livres pra investimento. 🧵',
  '@fazenda.gov.br.bsky.social,@bcb.gov.br.bsky.social',
  '[
    "🏛️ O Brasil gasta R$650bi/ano só com juros da dívida pública — mais do que saúde e educação juntos. Existe saída? 🧵 (1/3)",
-   "📉 O SELIX prova com 5 teoremas formais que a Selic ideal é 9,25%. Nesse cenário: custo da dívida = R$380bi. Economia: R$270bi/ano. (2/3)",
+   "📉 O SELIX prova com 5 teoremas formais que a Selic ideal é 9,25%. Nesse cenário: custo da dívida = R$380bi. Economia: R$345bi/ano. (2/3)",
    "🔗 Modelo aberto: github.com/scoobiii/selix\nCC: @fazenda.gov.br.bsky.social @bcb.gov.br.bsky.social #Selix #PoliticaFiscal (3/3)"
  ]');
 
@@ -122,17 +122,17 @@ INSERT INTO respostas_banco (segmento, dor_keyword, resposta, cc_handles, thread
 
 INSERT INTO respostas_banco (segmento, dor_keyword, resposta, cc_handles, thread_json) VALUES
 ('geral', 'selic',
- '📉 Selic ideal provada com Z3+Lean4: 9,25% (atual: 14,50%). Economia de R$270bi/ano. 5 teoremas, código aberto. 🧵',
+ '📉 Selic ideal provada com Z3+Lean4: 9,25% (atual: 14,25%). Economia de R$345bi/ano. 5 teoremas, código aberto. 🧵',
  '@bcb.gov.br.bsky.social',
  '[
-   "📉 Por que a Selic está em 14,50% sendo que a taxa ideal é 9,25%? O SELIX tem a resposta — e ela é matemática. 🧵 (1/3)",
+   "📉 Por que a Selic está em 14,25% sendo que a taxa ideal é 9,25%? O SELIX tem a resposta — e ela é matemática. 🧵 (1/3)",
    "🔬 5 teoremas provados formalmente com Z3 (Microsoft) e Lean 4 mostram que qualquer taxa acima de 9,99% é ineficiente e injusta. (2/3)",
    "🔗 Veja, teste, contribua: github.com/scoobiii/selix\nCC: @bcb.gov.br.bsky.social #Selix #PoliticaMonetaria (3/3)"
  ]');
 
 INSERT INTO respostas_banco (segmento, dor_keyword, resposta, cc_handles, thread_json) VALUES
 ('geral', 'default',
- '🤖 Oi! Sou o bot do SELIX — sistema que prova que a Selic ideal é 9,25% (hoje: 14,50%). Saiba mais: github.com/scoobiii/selix #Selix',
+ '🤖 Oi! Sou o bot do SELIX — sistema que prova que a Selic ideal é 9,25% (hoje: 14,25%). Saiba mais: github.com/scoobiii/selix #Selix',
  NULL,
  '[
    "🤖 Oi! Sou o bot do SELIX — sistema econômico experimental que prova, com matemática formal, que a Selic ideal é 9,25%. 🧵 (1/2)",

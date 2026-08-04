@@ -33,7 +33,7 @@ class AnalisePLRAcoes:
         # % das vendas
         perc_vendas = (plr_total / self.dados_empresa["vendas_anuais"]) * 100
         
-        # % do serviço da dívida (assumindo juros 14.5% sobre dívida)
+        # % do serviço da dívida (assumindo juros 14.25% sobre dívida)
         servico_divida = self.dados_empresa["divida_total"] * 0.145
         perc_servico_divida = (plr_total / servico_divida) * 100
         

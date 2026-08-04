@@ -5,7 +5,7 @@
 | Indicador | Valor |
 |-----------|-------|
 | ROE médio IBOVESPA | 31.23% |
-| Selic atual | 14.50% |
+| Selic atual | 14.25% |
 | Folga | 16.73% |
 
 ## Com a SELIX (9.25%)

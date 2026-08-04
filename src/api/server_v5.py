@@ -32,7 +32,7 @@ CONFIG = {
 # ============================================================
 INFLACAO = 4.48  # Valor padrão
 ROE = 31.23      # Valor padrão
-SELIC_BCB = 14.50
+SELIC_BCB = 14.25
 
 ULTIMA_ATUALIZACAO = None
 

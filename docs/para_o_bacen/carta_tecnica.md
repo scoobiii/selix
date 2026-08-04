@@ -6,7 +6,7 @@
 
 ## Resumo Executivo
 
-O modelo SELIX demonstra que a Taxa Selic ideal é **9.25%**, não 14.50%.
+O modelo SELIX demonstra que a Taxa Selic ideal é **9.25%**, não 14.25%.
 
 ### Os 5 Teoremas Provados
 
@@ -15,7 +15,7 @@ O modelo SELIX demonstra que a Taxa Selic ideal é **9.25%**, não 14.50%.
 | 1 | 9.25% ≤ 9.99% | Investment Grade (BBB+) |
 | 2 | 9.25% ≤ 29.67% | Não canibaliza produção |
 | 3 | 4.77% ≤ 5% | Tesouro paga principal |
-| 4 | 14.5% → 9.25% | Convergência em 10.5 meses |
+| 4 | 14.25% → 9.25% | Convergência em 10.5 meses |
 | 5 | SAT | Sistema consistente |
 
 ### Metodologia

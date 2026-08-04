@@ -18,7 +18,7 @@
 > solvency of the National Treasury, convergence feasibility, and global system
 > consistency. Using the Z3 SMT Solver (Microsoft Research) we prove all five theorems
 > hold at **SELIX = 9.48 %** given current parameters (IPCA = 4.48 %, ROE = 31.23 %,
-> Selic<sub>BCB</sub> = 14.50 %), implying a reduction of **502 basis points** achievable
+> Selic<sub>BCB</sub> = 14.25 %), implying a reduction of **502 basis points** achievable
 > in approximately **10 months** at standard COPOM cadence. The model is open-source,
 > reproducible, and falsifiable.
 
@@ -30,7 +30,7 @@ política monetária discricionária, inconsistência temporal, economia políti
 
 ## 1. Introdução
 
-A taxa Selic brasileira encerrou o ciclo de alta de 2024–2025 em **14,50 % a.a.** —
+A taxa Selic brasileira encerrou o ciclo de alta de 2024–2025 em **14,25 % a.a.** —
 o maior nível em 19 anos, superior às taxas de referência de todas as economias
 emergentes com grau de investimento comparável (Tabela 1). O custo fiscal desta
 anomalia é expressivo: cada 100 bps acima do equilíbrio representa aproximadamente
@@ -94,7 +94,7 @@ piso conservador.
 |------|-----------|-------------|-----------|--------------|
 | México | BBB | 9,50 % | 4,82 % | 9,30 % |
 | Colombia | BB+ | 9,75 % | 5,07 % | 9,55 % |
-| Brasil | BB | **14,50 %** | **10,02 %** | **9,48 %** |
+| Brasil | BB | **14,25 %** | **10,02 %** | **9,48 %** |
 | África do Sul | BB- | 8,25 % | 3,95 % | — |
 | Turquia | B+ | 42,50 % | 9,50 % | — |
 | Índia | BBB- | 6,25 % | 1,77 % | — |
@@ -116,7 +116,7 @@ Seja $s \in \mathbb{R}_{>0}$ a taxa Selic anual em percentual. Definem-se:
 |---------|-----------|-----------------|-------|
 | $\pi$ | IPCA acumulado 12 meses | 4,48 % | BCB SGS 13522 |
 | $\rho$ | ROE médio IBOVESPA | 31,23 % | B3 Ranking abr/2026 |
-| $s_{BCB}$ | Selic corrente | 14,50 % | BCB, COPOM 03/2026 |
+| $s_{BCB}$ | Selic corrente | 14,25 % | BCB, COPOM 03/2026 |
 | $r^*$ | Juro neutro global | 3,50 % | IMF WEO 2026 |
 | $\phi$ | Fator de ajuste emergentes | 1,39 | Holston et al. 2017 |
 | $\delta$ | Prêmio de risco-Brasil | 4,50 pp | CDS 5Y médio 2025 |
@@ -219,12 +219,12 @@ e verifica **satisfatibilidade** (SAT) ou **insatisfatibilidade** (UNSAT).
 ```
 SELIX v3.2 — PROVA FORMAL COM Z3 SMT SOLVER
 ============================================================
-  Parametros: inflacao=4.48% | ROE=31.23% | BACEN=14.50%
+  Parametros: inflacao=4.48% | ROE=31.23% | BACEN=14.25%
 ------------------------------------------------------------
   T1 Investment Grade    (s <= 9.99):        ✓ PROVADO  (SAT)
   T2 Nao Canibaliza      (s <= ROE×0.95):    ✓ PROVADO  (SAT)
   T3 Tesouro Solvente    (s−π <= 5.0%):      ✓ PROVADO  (SAT)
-  T4 Convergencia        (14.50 > s):        ✓ PROVADO  (SAT)
+  T4 Convergencia        (14.25 > s):        ✓ PROVADO  (SAT)
   T5 Sistema Consistente (T1∧T2∧T3∧T4 SAT): ✓ PROVADO  (SAT)
 ------------------------------------------------------------
   Resultado: 5/5 teoremas provados
@@ -251,7 +251,7 @@ theorem selix_sat
     (π ρ s_bcb s : Float)
     (hπ  : π = 4.48)
     (hρ  : ρ = 31.23)
-    (hbcb: s_bcb = 14.50)
+    (hbcb: s_bcb = 14.25)
     (hR1 : s ≤ 9.99)
     (hR2 : s ≤ ρ * 0.95)
     (hR3 : s - π ≤ 5.0)
@@ -322,7 +322,7 @@ $$
 
 ### 6.1 Custo da Anomalia
 
-O custo anual de manter a Selic em 14,50 % ao invés de 9,48 %:
+O custo anual de manter a Selic em 14,25 % ao invés de 9,48 %:
 
 $$
 \Delta_{fiscal} = DPMFi \times (s_{BCB} - s^*) = 6{,}8T \times 0{,}0502 \approx \mathbf{R\$\, 341 \text{ bi/ano}}
@@ -359,7 +359,7 @@ prêmio não justificado pelos demais fundamentos (dívida/PIB, crescimento, inf
 
 O modelo SELIX demonstra formalmente que existe uma taxa Selic ótima
 $s^* = 9{,}48\%$ que satisfaz simultaneamente as cinco restrições institucionais
-relevantes para a economia brasileira. A taxa corrente de 14,50 % excede $s^*$ em
+relevantes para a economia brasileira. A taxa corrente de 14,25 % excede $s^*$ em
 **502 bps** — excesso com custo fiscal estimado em **R$ 341 bilhões/ano** — sem
 contrapartida nos fundamentos de risco soberano.
 
@@ -427,7 +427,7 @@ make all
 **Output esperado (core.py):**
 ```
 SELIX IDEAL      : 9.48%
-Selic BACEN      : 14.50%
+Selic BACEN      : 14.25%
 Diferencial      : -5.02 pp
 Juro real SELIX  : 5.0%
 Investment Grade : SIM ✓
@@ -571,7 +571,7 @@ PIB BRASIL 2025 — R$ 11,7 trilhões
 
 *Fontes: IBGE SCN 2025, FGV IBRE, BCB.*
 
-### 10.2 Impacto Setorial de -502 bps (Selic 14,50 % → 9,48 %)
+### 10.2 Impacto Setorial de -502 bps (Selic 14,25 % → 9,48 %)
 
 | Setor | Peso PIB | Canal principal | Impacto estimado |
 |-------|---------|----------------|-----------------|
@@ -674,7 +674,7 @@ PIB BRASIL 2025 — R$ 11,7 trilhões
 
 #### FEBRABAN + Grandes Bancos (Itaú, Bradesco, BB, Caixa, Santander)
 
-**Interesse real:** Com Selic a 14,50 %, a tesouraria bancária rende 14,50 % em LFT
+**Interesse real:** Com Selic a 14,25 %, a tesouraria bancária rende 14,25 % em LFT
 sem risco de crédito. Redução de 502 bps comprime NII estimado em R$ 85–110 bi/ano
 no agregado do sistema.
 
@@ -724,7 +724,7 @@ de credibilidade anti-inflacionária construída desde o Plano Real.
 
 #### Carry Trade Externo (JPMorgan, BlackRock, BNY — ~28 % da DPMFi)
 
-**Interesse real:** Diferencial de juros Brasil-EUA de ~10 pp com Selic a 14,50 %.
+**Interesse real:** Diferencial de juros Brasil-EUA de ~10 pp com Selic a 14,25 %.
 Redução comprime o carry e pode induzir saída de posições.
 
 **Argumento:** "Redução de juro provoca fuga de capital e desvalorização do BRL."

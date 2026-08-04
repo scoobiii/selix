@@ -19,7 +19,7 @@ class ProvaValuationB3:
         }
         
         # Cenários
-        self.selic_atual = 0.145   # 14.5%
+        self.selic_atual = 0.145   # 14.25%
         self.selic_selix = 0.0948  # 9.48%
         
     def custo_capital_proprio(self, selic):
@@ -52,7 +52,7 @@ class ProvaValuationB3:
         print("📐 TEOREMA 1: VALUATION B3 COM SELIX")
         print("=" * 70)
         print(f"\nCusto de Capital Próprio (Ke):")
-        print(f"   Selic 14.5% → Ke = {ke_atual:.2%}")
+        print(f"   Selic 14.25% → Ke = {ke_atual:.2%}")
         print(f"   Selic 9.48% → Ke = {ke_selix:.2%}")
         print(f"   Redução: {(ke_atual - ke_selix)*100:.1f} p.p.")
         
@@ -62,7 +62,7 @@ class ProvaValuationB3:
         print(f"   g = {self.dados_b3['crescimento_esperado']:.0%}")
         
         print(f"\nResultado:")
-        print(f"   Com Selic 14.5%: P = R$ {p_atual:.2f}")
+        print(f"   Com Selic 14.25%: P = R$ {p_atual:.2f}")
         print(f"   Com SELIX 9.48%: P = R$ {p_selix:.2f}")
         print(f"   VALORIZAÇÃO: +{valorizacao:.0f}%")
         
@@ -87,11 +87,11 @@ class ProvaValuationB3:
         print("📐 TEOREMA 2: VIABILIDADE DE IPOS")
         print("=" * 70)
         print(f"\nROI médio empresas: {roi_medio:.1%}")
-        print(f"Ke com Selic 14.5%: {ke_atual:.1%}")
+        print(f"Ke com Selic 14.25%: {ke_atual:.1%}")
         print(f"Ke com SELIX 9.48%: {ke_selix:.1%}")
         
         print(f"\nCondição para IPO viável: Ke < ROI")
-        print(f"   Selic 14.5%: {ke_atual:.1%} < {roi_medio:.1%}? {ipos_viaveis_atual}")
+        print(f"   Selic 14.25%: {ke_atual:.1%} < {roi_medio:.1%}? {ipos_viaveis_atual}")
         print(f"   SELIX 9.48%: {ke_selix:.1%} < {roi_medio:.1%}? {ipos_viaveis_selix}")
         
         if ipos_viaveis_selix and not ipos_viaveis_atual:
@@ -151,7 +151,7 @@ B3 VALIDAÇÃO COM SELIX (9.48%):
    • VALORIZAÇÃO: +{t1['valorizacao']:.0f}%
 
 2. IPO CONGELADOS:
-   • Selic 14.5%: Ke ({self.custo_capital_proprio(self.selic_atual):.1%}) > ROI ({self.dados_b3['roi_medio']:.0%})
+   • Selic 14.25%: Ke ({self.custo_capital_proprio(self.selic_atual):.1%}) > ROI ({self.dados_b3['roi_medio']:.0%})
    • SELIX 9.48%: Ke ({self.custo_capital_proprio(self.selic_selix):.1%}) < ROI ({self.dados_b3['roi_medio']:.0%})
    • {35} IPOs descongelados
 

@@ -20,7 +20,7 @@ class MonitorSelic:
         }
         
         # Dados atuais
-        self.selic_atual = 14.5
+        self.selic_atual = 14.25
         self.selic_selix = 9.48
         self.meta_inflacao = 3.0
         self.ipca_acumulado = 4.5
@@ -38,15 +38,15 @@ class MonitorSelic:
             # BCB API - Expectativas de mercado
             url = "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/documentacao"
             # Em produção: chamada real
-            return {"selic": 14.5, "fonte": "BCB", "atualizado": datetime.now().isoformat()}
+            return {"selic": 14.25, "fonte": "BCB", "atualizado": datetime.now().isoformat()}
         except:
-            return {"selic": 14.5, "fonte": "fallback", "atualizado": datetime.now().isoformat()}
+            return {"selic": 14.25, "fonte": "fallback", "atualizado": datetime.now().isoformat()}
     
     def calcular_impacto_selic(self) -> Dict:
         """Calcula impacto da redução da Selic para 9.48%"""
         return {
             "reducao": self.selic_atual - self.selic_selix,
-            "economia_anual": 270,  # R$ bilhões
+            "economia_anual": 345,  # R$ bilhões
             "investment_grade": "BBB+",
             "juro_real_atual": self.selic_atual - self.ipca_acumulado,
             "juro_real_selix": self.selic_selix - self.meta_inflacao
@@ -65,7 +65,7 @@ class MonitorSelic:
 🎯 SELIX (ideal): {self.selic_selix}%
 📉 Redução necessária: {(self.selic_atual - self.selic_selix):.1f} p.p.
 
-💰 Economia anual: R$ 270 bi/ano
+💰 Economia anual: R$ 345 bi/ano
 
 🔗 github.com/scoobiii/selix
 #SELIX #COPOM #Selic

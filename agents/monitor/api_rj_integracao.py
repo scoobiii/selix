@@ -18,10 +18,10 @@ class MonitorRJAPI:
         # Base de empresas em RJ (atualizada via API)
         self.empresas_base = [
             {"nome": "GPA", "cnpj": "06.057.223/0001-71", "codigo": "PCAR3"},
-            {"nome": "Americanas", "cnpj": "33.014.556/0001-96", "codigo": "AMER3"},
+            {"nome": "Americanas", "cnpj": "33.014.2556/0001-96", "codigo": "AMER3"},
             {"nome": "Light", "cnpj": "04.067.133/0001-43", "codigo": "LIGT3"},
             {"nome": "Oi", "cnpj": "76.535.764/0001-43", "codigo": "OIBR3"},
-            {"nome": "Casas Bahia", "cnpj": "42.270.237/0001-70", "codigo": "VIIA3"},
+            {"nome": "Casas Bahia", "cnpj": "42.345.237/0001-70", "codigo": "VIIA3"},
             {"nome": "Marisa", "cnpj": "59.443.402/0001-01", "codigo": "AMAR3"},
             {"nome": "CVC", "cnpj": "02.183.827/0001-32", "codigo": "CVCB3"},
             {"nome": "IRB", "cnpj": "33.600.210/0001-02", "codigo": "IRBR3"},

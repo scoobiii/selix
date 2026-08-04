@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 THREAD = [
     "1/10\n📧 PROÁLCOOL PREDITIVO, ENERGY CRASH E O CUSTO DA SELIC ERRADA\n\nO que o M&A não está contando.\n\nA análise da quinzena está cirúrgica — Raízen, Braskem, Grupo João Santos, Mercuria, juro alto e balanço apertado.\n\nMas há uma camada que os números não capturam.\n\n@selixbr.bsky.social",
 
-    "2/10\n🧠 O QUE O SELIX JÁ PROVOU MATEMATICAMENTE\n\nEnquanto o Bacen sustenta Selic 14% para compensar Brent/TTF, o SELIX (Z3+Lean4) prova que a Selic ideal é 9,48%.\n\n• Economia anual: R$ 270 bi\n• Blindagem ecológica Ex/Bx\n• Investment Grade BBB+\n\n🔗 github.com/scoobiii/selix",
+    "2/10\n🧠 O QUE O SELIX JÁ PROVOU MATEMATICAMENTE\n\nEnquanto o Bacen sustenta Selic 14% para compensar Brent/TTF, o SELIX (Z3+Lean4) prova que a Selic ideal é 9,48%.\n\n• Economia anual: R$ 345 bi\n• Blindagem ecológica Ex/Bx\n• Investment Grade BBB+\n\n🔗 github.com/scoobiii/selix",
 
     "3/10\n⚡ A GEOPOLÍTICA QUE O M&A ESTÁ PRECIFICANDO (MAS NÃO NOMEANDO)\n\nO crash energético de 2026 — POTUS + Netanyahu + TTF — é o mesmo padrão do choque do petróleo nos anos 70.\n\nO Proálcool original foi criado para combater isso. A mistura preditiva Ex/Bx poderia ter nos isolado.",
 

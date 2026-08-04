@@ -57,7 +57,7 @@ texto = \"\"\"@mme.bsky.social @economia.bsky.social
 🚀 POTENCIAL DO BRASIL COM SELIX
 
 Hoje:
-• Selic 14.5%
+• Selic 14.25%
 • P/L Brasil: 7.6x
 • Market Cap: US$ 420B
 

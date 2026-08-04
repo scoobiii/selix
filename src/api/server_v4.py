@@ -29,7 +29,7 @@ except ImportError:
         RELACAO_GLOBAL = 1.39
         PREMIO_RISCO_BRASIL = 4.5
         
-        def __init__(self, inflacao=4.48, roe=31.23, selic_bacen=14.50):
+        def __init__(self, inflacao=4.48, roe=31.23, selic_bacen=14.25):
             self.inflacao = inflacao
             self.roe = roe
             self.selic_bacen = selic_bacen
@@ -99,7 +99,7 @@ HISTORICO = {
     2023: {"selic": 11.75, "selix": 9.80},
     2024: {"selic": 12.25, "selix": 9.90},
     2025: {"selic": 13.75, "selix": 10.10},
-    2026: {"selic": 14.50, "selix": 9.48},
+    2026: {"selic": 14.25, "selix": 9.48},
 }
 
 @app.route('/')
@@ -128,7 +128,7 @@ def get_current():
         "parameters": {
             "ipca_12m": 4.48,
             "roe_ibovespa": 31.23,
-            "selic_bcb": 14.50,
+            "selic_bcb": 14.25,
             "r_star_global": 3.50,
             "cds_5y": 145,
             "phi": 1.39
@@ -189,7 +189,7 @@ def get_score():
         "adherence_score": score,
         "rating": rating,
         "max_score": 10.0,
-        "selic_atual": 14.50,
+        "selic_atual": 14.25,
         "selix_ideal": 9.48
     })
 
@@ -228,7 +228,7 @@ def simulate():
     selix_sim = SELIX(
         inflacao=data.get('ipca', 4.48),
         roe=data.get('roe', 31.23),
-        selic_bacen=data.get('selic_bcb', 14.50)
+        selic_bacen=data.get('selic_bcb', 14.25)
     )
     return jsonify({
         "input_params": data,

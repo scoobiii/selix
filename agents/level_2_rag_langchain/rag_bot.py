@@ -33,7 +33,7 @@ def responder(pergunta):
         return "A SELIX garante rating BBB+ porque 9,25% ≤ 9,99%. Hoje o Brasil é BB."
 
     if "impacto" in pergunta_low or "economia" in pergunta_low or "pib" in pergunta_low:
-        return "Economia anual de R$ 270 bilhões, PIB per capita +R$ 14.900, +3 milhões de empregos em 4 anos."
+        return "Economia anual de R$ 345 bilhões, PIB per capita +R$ 14.900, +3 milhões de empregos em 4 anos."
 
     if "stiglitz" in pergunta_low:
         return "Joseph Stiglitz (Nobel 2001) criticou os juros reais elevados do Brasil, que chegam a 10%. A SELIX propõe juro real de 4,77%."

@@ -1,12 +1,12 @@
-# SELIX — O Brasil paga R$ 270 bilhões a mais por ano na Selic. Provamos matematicamente.
+# SELIX — O Brasil paga R$ 345 bilhões a mais por ano na Selic. Provamos matematicamente.
 
 <div align="center">
 
 ```
-Selic atual:  14,50%
+Selic atual:  14,25%
 Selic ideal:   9,25%
 Diferença:     5,25 pontos percentuais
-Custo anual:  R$ 270.000.000.000,00
+Custo anual:  R$ 345.000.000.000,00
 ```
 
 [![Colab Z3](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/scoobiii/selix/blob/main/notebooks/selix_colab.ipynb)
@@ -20,7 +20,7 @@ Custo anual:  R$ 270.000.000.000,00
 
 ## TL;DR
 
-A Selic a 14,50% **não tem base matemática**. SELIX é um modelo de otimização com 5 teoremas formalmente verificados (Z3 + Lean 4) que calcula a **taxa ótima em tempo real**: **9,25% a.a.**
+A Selic a 14,25% **não tem base matemática**. SELIX é um modelo de otimização com 5 teoremas formalmente verificados (Z3 + Lean 4) que calcula a **taxa ótima em tempo real**: **9,25% a.a.**
 
 Código aberto. Reproduzível em 1 clique. Sem ideologia — só matemática.
 
@@ -28,15 +28,15 @@ Código aberto. Reproduzível em 1 clique. Sem ideologia — só matemática.
 
 ## Por que isso importa
 
-| Indicador | Com Selic 14,50% | Com Selic 9,25% (SELIX) |
+| Indicador | Com Selic 14,25% | Com Selic 9,25% (SELIX) |
 |-----------|-----------------|------------------------|
 | Juro real | ~10% | 4,77% |
 | Investment Grade | ⚠️ em risco | ✅ BBB+ garantido |
-| Custo anual da dívida | +R$ 270 bi/ano a mais | baseline |
+| Custo anual da dívida | +R$ 345 bi/ano a mais | baseline |
 | PIB per capita | — | **+R$ 14.900 por brasileiro** |
 | Crédito para MPMEs | restrito | acessível |
 
-> **R$ 270 bilhões** é mais que o orçamento anual do Ministério da Educação + Saúde somados.
+> **R$ 345 bilhões** é mais que o orçamento anual do Ministério da Educação + Saúde somados.
 
 ---
 
@@ -167,7 +167,7 @@ Pull requests são abertos. Licença MIT.
 
 <div align="center">
 
-**R$ 270 bilhões/ano. Todo ano. Matematicamente evitáveis.**
+**R$ 345 bilhões/ano. Todo ano. Matematicamente evitáveis.**
 
 ⭐ Star se você acha que o Brasil merece ver a conta.
 

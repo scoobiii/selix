@@ -13,7 +13,7 @@
 
 ## Resumo
 
-Apresentamos o SELIX (*Sistema de Equilíbrio Linear de Juros e Investment Grade*), um modelo matemático formal que determina a taxa de juros de referência brasileira (Selic) ótima sujeita a cinco restrições simultaneamente vinculantes. Usando o Z3 SMT Solver provamos que todos os cinco teoremas se mantêm em **SELIX = 9,48%** dados os parâmetros atuais (IPCA = 4,48%, ROE = 31,23%, SelicBCB = 14,50%), implicando uma redução de **502 pontos-base** alcançável em aproximadamente **10 meses**.
+Apresentamos o SELIX (*Sistema de Equilíbrio Linear de Juros e Investment Grade*), um modelo matemático formal que determina a taxa de juros de referência brasileira (Selic) ótima sujeita a cinco restrições simultaneamente vinculantes. Usando o Z3 SMT Solver provamos que todos os cinco teoremas se mantêm em **SELIX = 9,48%** dados os parâmetros atuais (IPCA = 4,48%, ROE = 31,23%, SelicBCB = 14,25%), implicando uma redução de **502 pontos-base** alcançável em aproximadamente **10 meses**.
 
 Em paralelo, analisamos o atraso de **118 dias** na resposta do CNPE à crise energética desencadeada pela *Operation Epic Fury* (28/fev/2026), que custou ao Brasil **R$ 15-20 bilhões** em importações de gasolina desnecessárias. Demonstramos que ambos os problemas — juros excessivos e mistura defasada — têm a mesma causa: **discrição lenta vs. mercado rápido**. A solução em ambos os casos é a adoção de **regras automáticas auditáveis** (SELIX para juros; SELIX Energy para mistura).
 
@@ -25,7 +25,7 @@ Em paralelo, analisamos o atraso de **118 dias** na resposta do CNPE à crise en
 
 ## 1. Introdução
 
-A taxa Selic brasileira encerrou o ciclo de alta de 2024–2025 em **14,50% a.a.** — o maior nível em 19 anos. Paralelamente, a crise energética desencadeada pela *Operation Epic Fury* (28/fev/2026) viu o preço do petróleo Brent atingir **US$ 126/barril** em 29/abr/2026, enquanto o Brasil manteve a mistura de etanol na gasolina em E27 até **25/jun/2026** — um atraso de **118 dias** com custo estimado de **R$ 15-20 bilhões**.
+A taxa Selic brasileira encerrou o ciclo de alta de 2024–2025 em **14,25% a.a.** — o maior nível em 19 anos. Paralelamente, a crise energética desencadeada pela *Operation Epic Fury* (28/fev/2026) viu o preço do petróleo Brent atingir **US$ 126/barril** em 29/abr/2026, enquanto o Brasil manteve a mistura de etanol na gasolina em E27 até **25/jun/2026** — um atraso de **118 dias** com custo estimado de **R$ 15-20 bilhões**.
 
 Este paper tem dois objetivos:
 
@@ -106,7 +106,7 @@ Enquanto isso, o mercado:
 
 | Dimensão | SELIX (Juros) | SELIX Energy (Mistura) |
 |----------|---------------|------------------------|
-| **Problema** | Selic em 14,50% (deveria ser 9,48%) | E27 mantido durante crise (deveria ser E30-E42) |
+| **Problema** | Selic em 14,25% (deveria ser 9,48%) | E27 mantido durante crise (deveria ser E30-E42) |
 | **Causa** | COPOM delibera a cada 45 dias | CNPE delibera a cada 3-6 meses |
 | **Custo** | R$ 341 bilhões/ano | R$ 15-20 bilhões em 4 meses |
 | **Responsável** | BCB (abelhudos) | CNPE/MME |
@@ -157,7 +157,7 @@ Seja s ∈ ℝ>0 a taxa Selic anual em percentual.
 |---------|-----------|-----------------|-------|
 | π | IPCA acumulado 12 meses | 4,48% | BCB SGS 13522 |
 | ρ | ROE médio IBOVESPA | 31,23% | B3 Ranking abr/2026 |
-| s_BCB | Selic corrente | 14,50% | BCB, COPOM 03/2026 |
+| s_BCB | Selic corrente | 14,25% | BCB, COPOM 03/2026 |
 | r* | Juro neutro global | 3,50% | IMF WEO 2026 |
 | φ | Fator de ajuste emergentes | 1,39 | Holston et al. 2017 |
 | δ | Prêmio de risco-Brasil | 4,50 pp | CDS 5Y médio 2025 |
@@ -247,14 +247,14 @@ Com a regra automática E*:
 
 SELIX v4.0 — PROVA FORMAL COM Z3
 ============================================================
-Parametros: inflacao=4.48% | ROE=31.23% | BACEN=14.50%
+Parametros: inflacao=4.48% | ROE=31.23% | BACEN=14.25%
 
 ---
 
 T1 Investment Grade    (s <= 9.99):        ✓ PROVADO (SAT)
 T2 Nao Canibaliza      (s <= ROEx0.95):    ✓ PROVADO (SAT)
 T3 Tesouro Solvente    (s-pi <= 5.0%):     ✓ PROVADO (SAT)
-T4 Convergencia        (14.50 > s):        ✓ PROVADO (SAT)
+T4 Convergencia        (14.25 > s):        ✓ PROVADO (SAT)
 T5 Sistema Consistente (T1..T4 SAT):       ✓ PROVADO (SAT)
 
 ---
@@ -319,7 +319,7 @@ SELIX ENERGY IDEAL = 40% (para Brent=126)
 
 | Lambança | Custo anual | Fonte |
 |----------|------------|-------|
-| Selic 14,50% vs. 9,48% | R$ 341 bi | DPMFi = R$ 6,8 T × 5,02 pp |
+| Selic 14,25% vs. 9,48% | R$ 341 bi | DPMFi = R$ 6,8 T × 5,02 pp |
 | Atraso na mistura (118 dias) | R$ 15-20 bi (uma vez) | Importações no pico |
 | **Total** | **R$ 356-361 bi/ano (recorrente + evento)** | |
 
@@ -391,7 +391,7 @@ Como demonstrado por Kydland & Prescott (2004), a única maneira de eliminar o v
 
 ## 12. Conclusão
 
-O modelo SELIX demonstra formalmente que existe uma taxa Selic ótima **s* = 9,48%**. A taxa corrente de 14,50% excede s* em **502 bps** — excesso com custo fiscal estimado em **R$ 341 bilhões/ano**.
+O modelo SELIX demonstra formalmente que existe uma taxa Selic ótima **s* = 9,48%**. A taxa corrente de 14,25% excede s* em **502 bps** — excesso com custo fiscal estimado em **R$ 341 bilhões/ano**.
 
 O paralelo energético mostra que o mesmo problema — **discrição lenta vs. mercado rápido** — custou ao Brasil **R$ 15-20 bilhões** adicionais durante a crise de 2026, devido ao atraso de 118 dias na resposta do CNPE.
 
@@ -453,7 +453,7 @@ Output esperado:
 
 ```
 SELIX (Juros) IDEAL: 9.48%
-Selic BACEN: 14.50%
+Selic BACEN: 14.25%
 Diferencial: -5.02 pp
 
 SELIX Energy (Brent=126): E* = 40%

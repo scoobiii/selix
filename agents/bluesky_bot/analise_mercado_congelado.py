@@ -18,8 +18,8 @@ class AnaliseMercadoCongelado:
         
         self.selix_impacto = {
             "selic_nova": 9.48,
-            "selic_atual": 14.50,
-            "economia_anual": 270e9,  # R$ 270 bilhões
+            "selic_atual": 14.25,
+            "economia_anual": 345e9,  # R$ 345 bilhões
             "investment_grade": "BBB+"
         }
         
@@ -150,7 +150,7 @@ class AnaliseMercadoCongelado:
         print("=" * 70)
         
         mudancas = [
-            "1. Selic 14.5% → 9.48% (custo de capital reduz 35%)",
+            "1. Selic 14.25% → 9.48% (custo de capital reduz 35%)",
             "2. Investment Grade BBB+ (confiança internacional)",
             "3. Risco trabalhista reduz 71% (TrampoForte)",
             f"4. R$ {b3['capital_reativado']/1e9:.0f}B reativados no mercado",

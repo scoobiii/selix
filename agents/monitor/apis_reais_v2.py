@@ -128,11 +128,11 @@ class APIsReais:
             if response.status_code == 200:
                 data = response.json()
                 if data.get('value'):
-                    selic = data['value'][0].get('Mediana', 14.5)
+                    selic = data['value'][0].get('Mediana', 14.25)
                 else:
-                    selic = 14.5
+                    selic = 14.25
             else:
-                selic = 14.5
+                selic = 14.25
             
             resultado = {
                 "selic": selic,
@@ -145,7 +145,7 @@ class APIsReais:
             self._cache_set("selic", resultado)
             return resultado
         except Exception as e:
-            return {"selic": 14.5, "fonte": "FALLBACK", "status": "FALLBACK", "erro": str(e)}
+            return {"selic": 14.25, "fonte": "FALLBACK", "status": "FALLBACK", "erro": str(e)}
     
     # ============================================================
     # 4. CÂMBIO USD/BRL - AwesomeAPI (REAL)

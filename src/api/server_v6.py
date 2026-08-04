@@ -96,7 +96,7 @@ def verify_lean4():
             {"theorem": "T1 - Investment Grade", "result": selix <= 9.99},
             {"theorem": "T2 - Não canibaliza", "result": selix <= ROE * 0.95},
             {"theorem": "T3 - Juro real máximo", "result": selix - INFLACAO <= 5.01},
-            {"theorem": "T4 - Convergência", "result": 14.5 > selix},
+            {"theorem": "T4 - Convergência", "result": 14.25 > selix},
             {"theorem": "T5 - Sistema consistente", "result": True}
         ]
     })

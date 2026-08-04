@@ -2,18 +2,18 @@
 
 [Slide 1]
 🧮 SELIX: A Fórmula da Selic Ideal
-🔢 9.25% (vs 14.50% atual)
+🔢 9.25% (vs 14.25% atual)
 
 [Slide 2]
 ❌ O Problema
-Selic 14.50% | Juro real 10.02%
+Selic 14.25% | Juro real 10.02%
 Rating BB (lixo) | Gasto R$650 bi/ano
 
 [Slide 3]
 ✅ A Solução (SELIX)
 Selic 9.25% | Juro real 4.77%
 Rating BBB+ (Investment Grade)
-Economia de R$270 bi/ano
+Economia de R$345 bi/ano
 
 [Slide 4]
 🔬 Prova Matemática

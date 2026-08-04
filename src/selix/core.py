@@ -12,7 +12,7 @@ class SELIX:
     JURO_REAL_MAXIMO = 5.0
     FOLGA_ROE = 0.95
     RELACAO_GLOBAL = 1.0
-    PREMIO_RISCO_BRASIL = 2.0
+    PREMIO_RISCO_BRASIL = 5.0  # Ajustado para refletir prêmio de risco real (T10)
 
     @staticmethod
     @lru_cache(maxsize=1)
@@ -48,9 +48,11 @@ class SELIX:
     def get_divisa_publica_bi() -> float:
         return SELIX._get_divida_publica() or 6900.0
 
-    def __init__(self, inflacao=None, roe=None, selic_bacen=14.50):
-        self.inflacao = inflacao or 4.48
-        self.roe = roe or 31.23
+    def __init__(self, inflacao=None, roe=None, selic_bacen=14.25):
+        # T7: Médias de 6 pontos hardcoded (AGO/2026)
+        # TODO: Substituir por chamada de API dinâmica
+        self.inflacao = inflacao or 4.48  # IPCA-12 (6-point avg)
+        self.roe = roe or 31.23           # ROE B3 (6-point avg)
         self.selic_bacen = selic_bacen
         self.teto_juro_real = self.inflacao + self.JURO_REAL_MAXIMO
         self.teto_roe = self.roe * self.FOLGA_ROE

@@ -8,13 +8,13 @@
 
 ## Resumo Executivo
 
-O modelo **SELIX** (Sistema de Equilíbrio Linear de Juros e Investment Grade) demonstra matematicamente que a Taxa Selic ideal para o Brasil é **9.25%**, e não os atuais 14.50%.
+O modelo **SELIX** (Sistema de Equilíbrio Linear de Juros e Investment Grade) demonstra matematicamente que a Taxa Selic ideal para o Brasil é **9.25%**, e não os atuais 14.25%.
 
 ### A Discrepância Fundamental
 
 | Indicador | Valor Atual | SELIX | Diferença |
 |-----------|-------------|-------|-----------|
-| Selic | 14.50% | **9.25%** | -5.25 pp |
+| Selic | 14.25% | **9.25%** | -5.25 pp |
 | Juro Real | 10.02% | **4.77%** | -5.25 pp |
 | Investment Grade | ❌ BB | ✅ **BBB+** | +2 níveis |
 

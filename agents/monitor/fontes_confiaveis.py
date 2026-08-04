@@ -179,7 +179,7 @@ class FontesConfi:
     
     def selic_fonte2(self) -> Optional[float]:
         try:
-            return 14.5
+            return 14.25
         except:
             return None
     
@@ -214,7 +214,7 @@ class FontesConfi:
             fonte = "DuckDuckGo Search"
         
         if selic is None:
-            selic = 14.5
+            selic = 14.25
         
         resultado = {"selic": round(selic, 2), "fonte": fonte, "atualizado": datetime.now().isoformat()}
         self._cache_set("selic", resultado)

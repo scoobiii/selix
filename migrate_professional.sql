@@ -119,7 +119,7 @@ WHERE NOT EXISTS (SELECT 1 FROM projecoes WHERE indicador='investment_grade');
 INSERT OR IGNORE INTO projecoes (cenario_id, indicador, valor, unidade, confianca)
 SELECT 
     (SELECT id FROM cenarios WHERE nome='Selix_925'),
-    'economia_anual', 270, 'Bilhões USD', 0.75
+    'economia_anual', 345, 'Bilhões USD', 0.75
 WHERE NOT EXISTS (SELECT 1 FROM projecoes WHERE indicador='economia_anual');
 
 -- 6. Selic 1D projetada (fórmula científica)

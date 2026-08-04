@@ -23,7 +23,7 @@ POLLING_INTERVAL = 30
 MAX_CACHE        = 10_000
 
 
-def calcular_selix(ipca=4.48, roe=31.23, selic_bcb=14.50,
+def calcular_selix(ipca=4.48, roe=31.23, selic_bcb=14.25,
                    r_star=3.50, phi=1.39, delta=4.50):
     s_star = max(r_star * phi + delta, min(9.99, roe * 0.95, ipca + 5.0))
     desvio = round(selic_bcb - s_star, 2)

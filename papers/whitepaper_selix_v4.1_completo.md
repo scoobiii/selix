@@ -12,7 +12,7 @@
 
 ## 0. Resumo Executivo (nova seção)
 
-O Brasil tem **capacidade ociosa de 30% para etanol** e pode elevar imediatamente a mistura para **E32-E35 sem importar**, garantindo **autossuficiência em gasolina pela primeira vez**. Enquanto isso, a **Selic a 14,50%** (juro real ~10%) está **sufocando o setor produtivo** — o caso **Raízen** (maior produtora de cana do mundo) entrou em recuperação extrajudicial em 10/03/2026 por não conseguir rolar dívidas com juros estratosféricos.
+O Brasil tem **capacidade ociosa de 30% para etanol** e pode elevar imediatamente a mistura para **E32-E35 sem importar**, garantindo **autossuficiência em gasolina pela primeira vez**. Enquanto isso, a **Selic a 14,25%** (juro real ~10%) está **sufocando o setor produtivo** — o caso **Raízen** (maior produtora de cana do mundo) entrou em recuperação extrajudicial em 10/03/2026 por não conseguir rolar dívidas com juros estratosféricos.
 
 Este paper une os dois problemas:
 1. **Oferta de etanol:** existe, é ociosa, e a mistura pode ser aumentada sem risco
@@ -106,7 +106,7 @@ A Selic alta **não foi feita para matar a Raízen**, mas foi decisiva para sua 
 
 ### 4.1 Custo de capital vs. investimento em energia
 
-| Indicador | Com Selic 14,50% | Com SELIX 9,48% | Impacto |
+| Indicador | Com Selic 14,25% | Com SELIX 9,48% | Impacto |
 |-----------|-----------------|-----------------|---------|
 | Juro real | 10,02% | 4,77% | -5,25 pp |
 | Custo de hedge cambial | 3-5% a.a. | 1-2% a.a. | -50% |
@@ -135,14 +135,14 @@ A Selic alta **não foi feita para matar a Raízen**, mas foi decisiva para sua 
 |---------|-----------|-----------------|-------|
 | π | IPCA acumulado 12 meses | 4,14% | BCB SGS 13522 |
 | ρ | ROE médio IBOVESPA | 31,23% | B3 Ranking |
-| s_BCB | Selic corrente | 14,50% | BCB COPOM 29/04/2026 |
+| s_BCB | Selic corrente | 14,25% | BCB COPOM 29/04/2026 |
 | δ | Prêmio de risco-Brasil | 4,50 pp | CDS 5Y médio |
 | **Capacidade de etanol ociosa** | **30%** | **Inpasa/UNICA** |
 
 ### 5.2 Pontos de atenção para o setor energético
 
 1. **Demanda por crédito jovem** (expansão de usinas) → requer juro real baixo
-2. **Spread bancário médio** (~22% a.a.) inviabiliza novos projetos com Selic a 14,50%
+2. **Spread bancário médio** (~22% a.a.) inviabiliza novos projetos com Selic a 14,25%
 3. **Investimento em etanol de milho** (Inpasa) só sustentável com Selic a 9-10% máxima
 
 ---
@@ -151,7 +151,7 @@ A Selic alta **não foi feita para matar a Raízen**, mas foi decisiva para sua 
 
 | Cenário | Selic | Juro real | Impacto na energia | Capacidade de investimento |
 |---------|-------|-----------|-------------------|---------------------------|
-| **Cenário atual** | 14,50% | 10,02% | **Sufocamento** (Raízen em RJ) | Zero |
+| **Cenário atual** | 14,25% | 10,02% | **Sufocamento** (Raízen em RJ) | Zero |
 | **SELIX proposta** | **9,48%** | **5,00%** | Respiração | Expansão com hedge viável |
 | **Cenário ótimo** | 7-8% | 3-4% | **Boom de produção** | Autossuficiência plena |
 
@@ -184,7 +184,7 @@ A Selic alta **não foi feita para matar a Raízen**, mas foi decisiva para sua 
 
 O Brasil tem **etanol ocioso** (30% da capacidade instalada), **competitividade internacional** (Inpasa como segunda maior produtora do mundo) e **condições técnicas** para elevar a mistura para **E32-E35 sem importar**.
 
-Entretanto, **a Selic a 14,50% está matando o setor produtivo** — o caso Raízen é a ponta do iceberg. A SELIX prova que **a Selic deveria ser 9,48%** (juro real 4,77%). Com essa taxa:
+Entretanto, **a Selic a 14,25% está matando o setor produtivo** — o caso Raízen é a ponta do iceberg. A SELIX prova que **a Selic deveria ser 9,48%** (juro real 4,77%). Com essa taxa:
 
 - A Raízen teria condições de rolar dívidas e investir
 - O etanol de milho (Inpasa) expandiria ainda mais
