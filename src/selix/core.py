@@ -1,145 +1,133 @@
-<<<<<<< HEAD
 #!/usr/bin/env python3
-=======
->>>>>>> 34471f1 (fix: atualiza core.py e adiciona v7.1)
-import sys
-import json
-import requests
-import time
-from datetime import datetime
-from typing import Optional
-from functools import lru_cache
+"""
+SELIX — core.py (baseline mínimo, v6.2-clean)
 
-class SELIX:
-    TETO_1_DIGITO = 9.99
-    JURO_REAL_MAXIMO = 5.0
-    FOLGA_ROE = 0.95
-    RELACAO_GLOBAL = 1.0
-<<<<<<< HEAD
-    PREMIO_RISCO_BRASIL = 1.16
-=======
-    PREMIO_RISCO_BRASIL = 2.0
->>>>>>> 34471f1 (fix: atualiza core.py e adiciona v7.1)
+Escopo deliberadamente restrito: SÓ os 4 inputs macro que têm fonte
+verificável. Nada de ROIC, RJ, "choque", "multiplicador" — esses
+ficam em módulos separados (ver roic.py) até terem fonte de dado real
+e auditável, não hardcode disfarçado de API.
 
-    @staticmethod
-    @lru_cache(maxsize=1)
-    def _get_selic_atual() -> Optional[float]:
-        try:
-            url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?formato=json"
-            response = requests.get(url, timeout=5)
-            if response.status_code == 200:
-                data = response.json()
-                if data:
-                    return float(data[-1]["valor"])
-        except Exception:
-            pass
-        return None
+Fórmula (reconciliada em conversa — bate com a tabela comparativa
+Brasil/EUA/Europa publicada no README v6.1, que a forma multiplicativa
+documentada originalmente NÃO reproduzia):
 
-    @staticmethod
-    @lru_cache(maxsize=1)
-    def _get_divida_publica() -> Optional[float]:
-        try:
-            url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.14558/dados?formato=json"
-            response = requests.get(url, timeout=5)
-            if response.status_code == 200:
-                data = response.json()
-                if data:
-                    return float(data[-1]["valor"])
-        except Exception:
-            pass
-        return 6900.0
+    juro_real_necessario = inflacao + (premio_risco / credibilidade) + 0.5 * gap_produto
 
-    @staticmethod
-    def get_divisa_publica_bi() -> float:
-        return SELIX._get_divida_publica() or 6900.0
+Todos os parâmetros de entrada são PERCENTUAIS EM PONTOS (ex: 4.48
+significa 4,48%, não 0.0448). Isso evita o bug recorrente do "×100"
+que apareceu em versões anteriores (embi_api retornando já em % e o
+motor multiplicando de novo).
+"""
 
-    def __init__(self, inflacao=None, roe=None, selic_bacen=14.50):
-        self.inflacao = inflacao or 4.48
-        self.roe = roe or 31.23
-        self.selic_bacen = selic_bacen
-<<<<<<< HEAD
-        self.etanol_mix = 0.27  # 27% (valor oficial)
-        self.biodiesel_mix = 0.15  # 15% (valor oficial)
-        self.teto_juro_real = self.inflacao + self.JURO_REAL_MAXIMO
-        self.teto_roe = self.roe * self.FOLGA_ROE
-        self.teto_global = (self.RELACAO_GLOBAL * self.inflacao) + self.PREMIO_RISCO_BRASIL
-=======
-        self.teto_juro_real = self.inflacao + self.JURO_REAL_MAXIMO
-        self.teto_roe = self.roe * self.FOLGA_ROE
->>>>>>> 34471f1 (fix: atualiza core.py e adiciona v7.1)
+from dataclasses import dataclass
+from math import floor
 
-    def calcular_selix_continuo(self):
-        return min(
-            self.TETO_1_DIGITO,
-            self.teto_juro_real,
-<<<<<<< HEAD
-            self.teto_roe,
-            self.teto_global
-=======
-            self.teto_roe
->>>>>>> 34471f1 (fix: atualiza core.py e adiciona v7.1)
+
+COPOM_GRID = 0.25  # p.p. — step de quantização das decisões do Copom
+
+
+@dataclass(frozen=True)
+class SelixInputs:
+    """
+    Inputs macro do modelo. Todos em pontos percentuais (4.48 = 4,48%).
+
+    Fontes e status na data de fechamento desta versão (04/ago/2026):
+      inflacao_esperada : IPCA esperado 12m, Focus/BCB           -> 4.48
+      premio_risco      : CDS Brasil 5Y (NÃO usar EMBI+,
+                           descontinuado pelo JPMorgan/Ipeadata
+                           em jul/2024). Fechamento 01/jul/2026
+                           = 125.56 bps = 1.2556%.               -> 1.25
+      credibilidade     : histórico de cumprimento da meta de
+                           inflação, 0.0-1.0. Valor 0.50 é o
+                           baseline documentado nas versões
+                           anteriores; NÃO CONFIRMADO contra
+                           fonte oficial. O v7.0 usou 0.30 sem
+                           explicar a origem — não usar até
+                           rastrear a fonte.                      -> 0.50 (⚠️ revisar)
+      gap_produto       : hiato do produto, BCB RPM. 2º tri/2026
+                           = +0.4% a +0.5% (positivo, não negativo
+                           — só fica negativo a partir do
+                           4º tri/2027, projeção).                -> 0.50
+    """
+    inflacao_esperada: float
+    premio_risco: float
+    credibilidade: float
+    gap_produto: float
+
+
+def quantizar_copom(valor: float, grid: float = COPOM_GRID) -> float:
+    """Arredonda para baixo ao múltiplo de `grid` mais próximo (grid do Copom)."""
+    return round(floor(valor / grid) * grid, 2)
+
+
+def calcular_juro_real_necessario(inputs: SelixInputs) -> float:
+    """
+    juro_real_necessario = inflacao + (premio_risco / credibilidade) + 0.5 * gap_produto
+
+    Levanta ValueError se credibilidade <= 0 (divisão por zero / não-sentido
+    econômico — credibilidade é definida em (0, 1]).
+    """
+    if inputs.credibilidade <= 0:
+        raise ValueError(
+            f"credibilidade deve ser > 0, recebido: {inputs.credibilidade}"
         )
-
-    @staticmethod
-    def quantizar(valor, grid=0.25):
-        return (int(valor / grid)) * grid
-
-    def calcular_selix(self):
-        teto_efetivo = self.calcular_selix_continuo()
-        selix = self.quantizar(teto_efetivo)
-        if selix - self.inflacao > self.JURO_REAL_MAXIMO:
-            selix = self.quantizar(self.inflacao + self.JURO_REAL_MAXIMO)
-        return min(selix, self.TETO_1_DIGITO)
-
-    def economia_anual(self, divida_publica_bi: Optional[float] = None):
-        selix = self.calcular_selix()
-        diferencial = self.selic_bacen - selix
-        if diferencial <= 0:
-            return None
-        dpl = divida_publica_bi or self.get_divisa_publica_bi()
-        return round(dpl * (diferencial / 100), 2)
-
-    def diagnosticar(self):
-        selix = self.calcular_selix()
-        economia = self.economia_anual()
-        return {
-            "selix_continuo": round(self.calcular_selix_continuo(), 2),
-            "selix_ideal": selix,
-            "selic_atual": self.selic_bacen,
-            "diferencial": round(self.selic_bacen - selix, 2),
-            "juro_real_atual": round(self.selic_bacen - self.inflacao, 2),
-            "juro_real_selix": round(selix - self.inflacao, 2),
-            "investment_grade": selix <= self.TETO_1_DIGITO,
-            "convergencia_meses": abs(self.selic_bacen - selix) / 0.5,
-            "economia_anual_bi": economia,
-            "divida_publica_bi": self.get_divisa_publica_bi(),
-        }
+    return (
+        inputs.inflacao_esperada
+        + (inputs.premio_risco / inputs.credibilidade)
+        + 0.5 * inputs.gap_produto
+    )
 
 
-def main():
-    if len(sys.argv) > 1 and sys.argv[1] == "--daemon":
-        while True:
-            selix = SELIX()
-            eco = selix.economia_anual()
-            dpl = SELIX.get_divisa_publica_bi()
-            print(f"[{datetime.now().isoformat()}] Dívida: R$ {dpl:.2f} bi | Economia: R$ {eco:.2f} bi/ano")
-            sys.stdout.flush()
-            time.sleep(60)
-    else:
-        resultado = SELIX().diagnosticar()
-        print(f"\n📊 SELIX IDEAL: {resultado['selix_ideal']}%")
-        print(f"   Selic atual: {resultado['selic_atual']}%")
-        print(f"   Diferencial: {resultado['diferencial']:.2f} p.p.")
-        print(f"   Juro real atual: {resultado['juro_real_atual']:.2f}%")
-        print(f"   Juro real SELIX: {resultado['juro_real_selix']:.2f}%")
-        print(f"   Investment Grade: {'SIM' if resultado['investment_grade'] else 'NÃO'}")
-        print(f"   💰 Economia anual: R$ {resultado['economia_anual_bi']:.2f} bi")
-        print(f"   Convergência: {resultado['convergencia_meses']:.1f} meses")
+def calcular_selix(inputs: SelixInputs, selic_atual: float = 14.25) -> dict:
+    """
+    Retorna o payload completo do cálculo, com o valor bruto (contínuo)
+    e o quantizado ao grid do Copom, além do diferencial vs Selic atual.
+    """
+    juro_real = calcular_juro_real_necessario(inputs)
+    selic_ideal_bruta = juro_real  # ver nota de nomenclatura abaixo
+    selic_ideal = quantizar_copom(selic_ideal_bruta)
+    diferencial = round(selic_atual - selic_ideal, 2)
 
-<<<<<<< HEAD
+    return {
+        "inflacao_esperada": inputs.inflacao_esperada,
+        "premio_risco": inputs.premio_risco,
+        "credibilidade": inputs.credibilidade,
+        "gap_produto": inputs.gap_produto,
+        "juro_real_necessario": round(juro_real, 2),
+        "selic_ideal_continua": round(selic_ideal_bruta, 2),
+        "selic_ideal_quantizada": selic_ideal,
+        "selic_atual": selic_atual,
+        "diferencial_pp": diferencial,
+    }
 
-if __name__ == "__main__":  # pragma: no cover
-=======
+
+# Nota de nomenclatura: o README v6.1 chamava o resultado da fórmula de
+# "juro_real_necessario" e depois o usava diretamente como "Selic ideal"
+# (quantizada). Isso é uma imprecisão técnica — juro real e Selic nominal
+# não são a mesma coisa sem passar por uma equação de Fisher. Mantido aqui
+# por compatibilidade com a tabela histórica já publicada, mas sinalizado:
+# se for pra virar peça de comunicação técnica séria (Copom, academia),
+# isso precisa ser corrigido para incorporar a meta/expectativa de inflação
+# explicitamente na conversão real -> nominal.
+
+
+# Baseline atual (04/ago/2026), a ser usado enquanto não houver
+# integração de API viva para os 4 inputs:
+BASELINE_ATUAL = SelixInputs(
+    inflacao_esperada=4.48,
+    premio_risco=1.25,
+    credibilidade=0.50,   # ⚠️ não confirmado — ver docstring de SelixInputs
+    gap_produto=0.50,
+)
+
+
 if __name__ == "__main__":
->>>>>>> 34471f1 (fix: atualiza core.py e adiciona v7.1)
-    main()
+    resultado = calcular_selix(BASELINE_ATUAL)
+    print("=" * 60)
+    print("SELIX — core.py (baseline macro, 4 inputs)")
+    print("=" * 60)
+    for k, v in resultado.items():
+        print(f"{k:30s}: {v}")
+    print("=" * 60)
+    if BASELINE_ATUAL.credibilidade == 0.50:
+        print("⚠️  credibilidade=0.50 é baseline não confirmado. Ver docstring.")
