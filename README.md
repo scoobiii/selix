@@ -106,7 +106,7 @@ nano .env   # preencha suas credenciais
 4. Inicie o sistema
 
 ```bash
-./run_selix.sh
+./start_selix.sh
 ```
 
 ---
