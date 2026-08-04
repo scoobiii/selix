@@ -156,3 +156,38 @@ theorem tetos_consistentes :
     · rw [h4]
       exact h2
     · rw [h3, h4]
+
+-- ============================================================
+-- T9 REAL: Alinhamento formal entre 9.48% e 9.25%
+-- ============================================================
+
+-- Definição formal de quantização
+def quantizar (x : ℚ) (grid : ℚ) : ℚ := (⌊x / grid⌋ : ℚ) * grid
+
+-- Valores formais
+def s_star_continuo_formal : ℚ := 948 / 100
+def s_star_operacional_formal : ℚ := 925 / 100
+
+-- Prova: 9.25 é a quantização de 9.48
+theorem alinhamento_948_925_formal :
+  quantizar s_star_continuo_formal (25/100) = 925/100 := by
+  unfold quantizar s_star_continuo_formal
+  have h1 : (948/100) / (25/100) = 3792/100 := by norm_num
+  rw [h1]
+  have h2 : Int.floor (3792/100 : ℚ) = 37 := by
+    apply Int.floor_eq_iff.mpr
+    constructor <;> norm_num
+  rw [h2]
+  norm_num
+
+-- Teorema: A relação entre os dois valores
+theorem relacao_948_925 :
+  s_star_continuo_formal = 948/100 ∧ s_star_operacional_formal = 925/100 ∧
+  s_star_operacional_formal = quantizar s_star_continuo_formal (25/100) := by
+  constructor
+  · unfold s_star_continuo_formal
+    norm_num
+  · constructor
+    · unfold s_star_operacional_formal
+      norm_num
+    · exact alinhamento_948_925_formal
