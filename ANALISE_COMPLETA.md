@@ -58,6 +58,34 @@ cat > ANALISE_COMPLETA.md << 'EOF'
 | Convergência | 10.5 meses | Cortes de 0.5%/mês |
 | Economia anual | R$ 345 bilhões | Financia Renda Básica |
 
+## 📊 Reconciliação do Impacto Econômico (270 vs 345 vs 430 bi)
+
+É importante contextualizar os diferentes valores de impacto econômico que podem ser encontrados na documentação e comunicações do SELIX:
+
+| Cenário | Dívida Considerada | Diferencial Selic | Impacto | Fonte |
+|:--------|:-------------------|:------------------|:--------|:------|
+| **Estimativa Antiga** | R$ 5,4 tri | 5,0 p.p. | R$ 270 bi | Documentação anterior |
+| **Dívida Líquida STN/BCB** | R$ 6,9 tri | 5,0 p.p. | R$ 345 bi | Modelo formal Lean (atual) |
+| **Alívio Total de Juros** | R$ 5,4 tri (parcela pós-fixada) | 8,0 p.p. (14,25% → 6,25%) | R$ 430 bi | Análise macroeconômica |
+
+Todos os três números são válidos, dependendo do contexto e da métrica utilizada. O modelo formal do SELIX atualmente prova a economia de R$ 345 bilhões, baseada na dívida pública líquida de R$ 6,9 trilhões e no diferencial de 5,00 pontos percentuais (de 14,25% para 9,25%).
+
+## 🧐 Limitações do Modelo Atual (v5.4.0) e Visão v6.0
+
+O SELIX v5.4.0, embora formalmente provado no Lean 4, opera como um **"modelo de equilíbrio parcial"** com parâmetros calibrados estaticamente. Ele formaliza médias históricas e aritmética, mas não é um substituto para um modelo de Equilíbrio Geral Dinâmico e Estocástico (DSGE) completo, como os utilizados pelo Banco Central (e.g., modelo SAMBA).
+
+Para o **SELIX v6.0**, o plano é evoluir para um **"Modelo Dinâmico Híbrido"** que incorpore:
+
+| Componente | Modelo Atual (v5.4.0) | Próximo Nível (v6.0 - Estilo BCB) |
+|:-----------|:----------------------|:----------------------------------|
+| **Taxa Natural (r*)** | Filtro HP estático (6,25%) | Estimativa em tempo real via Curva de Juros Futuros + Prêmio de Risco |
+| **Gap de Produto** | Média histórica simples | Função de produção agregada com capacidade ociosa dinâmica |
+| **Inflação (pi)** | Meta + Desvio Padrão | Curva de Phillips Nova-Keynesiana com expectativas desagregadas (Focus) |
+| **Prêmio de Risco (rp)** | Constante manual | Derivado da volatilidade implícita (VIX Brasil/EMBI) e risco fiscal |
+| **Derivação** | Aritmética Lean/Z3 | Simulação estocástica com horizonte de política monetária (4-8 trimestres) |
+
+Esta evolução permitirá ao SELIX operar com maior dinamismo e incorporar a incerteza e o tempo real, aproximando-o das metodologias de "accountability institucional" do Banco Central.
+
 ## 📁 PROJETO ENTREGUE
 
 ```

@@ -19,15 +19,17 @@
 ---
 
 ## 🎯 O que é o SELIX?
-### 📐 Modelo Econômico
+### 📐 Modelo Econômico (Equilíbrio Parcial Estático v5.4.0)
 
-O SELIX deriva a Selic ideal a partir de **três tetos econômicos reais**:
+O SELIX v5.4.0 deriva a Selic ideal a partir de **três tetos econômicos reais**, operando como um modelo de equilíbrio parcial com parâmetros estáticos. Ele formaliza a aritmética de médias históricas e constantes, mas não é um modelo de Equilíbrio Geral Dinâmico e Estocástico (DSGE) como os utilizados pelo Banco Central.
 
 | Teto | Fórmula | Valor | Fonte |
 |------|---------|-------|-------|
 | **Regra de Taylor** | `π_target + r_star + risk_premium` | 9,48% | BCB/DSGE |
 | **Custo de capital** | `ROE_B3 * 0.95` | 29,67% | Economatica/B3 |
 | **Teto inflacionário** | `π_target + 5%` | 9,48% | Meta BCB |
+
+Para o **SELIX v6.0**, o plano é evoluir para um **"Modelo Dinâmico Híbrido"** que incorpore estimativas em tempo real e simulações estocásticas, aproximando-o das metodologias do BCB.
 
 ### 🔢 9,48 vs 9,25: Reconciliação
 
