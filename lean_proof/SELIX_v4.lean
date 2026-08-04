@@ -157,3 +157,23 @@ theorem impacto_total_selic_1d :
           · exact upside_valuation_calculado.1
           · exact upside_valuation_calculado.2
 
+
+-- ============================================================
+-- T11: Modelo com Multiplicador de Credibilidade
+-- ============================================================
+
+def inflacao_brasil : ℚ := 448 / 100
+def premio_risco_brasil : ℚ := 2
+def credibilidade_brasil : ℚ := 5 / 10
+def gap_produto_brasil : ℚ := -5 / 10
+
+def multiplicador_credibilidade : ℚ := 1 + (premio_risco_brasil / 100) * (1 + (1 - credibilidade_brasil) * (1/2))
+
+def juro_real_necessario : ℚ := 
+  inflacao_brasil * multiplicador_credibilidade + (1/2) * gap_produto_brasil
+
+theorem juro_real_brasil_calculado :
+  juro_real_necessario = 948 / 100 := by
+  unfold juro_real_necessario inflacao_brasil premio_risco_brasil credibilidade_brasil gap_produto_brasil multiplicador_credibilidade
+  norm_num
+  decide
