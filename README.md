@@ -151,7 +151,7 @@ O que o SELIX NÃO é:
 
 · ❌ Modelo DSGE: Não substitui o SAMBA do BCB nem modelos de equilíbrio geral dinâmico
 · ❌ Accountability institucional: Não tem mandato legal nem acesso privilegiado a dados internos
-· ❌ Previsão estocástica: Não incorpora incerteza em tempo real com simulações de Monte Carlo
+· ❌ Estimativa estocástica: Não incorpora incerteza em tempo real com simulações de Monte Carlo
 
 O que o SELIX É:
 
@@ -238,3 +238,25 @@ v5.0.0 2026-07-28 Lançamento inicial com API, bot, worker
 ---
 
 O SELIX v6.2 está 100% completo e pronto para produção! 🚀🏆
+
+## 💰 Reconciliação dos Impactos — R$ 270/345/430 bi
+
+O SELIX trabalha com **três cenários distintos**, dependendo da base da dívida e do diferencial considerado:
+
+| Cenário | Dívida | Diferencial | Impacto | Contexto |
+|---------|--------|-------------|---------|----------|
+| **R$ 270 bi** | R$ 5,4 tri (líquida) | 5,0 p.p. | R$ 270 bi | Dívida líquida (STN) |
+| **R$ 345 bi** | R$ 6,9 tri (bruta) | 5,0 p.p. | R$ 345 bi | Dívida bruta (BCB) |
+| **R$ 431 bi** | R$ 5,4 tri (líquida) | 8,0 p.p. | R$ 431 bi | Selic 2D → 1D (14,25→6,25) |
+
+**Qual usar?** O valor operacional do SELIX é **R$ 345 bi** (dívida bruta BCB). Os outros cenários são análises de sensibilidade.
+
+> **Nota:** O valor de R$ 431 bi é um cenário hipotético de queda da Selic para 6,25%, não uma projeção do SELIX.
+
+## ⚠️ Disclaimer
+
+O SELIX é uma **ferramenta de apoio à decisão**, não uma fonte de previsões econômicas definitivas. Todos os números são **estimativas** baseadas em dados públicos e modelos matemáticos. O sistema não substitui a análise de especialistas nem as decisões do COPOM.
+
+**Uso recomendado:** Auditoria, transparência, educação e referência técnica.
+
+**Uso NÃO recomendado:** Substituir o COPOM, previsões de curto prazo, decisões de trading sem validação adicional.
