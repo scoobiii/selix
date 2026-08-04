@@ -63,3 +63,97 @@ theorem selix_gos3_completo :
   constructor
   · exact s_star_gos3
   · exact quantizacao_gos3
+
+-- ============================================================
+-- IMPACTO DA SELIC 2D (14.25%) vs 1D (6.25%)
+-- ============================================================
+
+-- Dados macro (fonte: BCB/STN - jun/ago 2026)
+def divida_bruta : ℚ := 10800  -- R$ 10,8 tri (81.9% do PIB)
+def juros_nominais_12m : ℚ := 1160  -- R$ 1,16 tri (8.8% do PIB)
+def custo_medio_divida : ℚ := 1268 / 100  -- 12.68% a.a.
+def selic_atual_2d : ℚ := 1425 / 100  -- 14.25%
+def selic_ideal_1d : ℚ := 625 / 100  -- 6.25%
+
+-- Parcela Selic-linked da dívida (LFTs, ~49%)
+def fracao_selic_linked : ℚ := 49 / 100
+
+-- Elasticidade oficial do BC: cada 1 p.p. reduz dívida em ~R$ 60-66 bi
+def elasticidade_bc_min : ℚ := 60
+def elasticidade_bc_max : ℚ := 66
+
+-- Diferença entre Selic 2D e 1D
+def diferencial_2d_1d : ℚ := selic_atual_2d - selic_ideal_1d  -- 8 p.p.
+
+-- Parcela pós-fixada da dívida
+def parcela_pos_fixada : ℚ := divida_bruta * fracao_selic_linked  -- ~R$ 5,29 tri
+
+-- Economia anual de juros (aproximação bruta)
+def economia_anual_juros : ℚ :=
+  parcela_pos_fixada * (diferencial_2d_1d / 100)  -- ~R$ 423 bi
+
+-- Efeito total no estoque (elasticidade × diferencial)
+def reducao_estoque_min : ℚ := elasticidade_bc_min * diferencial_2d_1d  -- ~480 bi
+def reducao_estoque_max : ℚ := elasticidade_bc_max * diferencial_2d_1d  -- ~528 bi
+
+-- Teoremas: impactos formalmente calculados
+theorem economia_anual_calculada :
+  economia_anual_juros > 400 ∧ economia_anual_juros < 450 := by
+  unfold economia_anual_juros parcela_pos_fixada divida_bruta
+        fracao_selic_linked diferencial_2d_1d
+  norm_num
+  decide
+
+theorem reducao_estoque_calculada :
+  reducao_estoque_min > 470 ∧ reducao_estoque_max < 540 := by
+  unfold reducao_estoque_min reducao_estoque_max
+        elasticidade_bc_min elasticidade_bc_max diferencial_2d_1d
+  norm_num
+  decide
+
+-- ============================================================
+-- IMPACTO NO VALUATION (P/L)
+-- ============================================================
+
+def ibovespa_atual : ℚ := 178000  -- pontos
+def pl_atual : ℚ := 84 / 10  -- 8.4×
+def pl_historico_media : ℚ := 105 / 10  -- 10.5×
+def pl_otimista : ℚ := 12  -- 12×
+
+-- Market cap Ibovespa (estimativa)
+def market_cap_ibovespa : ℚ := 5500  -- R$ 5,5 tri
+
+-- Potencial de expansão
+def expansao_pl_min : ℚ := (pl_historico_media - pl_atual) / pl_atual  -- +25%
+def expansao_pl_max : ℚ := (pl_otimista - pl_atual) / pl_atual  -- +43%
+
+def upside_valuation_min : ℚ := market_cap_ibovespa * expansao_pl_min  -- ~R$ 1,37 tri
+def upside_valuation_max : ℚ := market_cap_ibovespa * expansao_pl_max  -- ~R$ 2,36 tri
+
+theorem upside_valuation_calculado :
+  upside_valuation_min > 1300 ∧ upside_valuation_max < 2400 := by
+  unfold upside_valuation_min upside_valuation_max
+        market_cap_ibovespa expansao_pl_min expansao_pl_max
+  norm_num
+  decide
+
+-- ============================================================
+-- TEOREMA FINAL: IMPACTO COMBINADO
+-- ============================================================
+
+theorem impacto_total_selic_1d :
+  economia_anual_juros > 400 ∧ economia_anual_juros < 450 ∧
+  reducao_estoque_min > 470 ∧ reducao_estoque_max < 540 ∧
+  upside_valuation_min > 1300 ∧ upside_valuation_max < 2400 := by
+  constructor
+  · exact economia_anual_calculada.1
+  · constructor
+    · exact economia_anual_calculada.2
+    · constructor
+      · exact reducao_estoque_calculada.1
+      · constructor
+        · exact reducao_estoque_calculada.2
+        · constructor
+          · exact upside_valuation_calculado.1
+          · exact upside_valuation_calculado.2
+
