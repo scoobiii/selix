@@ -10,7 +10,7 @@
 - Selic ideal: 9.25%
 - Juro real: 4.77%
 - Rating: BBB+ (Investment Grade)
-- Economia: R$ 270 bi/ano
+- Economia: R$ 345 bi/ano
 
 ## Slide 3: Prova Matemática
 - Z3 SMT Solver (Microsoft) → 5 teoremas
