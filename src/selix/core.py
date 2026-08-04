@@ -1,8 +1,3 @@
-import json
-import requests
-from datetime import datetime
-from typing import Optional, Dict, Any
-from functools import lru_cache
 #!/usr/bin/env python3
 
 class SELIX:
@@ -15,7 +10,7 @@ class SELIX:
     def __init__(self, inflacao=None, roe=None, selic_bacen=14.50):
         self.inflacao = inflacao or 4.48
         self.roe = roe or 31.23
-        self.selic_bacen = self._get_selic_atual() or selic_bacen
+        self.selic_bacen = selic_bacen
         self.teto_juro_real = self.inflacao + self.JURO_REAL_MAXIMO
         self.teto_roe = self.roe * self.FOLGA_ROE
         self.teto_global = (self.RELACAO_GLOBAL * self.inflacao) + self.PREMIO_RISCO_BRASIL
@@ -39,7 +34,6 @@ class SELIX:
         return min(selix, 9.99)
 
     def diagnosticar(self):
-        economia = self.economia_anual()
         selix = self.calcular_selix()
         return {
             "selix_ideal": selix,
@@ -69,55 +63,3 @@ def main():
 
 if __name__ == "__main__":  # pragma: no cover
     main()  # pragma: no cover
-
-    # ============================================================
-    # T8: Dados reais da dívida pública e economia
-    # ============================================================
-
-    @staticmethod
-    @lru_cache(maxsize=1)
-    def _get_selic_atual() -> Optional[float]:
-        """Busca a Selic atual da API do BCB"""
-        try:
-            url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?formato=json"
-            response = requests.get(url, timeout=5)
-            if response.status_code == 200:
-                data = response.json()
-                if data:
-                    return float(data[-1]["valor"])
-        except Exception:
-            pass
-        return None
-
-    @staticmethod
-    @lru_cache(maxsize=1)
-    def _get_divida_publica() -> Optional[float]:
-        """Busca o estoque da dívida pública líquida do STN/BCB"""
-        try:
-            url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.14558/dados?formato=json"
-            response = requests.get(url, timeout=5)
-            if response.status_code == 200:
-                data = response.json()
-                if data:
-                    return float(data[-1]["valor"])
-        except Exception:
-            pass
-        return 6900.0
-
-    @staticmethod
-    def _get_estoque_divida(ano: int = 2026) -> float:
-        """Retorna o estoque da dívida pública em R$ bilhões"""
-        projecoes = {
-            2023: 6100.0,
-            2024: 6400.0,
-            2025: 6700.0,
-            2026: 6900.0,
-            2027: 7200.0,
-        }
-        return projecoes.get(ano, 6900.0)
-
-    @staticmethod
-    def get_divisa_publica_bi() -> float:
-        """Retorna a dívida pública líquida atualizada (R$ bi)"""
-        return SELIX._get_divida_publica() or 6900.0
-
