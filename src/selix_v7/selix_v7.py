@@ -1,85 +1,72 @@
 #!/usr/bin/env python3
 """
-SELIX v7.0 - Modelo com Derivação Endógena
-Versão simplificada para relatório COPOM
+SELIX v7.0 - Motor com Derivação Endógena
 """
 
-import requests
-from datetime import datetime
-from typing import Dict, Optional
+import sys
+import os
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from src.selix.focus_api import FocusAPI
+from src.selix.embi_api import EMBIApi
+from src.selix.credibilidade import CredibilidadeModel
+from src.selix.commodities import CommoditiesAPI
+from src.selix.core import SELIX
 
 
-class SelixV7:
-    """Motor do SELIX v7.0 para relatórios COPOM"""
+class SelixV7(SELIX):
+    """
+    SELIX v7.0 - Modelo com parâmetros derivados endogenamente
+    """
 
     def __init__(self):
-        self.base_url = "https://api.bcb.gov.br/dados/serie"
-
-    def get_selic_atual(self) -> float:
-        """Obtém a Selic atual da API do BCB"""
-        try:
-            url = f"{self.base_url}/bcdata.sgs.11/dados?formato=json"
-            response = requests.get(url, timeout=5)
-            data = response.json()
-            return float(data[-1]["valor"])
-        except Exception:
-            return 14.25  # fallback
-
-    def get_divida_publica(self) -> float:
-        """Obtém a dívida pública líquida"""
-        try:
-            url = f"{self.base_url}/bcdata.sgs.14558/dados?formato=json"
-            response = requests.get(url, timeout=5)
-            data = response.json()
-            return float(data[-1]["valor"])
-        except Exception:
-            return 6900.0
+        super().__init__()
+        self.focus = FocusAPI()
+        self.embi = EMBIApi()
+        self.cred = CredibilidadeModel()
+        self.commodities = CommoditiesAPI()
 
     def calcular_selic_ideal(self):
-        """Calcula a Selic ideal com parâmetros derivados"""
-        # Parâmetros (simulados para demonstração)
-        # Em produção: viriam de APIs Focus/EMBI+/Commodities
-        premio_risco = 2.00
-        credibilidade = 0.50
-        inflacao_esperada = 4.48
-        gap_produto = -0.5
-        choque_oil = 80.0
-        choque_ttf = 40.0
+        """Calcula Selic ideal com parâmetros dinâmicos"""
+        # Parâmetros derivados
+        inflacao = self.focus.get_ipca_esperado()
+        premio_risco = self.embi.get_spread_percent()
+        credibilidade = self.cred.calcular_credibilidade()
+        gap = self.focus.get_gap_produto()
+        choque = self.commodities.ajuste_choque()
 
         # Multiplicador de credibilidade
-        multiplicador = 1 + premio_risco / 100 + (1 - credibilidade) * 0.5
+        multiplicador = 1 + premio_risco + (1 - credibilidade) * 0.5
 
-        # Selic ideal
-        selic_ideal = inflacao_esperada * multiplicador + 0.5 * gap_produto
+        # Juro real necessário
+        juro_real = inflacao * multiplicador + choque + 0.5 * gap
 
-        # Intervalo de confiança (86%)
-        desvio = 0.25
-        selic_inferior = selic_ideal - 1.5 * desvio
-        selic_superior = selic_ideal + 1.5 * desvio
+        # Selic ideal = juro_real + meta de inflação
+        meta_inflacao = 3.00
+        selic_ideal = juro_real + meta_inflacao
 
-        # Impacto econômico
-        selic_atual = self.get_selic_atual()
-        divida = self.get_divida_publica()
-        economia = divida * ((selic_atual - selic_ideal) / 100)
+        # Quantização ao grid do Copom (0.25pp)
+        selic_quantizado = int(selic_ideal / 0.25) * 0.25
 
-        from types import SimpleNamespace
-        return SimpleNamespace(
-            selic_ideal=round(selic_ideal, 2),
-            selic_inferior=round(selic_inferior, 2),
-            selic_superior=round(selic_superior, 2),
-            premio_risco=round(premio_risco, 2),
-            credibilidade=round(credibilidade, 2),
-            inflacao_esperada=round(inflacao_esperada, 2),
-            gap_produto=round(gap_produto, 2),
-            choque_oil=round(choque_oil, 2),
-            choque_ttf=round(choque_ttf, 2),
-            economia_anual=round(economia, 2),
-            timestamp=datetime.now().isoformat()
-        )
+        return {
+            "selic_ideal": round(selic_quantizado, 2),
+            "juro_real_necessario": round(juro_real, 2),
+            "inflacao_esperada": round(inflacao, 2),
+            "premio_risco": round(premio_risco * 100, 2),
+            "credibilidade": round(credibilidade, 2),
+            "gap_produto": round(gap, 2),
+            "choque": choque,
+            "multiplicador": round(multiplicador, 3),
+        }
 
 
 if __name__ == "__main__":
     selix = SelixV7()
-    r = selix.calcular_selic_ideal()
-    print(f"Selic ideal: {r.selic_ideal}%")
-    print(f"Economia anual: R$ {r.economia_anual:.2f} bi")
+    resultado = selix.calcular_selic_ideal()
+    print("=" * 60)
+    print("📊 SELIX v7.0 - Derivação Endógena")
+    print("=" * 60)
+    for k, v in resultado.items():
+        print(f"   {k}: {v}")
