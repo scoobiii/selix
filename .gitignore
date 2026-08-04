@@ -35,7 +35,6 @@ auditoria_*.json
 fix_*.sh
 run_*_pro.sh
 start_*_full.sh
-test_*.py
 generate_swagger.py
 *.bak
 *.backup

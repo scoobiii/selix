@@ -61,5 +61,5 @@ def main():
     print(f"   Convergência: {resultado['convergencia_meses']:.1f} meses")
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__":  # pragma: no cover
+    main()  # pragma: no cover
