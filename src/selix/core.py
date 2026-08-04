@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 #!/usr/bin/env python3
+=======
+>>>>>>> 34471f1 (fix: atualiza core.py e adiciona v7.1)
 import sys
 import json
 import requests
@@ -12,12 +15,15 @@ class SELIX:
     JURO_REAL_MAXIMO = 5.0
     FOLGA_ROE = 0.95
     RELACAO_GLOBAL = 1.0
+<<<<<<< HEAD
     PREMIO_RISCO_BRASIL = 1.16
+=======
+    PREMIO_RISCO_BRASIL = 2.0
+>>>>>>> 34471f1 (fix: atualiza core.py e adiciona v7.1)
 
     @staticmethod
     @lru_cache(maxsize=1)
     def _get_selic_atual() -> Optional[float]:
-        """Busca a Selic atual da API do BCB"""
         try:
             url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?formato=json"
             response = requests.get(url, timeout=5)
@@ -32,7 +38,6 @@ class SELIX:
     @staticmethod
     @lru_cache(maxsize=1)
     def _get_divida_publica() -> Optional[float]:
-        """Busca o estoque da dívida pública líquida do STN/BCB"""
         try:
             url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.14558/dados?formato=json"
             response = requests.get(url, timeout=5)
@@ -52,18 +57,27 @@ class SELIX:
         self.inflacao = inflacao or 4.48
         self.roe = roe or 31.23
         self.selic_bacen = selic_bacen
+<<<<<<< HEAD
         self.etanol_mix = 0.27  # 27% (valor oficial)
         self.biodiesel_mix = 0.15  # 15% (valor oficial)
         self.teto_juro_real = self.inflacao + self.JURO_REAL_MAXIMO
         self.teto_roe = self.roe * self.FOLGA_ROE
         self.teto_global = (self.RELACAO_GLOBAL * self.inflacao) + self.PREMIO_RISCO_BRASIL
+=======
+        self.teto_juro_real = self.inflacao + self.JURO_REAL_MAXIMO
+        self.teto_roe = self.roe * self.FOLGA_ROE
+>>>>>>> 34471f1 (fix: atualiza core.py e adiciona v7.1)
 
     def calcular_selix_continuo(self):
         return min(
             self.TETO_1_DIGITO,
             self.teto_juro_real,
+<<<<<<< HEAD
             self.teto_roe,
             self.teto_global
+=======
+            self.teto_roe
+>>>>>>> 34471f1 (fix: atualiza core.py e adiciona v7.1)
         )
 
     @staticmethod
@@ -122,6 +136,10 @@ def main():
         print(f"   💰 Economia anual: R$ {resultado['economia_anual_bi']:.2f} bi")
         print(f"   Convergência: {resultado['convergencia_meses']:.1f} meses")
 
+<<<<<<< HEAD
 
 if __name__ == "__main__":  # pragma: no cover
+=======
+if __name__ == "__main__":
+>>>>>>> 34471f1 (fix: atualiza core.py e adiciona v7.1)
     main()
