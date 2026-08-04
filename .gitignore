@@ -38,3 +38,4 @@ start_*_full.sh
 generate_swagger.py
 *.bak
 *.backup
+src/selix_v7/
