@@ -12,7 +12,7 @@ class SELIX:
     JURO_REAL_MAXIMO = 5.0
     FOLGA_ROE = 0.95
     RELACAO_GLOBAL = 1.0
-    PREMIO_RISCO_BRASIL = 2.0
+    PREMIO_RISCO_BRASIL = 1.16
 
     @staticmethod
     @lru_cache(maxsize=1)
