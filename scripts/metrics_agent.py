@@ -38,14 +38,46 @@ def ensure_table(conn):
     """)
     conn.commit()
 
-def get_temp():
+def get_temp(thermal_paths=None):
+    """
+    Retorna a temperatura do sistema (em Celsius).
+    thermal_paths: lista de caminhos para arquivos de temperatura (opcional)
+    """
+    # Se thermal_paths foi fornecido, tentar ler deles primeiro
+    if thermal_paths:
+        for path in thermal_paths:
+            try:
+                with open(path, "r") as f:
+                    raw = f.read().strip()
+                    if "android" in path.lower() or len(raw) > 4:
+                        return float(raw) / 1000.0
+                    return float(raw)
+            except Exception:
+                continue
+
+    # Tentar psutil
     try:
+        import psutil
         temps = psutil.sensors_temperatures()
-        for key in ('cpu-thermal', 'cpu_thermal', 'coretemp', 'k10temp'):
-            if key in temps and temps[key]:
-                return round(temps[key][0].current, 1)
+        for name, entries in temps.items():
+            for entry in entries:
+                if entry.current is not None:
+                    return entry.current
     except Exception:
         pass
+
+    # Fallback: tentar arquivos comuns
+    fallback_paths = [
+        "/sys/class/thermal/thermal_zone0/temp",
+        "/sys/devices/virtual/thermal/thermal_zone0/temp",
+    ]
+    for path in fallback_paths:
+        try:
+            with open(path, "r") as f:
+                raw = f.read().strip()
+                return float(raw) / 1000.0
+        except Exception:
+            continue
     return None
 
 def check_api():
@@ -65,9 +97,9 @@ def check_worker():
             pass
     return 0
 
-def check_brent():
+def check_brent(db_path=None):
     try:
-        conn = sqlite3.connect(DB_PATH)
+        conn = sqlite3.connect(db_path or DB_PATH)
         row = conn.execute(
             "SELECT price FROM brent WHERE success=1 "
             "ORDER BY timestamp DESC LIMIT 1"
@@ -77,9 +109,9 @@ def check_brent():
     except Exception:
         return 0
 
-def check_selic():
+def check_selic(db_path=None):
     try:
-        conn = sqlite3.connect(DB_PATH)
+        conn = sqlite3.connect(db_path or DB_PATH)
         # tenta tabela commodities (worker atual)
         for sql in [
             "SELECT valor FROM commodities WHERE tipo='efetiva' ORDER BY criado_em DESC LIMIT 1",
@@ -97,7 +129,7 @@ def check_selic():
     except Exception:
         return 0
 
-def collect():
+def collect(db_path=None):
     vm   = psutil.virtual_memory()
     disk = psutil.disk_usage('/')
     load = psutil.getloadavg()
@@ -120,8 +152,8 @@ def collect():
     }
     return metrics
 
-def save(metrics):
-    conn = sqlite3.connect(DB_PATH)
+def save(metrics, db_path=None):
+    conn = sqlite3.connect(db_path or DB_PATH)
     ensure_table(conn)
     conn.execute("""
         INSERT INTO metrics_history
@@ -168,3 +200,37 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+def get_load():
+    """
+    Retorna a carga do sistema nos últimos 1, 5 e 15 minutos.
+    Retorna [0.0, 0.0, 0.0] em caso de falha.
+    """
+    try:
+        import psutil
+        return list(psutil.getloadavg())
+    except (AttributeError, OSError, FileNotFoundError):
+        # Fallback: ler /proc/loadavg
+        try:
+            with open("/proc/loadavg", "r") as f:
+                parts = f.read().split()
+                return [float(x) for x in parts[:3]]
+        except Exception:
+            return [0.0, 0.0, 0.0]
+
+def get_load():
+    """
+    Retorna a carga do sistema nos últimos 1, 5 e 15 minutos.
+    Retorna [0.0, 0.0, 0.0] em caso de falha.
+    """
+    try:
+        import psutil
+        return list(psutil.getloadavg())
+    except (AttributeError, OSError, FileNotFoundError):
+        # Fallback: ler /proc/loadavg
+        try:
+            with open("/proc/loadavg", "r") as f:
+                parts = f.read().split()
+                return [float(x) for x in parts[:3]]
+        except Exception:
+            return [0.0, 0.0, 0.0]
