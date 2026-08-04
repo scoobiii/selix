@@ -52,6 +52,8 @@ class SELIX:
         self.inflacao = inflacao or 4.48
         self.roe = roe or 31.23
         self.selic_bacen = selic_bacen
+        self.etanol_mix = 0.42  # 42% de etanol
+        self.biodiesel_mix = 0.35  # 35% de biodiesel
         self.teto_juro_real = self.inflacao + self.JURO_REAL_MAXIMO
         self.teto_roe = self.roe * self.FOLGA_ROE
         self.teto_global = (self.RELACAO_GLOBAL * self.inflacao) + self.PREMIO_RISCO_BRASIL
