@@ -20,7 +20,7 @@ b_mix = energia['biodiesel']['mistura']
 # Públicos e suas mensagens base
 publicos = {
     "trabalhadores": f"Selic 14,5% corrói seu PLR. Com Selix 9,25%, você receberia até R$ X a mais. Exija #TrampoForte!",
-    "bancos": f"Spread bancário com Selic 9,25% ainda é lucrativo. A economia de R$345 bi/ano fortalece o sistema.",
+    "bancos": f"Spread bancário com Selic 9,25% ainda é lucrativo. A economia de R$270 bi/ano fortalece o sistema.",
     "governo": f"Selix 9,25%: investment grade BBB+, redução da dívida/PIB. Viável e sem choque fiscal.",
     "politicos": f"Apoie o PL da TrampoForte e a redução da Selic. É bom para o trabalhador e para a economia.",
     "midia": f"Estudo formal (Z3+Lean4) prova que Selic deveria ser 9,25%. Reportagem exclusiva conosco.",
@@ -48,7 +48,7 @@ msg += f"🏢 {emp['nome']} ({emp['acao']}): Selic 14,5% > ROI.\n"
 msg += f"⚠️ PLR devido de R$ {emp['plr_devido']} para {emp['funcionarios']} trabalhadores está bloqueado pelo rentismo.\n"
 msg += f"✅ Com Selix 9,25%, o valor justo da ação subiria {emp['upside']}% e a PLR seria paga.\n\n"
 msg += base_msg + f"\n\n🌍 Brent US${brent} → {e_mix}/{b_mix} (mix energético otimizado).\n"
-msg += f"📊 Selic ideal 9,25% (vs 14,50%). Economia anual de R$ 345 bi.\n"
+msg += f"📊 Selic ideal 9,25% (vs 14,50%). Economia anual de R$ 270 bi.\n"
 msg += f"🔗 github.com/scoobiii/selix\n#Selix #TrampoForte #PLR #Economia"
 
 # Publica (Bluesky tem limite de 300 caracteres, mas vamos usar até 300 para segurança)

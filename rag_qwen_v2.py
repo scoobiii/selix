@@ -25,7 +25,7 @@ TRAINING_DATA = [
             "Selic justa",
             "Selic 1 digito"
         ],
-        "resposta": "✅ A Selic ideal calculada pelo SELIX é 9,25% (1 dígito). A Selic atual está em 14,25%, o que custa R$345 bilhões/ano extras para o país."
+        "resposta": "✅ A Selic ideal calculada pelo SELIX é 9,25% (1 dígito). A Selic atual está em 14,25%, o que custa R$270 bilhões/ano extras para o país."
     },
     {
         "perguntas": [
@@ -57,10 +57,10 @@ TRAINING_DATA = [
             "economia anual",
             "gasto com juros",
             "dívida pública",
-            "R$345 bilhões",
+            "R$270 bilhões",
             "economia para o governo"
         ],
-        "resposta": "💰 Com Selic 9,25%:\n• Custo da dívida: R$380 bi/ano (hoje R$650 bi)\n• Economia anual: R$345 bilhões\n• Equivalente a 2x o orçamento da saúde."
+        "resposta": "💰 Com Selic 9,25%:\n• Custo da dívida: R$380 bi/ano (hoje R$650 bi)\n• Economia anual: R$270 bilhões\n• Equivalente a 2x o orçamento da saúde."
     },
     {
         "perguntas": [

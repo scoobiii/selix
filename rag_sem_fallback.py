@@ -60,7 +60,7 @@ def responder(pergunta):
         return f"📈 Raízen (RAIZ4): Com Selic {dados['selic']}%, upside travado.\n🎯 Potencial com Selic 9,25%: +76% (R$2,80 → R$4,93)"
     
     elif "governo" in p:
-        return f"💰 Com Selic REAL a {dados['selic']}%, governo paga R$650 bi/ano em juros.\n✅ Com Selic 9,25%: R$380 bi/ano | Economia: R$345 bi"
+        return f"💰 Com Selic REAL a {dados['selic']}%, governo paga R$650 bi/ano em juros.\n✅ Com Selic 9,25%: R$380 bi/ano | Economia: R$270 bi"
     
     elif "solar" in p or "energia" in p:
         return f"☀️ Com Selic {dados['selic']}%, financiamento verde inviável (WACC 18% > IRR 13%)\n✅ Com Selic 9,25%, WACC 11% < IRR 13% → viável"
@@ -69,7 +69,7 @@ def responder(pergunta):
         return f"🏦 B3 hoje: ~US$1,6 tri\n🎯 Com Selic 9,25% em 10 anos: US$10 tri (+525%)"
     
     else:
-        return f"📊 Dados REAIS disponíveis:\n• Selic: {dados['selic']}% (BCB)\n• Brent: US${dados['brent']} (Yahoo)\n\nSelic ideal Selix: 9,25%\nEconomia anual: R$345 bi"
+        return f"📊 Dados REAIS disponíveis:\n• Selic: {dados['selic']}% (BCB)\n• Brent: US${dados['brent']} (Yahoo)\n\nSelic ideal Selix: 9,25%\nEconomia anual: R$270 bi"
 
 if __name__ == "__main__":
     print("=" * 60)

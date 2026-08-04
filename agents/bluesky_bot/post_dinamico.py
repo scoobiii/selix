@@ -13,9 +13,9 @@ try:
     brent = data['brent_usd']
     etanol = data['etanol']['mistura']
     biodiesel = data['biodiesel']['mistura']
-    post = f"SELIX: Selic ideal 9,25% (vs 14,50%). Brent US$ {brent} → {etanol}/{biodiesel}. Economia de R$ 345 bi/ano. #Selix #Economia"
+    post = f"SELIX: Selic ideal 9,25% (vs 14,50%). Brent US$ {brent} → {etanol}/{biodiesel}. Economia de R$ 270 bi/ano. #Selix #Economia"
 except Exception as e:
-    post = f"SELIX: Selic ideal 9,25% (vs 14,50%). Economia de R$ 345 bi/ano. #Selix #Economia (dados temporários)"
+    post = f"SELIX: Selic ideal 9,25% (vs 14,50%). Economia de R$ 270 bi/ano. #Selix #Economia (dados temporários)"
 
 # Posta no Bluesky
 client = Client()

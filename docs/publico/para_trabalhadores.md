@@ -7,7 +7,7 @@ A Selic alta (14,5%) corrói seu poder de compra e trava o pagamento de PLR em e
 ## A solução
 
 O SELIX propõe a redução da Selic para **9,25%**, o que:
-- Libera R$ 345 bi/ano para a economia
+- Libera R$ 270 bi/ano para a economia
 - Desbloqueia o pagamento de PLR
 - Prioriza trabalhadores via **TrampoForte**
 

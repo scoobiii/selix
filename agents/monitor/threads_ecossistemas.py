@@ -106,7 +106,7 @@ Brent US$ {brent['preco']} → {mistura['mistura']}
 
 💰 IMPACTO DA SELIC 1 DÍGITO:
 
-✅ Economia: R$ 345 bi/ano
+✅ Economia: R$ 270 bi/ano
 ✅ Investment Grade: BBB+
 ✅ Juro real: 4,77%
 ✅ +R$ 794 PIB per capita

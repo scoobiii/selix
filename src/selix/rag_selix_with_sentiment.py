@@ -18,11 +18,11 @@ DB_PATH = "/root/selix/selix.db"
 
 # Respostas de fallback (apenas se LLM falhar)
 FALLBACK_RESPOSTAS = {
-    "selic": "✅ Selic ideal: 9,25% | Atual: 14,25% | Economia anual: R$345 bi",
+    "selic": "✅ Selic ideal: 9,25% | Atual: 14,25% | Economia anual: R$270 bi",
     "plr": "📉 PLR travada pela Selic alta. Com 9,25%, empresas voltam a pagar PLR.",
     "gpa": "📈 GPA (PCAR3): +68% com Selic 9,25% (R$12,50 → R$21,00)",
     "raizen": "📈 Raízen (RAIZ4): +76% com Selic 9,25% (R$2,80 → R$4,93)",
-    "governo": "💰 Governo economiza R$345 bi/ano com Selic 9,25%",
+    "governo": "💰 Governo economiza R$270 bi/ano com Selic 9,25%",
     "solar": "☀️ Selic 9,25% viabiliza +100 GW solares em 10 anos",
     "brent": "🛢️ Brent: monitorado via Yahoo Finance. Acima de US$120 exige E35/B20",
 }
@@ -50,7 +50,7 @@ def get_dados_reais() -> Dict[str, Any]:
         'sentimento_score': sentimento['score'] if sentimento else 0.0,
         'sentimento_data': sentimento['criado_em'] if sentimento else None,
         'selic_ideal': 9.25,
-        'economia_anual': 345,
+        'economia_anual': 270,
         'pib_per_capita': 130000,
         'b3_valuation': 10
     }

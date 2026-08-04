@@ -19,7 +19,7 @@ Apresentamos o **SELIX** (Sistema de Equilíbrio Linear de Juros e Investment Gr
 - pytest → 4/4 testes
 
 ### Impacto econômico
-- Economia anual: R$ 345 bilhões
+- Economia anual: R$ 270 bilhões
 - PIB per capita: +R$ 14.900
 - Investment Grade: BBB+
 

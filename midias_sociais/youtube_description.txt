@@ -11,7 +11,7 @@ Sistema de Equilíbrio Linear de Juros e Investment Grade
 5. Consistência matemática
 
 📈 Impacto Econômico:
-- Economia anual: R$345 bilhões
+- Economia anual: R$270 bilhões
 - PIB per capita: +R$14.900
 - Investment Grade: BBB+
 

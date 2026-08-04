@@ -84,15 +84,15 @@ def gerar_posts(d):
         f"🧵 SELIX — Economia que prioriza quem trabalha\n\n🌍 Brent: US${brent}\n📉 Selic efetiva: {sv}%\n📰 Sentimento: {sent}\n💰 Selic ideal: 9,25% (1 dígito)\n🔗 {rl}\n\nAcompanhe o fio 👇",
         f"👷 Para trabalhadores\n\nSelic {sv}% corrói seu poder de compra e trava PLR em GPA e Raízen.\n✅ Exija #Selix 9,25% e #TrampoForte — receba antes dos bancos.\n🔗 {rl}",
         f"🏦 Para bancos\n\nCom Selic 9,25%, custo de capital cai, bolsa sobe e o país ganha investment grade A-. Spread bancário continua lucrativo.\n🔗 {rl}",
-        f"🏛️ Para governo\n\nSelix 9,25%: R$345 bi/ano economizados, dívida/PIB cai, investment grade A-.\n🔗 {rl}",
+        f"🏛️ Para governo\n\nSelix 9,25%: R$270 bi/ano economizados, dívida/PIB cai, investment grade A-.\n🔗 {rl}",
         f"🗳️ Para políticos\n\nApoie o PL #TrampoForte e Selic 1 dígito (9,25%). Bom para o trabalhador, bom para os votos.\n🔗 {rl}",
         f"🌱 Para ambientalistas\n\nCom Brent US${brent}, mix ideal: E{e_mix}/B{b_mix}.\nCrise (Brent >150): E42/B25 — máximo histórico de biocombustíveis.\n🔗 {rl}",
         f"📈 Para investidores\n\nGPA (+68%), Raízen (+76%) em RJ. Com Selic 9,25%, upside → +150%. B3 pode chegar a US$10 tri em 10 anos.\n🔗 {rl}",
         f"📰 Para jornalistas\n\nProva formal (Z3 + Lean 4): Selic deveria ser 9,25%. Entreviste os criadores do Selix.\n🔗 {rl}",
         f"⚖️ Para sindicatos\n\nSelic {sv}% bloqueia PLR. Mobilize pela Selix 9,25% agora! #TrampoForte\n🔗 {rl}",
         f"☀️ Solar e Biocombustíveis\n\nCom Selic 1 dígito: 100 GW solar em 10 anos, etanol E42, biogás em escala nacional.\n🔗 {rl}",
-        f"📊 Cenário Selix 9,25% em 10 anos\n\n🇧🇷 PIB per capita: US$130k (+118%)\n🏦 B3: US$10 tri (6× atual)\n⭐ Investment Grade A-\n💰 Economia: R$345 bi/ano\n🔗 {rl}",
-        f"🔁 Compartilhe\n\n✅ Selic: 9,25%\n✅ Economia: R$345 bi/ano\n✅ PIB per capita: US$130k\n✅ B3: US$10 tri\n✅ Solar + biocombustíveis\n\n🔗 {rl}\n\n#Selix #TrampoForte #PLR #Economia #EnergiaSolar",
+        f"📊 Cenário Selix 9,25% em 10 anos\n\n🇧🇷 PIB per capita: US$130k (+118%)\n🏦 B3: US$10 tri (6× atual)\n⭐ Investment Grade A-\n💰 Economia: R$270 bi/ano\n🔗 {rl}",
+        f"🔁 Compartilhe\n\n✅ Selic: 9,25%\n✅ Economia: R$270 bi/ano\n✅ PIB per capita: US$130k\n✅ B3: US$10 tri\n✅ Solar + biocombustíveis\n\n🔗 {rl}\n\n#Selix #TrampoForte #PLR #Economia #EnergiaSolar",
     ]
     return [trunc(p) for p in raw]
 

@@ -19,7 +19,7 @@ client.login(USERNAME, PASSWORD)
 TEXTO_RESPOSTA = (
     "📊 SELIX | Selic Energy Real Time\n"
     "🔬 Provada com Z3 + Lean 4\n"
-    "💰 9,48% | Economia de R$ 345 bi/ano\n"
+    "💰 9,48% | Economia de R$ 270 bi/ano\n"
     "✅ Investment Grade BBB+\n"
     "🔗 github.com/scoobiii/selix"
 )
