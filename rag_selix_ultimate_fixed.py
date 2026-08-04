@@ -35,7 +35,7 @@ def get_dados_reais():
         'selic': selic['rate'] if selic else 13.25,
         'empresas_rj': [dict(e) for e in empresas],
         'selic_ideal': 9.25,
-        'economia_anual': 270,
+        'economia_anual': 345,
         'pib_per_capita_projetado': 130000,
         'b3_valuation_projetado': 10
     }

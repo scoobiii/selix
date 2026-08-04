@@ -4,7 +4,7 @@ Thread SELIX (5 posts)
 
 2/5 ✅ 5 teoremas provados pelo Z3 (Microsoft Research): Investment Grade, não canibalização, juro real ≤5%, convergência, consistência. #SELIX
 
-3/5 📊 Impacto: economia de R$ 270 bi/ano, PIB per capita +R$14.900, Investment Grade BBB+. #SELIX #Brasil
+3/5 📊 Impacto: economia de R$ 345 bi/ano, PIB per capita +R$14.900, Investment Grade BBB+. #SELIX #Brasil
 
 4/5 🔓 Código aberto e auditável: https://github.com/scoobiii/selix #SELIX #OpenSource
 

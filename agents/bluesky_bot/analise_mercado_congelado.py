@@ -19,7 +19,7 @@ class AnaliseMercadoCongelado:
         self.selix_impacto = {
             "selic_nova": 9.48,
             "selic_atual": 14.50,
-            "economia_anual": 270e9,  # R$ 270 bilhões
+            "economia_anual": 270e9,  # R$ 345 bilhões
             "investment_grade": "BBB+"
         }
         

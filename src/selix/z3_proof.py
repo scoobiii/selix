@@ -89,7 +89,7 @@ def main():
     
     cenarios = [
         (6900, "Dívida atual (STN/BCB) → R$ 345 bi"),
-        (5400, "Cenário para R$ 270 bi"),
+        (5400, "Cenário para R$ 345 bi"),
         (6000, "Cenário intermediário"),
     ]
     

@@ -28,7 +28,7 @@ def post_thread():
     empresas = get_empresas()
 
     # Post principal
-    main = client.send_post(f"🧵 #Selix - Impacto da Selic 9,25% (vs 14,5%)\n🌍 Brent ${brent} → {e_mix}/{b_mix}\nEconomia: R$270 bi/ano\nAcompanhe:")
+    main = client.send_post(f"🧵 #Selix - Impacto da Selic 9,25% (vs 14,5%)\n🌍 Brent ${brent} → {e_mix}/{b_mix}\nEconomia: R$345 bi/ano\nAcompanhe:")
     time.sleep(2)
 
     # Posts para cada empresa
@@ -45,7 +45,7 @@ def responder_mencoes():
         post = feed_view.post
         # Verifica se o post menciona o bot
         if 'zeh-sobrinho.bsky.social' in post.text and not post.viewer.reply:
-            resposta = f"Olá! Com Selix 9,25%, a economia seria de R$270 bi/ano. Mais dados: {API_BASE}/v1/energia/mistura"
+            resposta = f"Olá! Com Selix 9,25%, a economia seria de R$345 bi/ano. Mais dados: {API_BASE}/v1/energia/mistura"
             client.send_post(resposta, reply_to=post.uri)
             time.sleep(5)
             break

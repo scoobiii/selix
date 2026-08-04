@@ -16,11 +16,11 @@ DB_PATH = "/root/selix/selix.db"
 
 # Fallback para matching local (caso Ollama falhe)
 FALLBACK_RESPOSTAS = {
-    "selic": "✅ Selic ideal: 9,25% (1 dígito). Selic atual: 14,25% | Economia anual: R$270 bi",
+    "selic": "✅ Selic ideal: 9,25% (1 dígito). Selic atual: 14,25% | Economia anual: R$345 bi",
     "plr": "📉 PLR travada pela Selic alta. Com 9,25%, empresas voltam a pagar PLR.",
     "gpa": "📈 GPA (PCAR3): +68% com Selic 9,25% (R$12,50 → R$21,00)",
     "raizen": "📈 Raízen (RAIZ4): +76% com Selic 9,25% (R$2,80 → R$4,93)",
-    "governo": "💰 Governo economiza R$270 bi/ano com Selic 9,25%",
+    "governo": "💰 Governo economiza R$345 bi/ano com Selic 9,25%",
     "solar": "☀️ Selic 9,25% viabiliza energia solar: +100 GW em 10 anos",
 }
 

@@ -35,12 +35,12 @@ KEYWORDS = [
 
 # Respostas impactantes (viralizáveis)
 RESPOSTAS = [
-    "Selic ideal: 9,48% (não 14,50%). Economia de R$ 270 bi/ano. github.com/scoobiii/selix #SELIX",
+    "Selic ideal: 9,48% (não 14,50%). Economia de R$ 345 bi/ano. github.com/scoobiii/selix #SELIX",
     "Juro real a 10% trava o Brasil. SELIX: 9,48% resolve. github.com/scoobiii/selix",
     "Copom discricionário? SELIX é regra pública, código aberto, provada com Z3. github.com/scoobiii/selix",
-    "R$ 270 bi/ano é o que o Brasil perde com juros altos. SELIX: github.com/scoobiii/selix",
+    "R$ 345 bi/ano é o que o Brasil perde com juros altos. SELIX: github.com/scoobiii/selix",
     "Por que o BCB não adota uma regra pública? SELIX: 5 teoremas provados. github.com/scoobiii/selix",
-    "Selic atual: 14,50%. Selic ideal (SELIX): 9,48%. Diferença: R$ 270 bi/ano. github.com/scoobiii/selix",
+    "Selic atual: 14,50%. Selic ideal (SELIX): 9,48%. Diferença: R$ 345 bi/ano. github.com/scoobiii/selix",
     "O Brasil é o país com maior juro real do mundo. SELIX reduz para 4,77%. github.com/scoobiii/selix",
     "Cada 0,25 pp de corte na Selic economiza R$ 17 bi/ano. SELIX acelera o ritmo. github.com/scoobiii/selix",
 ]

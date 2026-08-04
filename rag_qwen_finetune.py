@@ -33,7 +33,7 @@ TRAINING_DATA = [
     },
     {
         "pergunta": "Quanto o governo economiza?",
-        "resposta": "Com Selic 9,25%, a dívida pública custa R$380 bi/ano em vez de R$650 bi. Economia anual de R$270 bilhões."
+        "resposta": "Com Selic 9,25%, a dívida pública custa R$380 bi/ano em vez de R$650 bi. Economia anual de R$345 bilhões."
     },
     {
         "pergunta": "Como a Selic afeta energia solar?",
@@ -57,7 +57,7 @@ def get_dados_reais():
         'selic': selic['rate'] if selic else 13.25,
         'empresas_rj': [dict(e) for e in empresas],
         'selic_ideal': 9.25,
-        'economia_anual': 270,
+        'economia_anual': 345,
         'pib_per_capita': 130000,
         'b3_valuation': 10
     }

@@ -13,7 +13,7 @@ Rating BB (lixo) | Gasto R$650 bi/ano
 ✅ A Solução (SELIX)
 Selic 9.25% | Juro real 4.77%
 Rating BBB+ (Investment Grade)
-Economia de R$270 bi/ano
+Economia de R$345 bi/ano
 
 [Slide 4]
 🔬 Prova Matemática

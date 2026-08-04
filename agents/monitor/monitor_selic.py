@@ -65,7 +65,7 @@ class MonitorSelic:
 🎯 SELIX (ideal): {self.selic_selix}%
 📉 Redução necessária: {(self.selic_atual - self.selic_selix):.1f} p.p.
 
-💰 Economia anual: R$ 270 bi/ano
+💰 Economia anual: R$ 345 bi/ano
 
 🔗 github.com/scoobiii/selix
 #SELIX #COPOM #Selic
