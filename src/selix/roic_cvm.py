@@ -12,9 +12,24 @@ import requests
 import pandas as pd
 from typing import Optional, Dict
 from io import StringIO
+import os
 
-# URL base da CVM
 CVM_BASE_URL = "https://dados.cvm.gov.br/dados/CIA_ABERTA/DOC/ITR/DADOS"
+
+def _baixar_itr(ano: int = 2025) -> Optional[pd.DataFrame]:
+    """Baixa o arquivo ITR da CVM para o ano especificado."""
+    try:
+        url = f"{CVM_BASE_URL}/itr_cia_aberta_{ano}.csv"
+        response = requests.get(url, timeout=30)
+        if response.status_code == 200:
+            # Decodificar com encoding correto (latin1)
+            df = pd.read_csv(StringIO(response.text), sep=';', encoding='latin1')
+            return df
+        else:
+            return None
+    except Exception as e:
+        print(f"Erro ao baixar ITR da CVM: {e}")
+        return None
 
 def get_roic_por_codigo(codigo: str, ano: int = 2025) -> Optional[float]:
     """
@@ -27,43 +42,34 @@ def get_roic_por_codigo(codigo: str, ano: int = 2025) -> Optional[float]:
     Returns:
         ROIC em porcentagem (ex: 18.5) ou None se não encontrado
     """
-    # Em produção: baixar ITR da CVM e calcular ROIC
-    # Exemplo de implementação:
-    # url = f"{CVM_BASE_URL}/itr_cia_aberta_{ano}.csv"
-    # df = pd.read_csv(url, encoding='latin1', sep=';')
-    # ...
+    df = _baixar_itr(ano)
+    if df is None:
+        return None
 
-    # Placeholder com dados reais (a serem validados)
-    roic_data = {
-        "PETR4": 18.5,
-        "PRIO3": 17.2,
-        "ABEV3": 15.0,
-        "RAIZ4": 8.5,
-        "PCAR3": 6.2,
-        "MGLU3": 5.8,
-        "VIIA3": 4.5,
-        "LREN3": 7.1,
-        "ITUB4": 12.3,
-        "BBDC4": 11.8,
-        "SANB11": 11.5,
-        "WEGE3": 10.5,
-        "EMBR3": 9.2,
-        "SUZB3": 10.8,
-        "AMER3": 4.0,
-    }
-    return roic_data.get(codigo, None)
+    # Filtrar a empresa pelo código
+    empresa = df[df['CD_CVM'].astype(str).str.contains(codigo, na=False)]
 
-def get_roic_setor(setor: str) -> float:
-    """ROIC médio por setor (calculado a partir dos dados da CVM)"""
-    setores = {
-        "Energia": 14.7,
-        "Bebidas": 15.0,
-        "Varejo": 5.5,
-        "Financeiro": 11.9,
-        "Industria": 10.2,
-        "Outros": 8.0,
-    }
-    return setores.get(setor, 8.0)
+    if empresa.empty:
+        return None
+
+    # Calcular ROIC
+    # EBIT = Lucro Operacional
+    ebit = empresa['VL_LUCRO_OPERACIONAL'].sum()
+    # Patrimônio Líquido
+    patrimonio = empresa['VL_PATRIMONIO_LIQUIDO'].sum()
+    # Dívida Bruta
+    divida = empresa['VL_DIVIDA_BRUTA'].sum()
+
+    if (patrimonio + divida) == 0:
+        return None
+
+    roic = (ebit / (patrimonio + divida)) * 100
+    return round(roic, 2)
 
 def get_fonte_roic() -> str:
     return "CVM — Portal de Dados Abertos (ITR/DFP)"
+
+if __name__ == "__main__":
+    # Teste
+    roic = get_roic_por_codigo("PETR4")
+    print(f"ROIC PETR4: {roic}%")
