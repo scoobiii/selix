@@ -260,3 +260,22 @@ O SELIX é uma **ferramenta de apoio à decisão**, não uma fonte de previsões
 **Uso recomendado:** Auditoria, transparência, educação e referência técnica.
 
 **Uso NÃO recomendado:** Substituir o COPOM, previsões de curto prazo, decisões de trading sem validação adicional.
+
+## 🧮 Versão atual — v7.2
+
+| Métrica | Valor |
+|---------|-------|
+| **Selic ideal (quantizada)** | **7.00%** |
+| **Diferencial** | 7.25 p.p. |
+| **Empresas que batem a Selic** | PETR4, PRIO3, ABEV3 |
+| **Empresas em RJ** | RAIZ4, PCAR3, VIIA3, AMER3 |
+| **Fator de blindagem energética (τ)** | 0.7786 (E32/B15) |
+| **Testes** | 22/22 passando |
+
+> **Nota:** a Selic ideal é sensível a credibilidade, prêmio de risco e gap de produto. Veja [docs/LIMITACOES.md](docs/LIMITACOES.md) para detalhes sobre as limitações do modelo.
+
+---
+
+## 🔬 Limitações conhecidas
+
+O SELIX é uma ferramenta de **auditoria aritmética**, não um modelo DSGE. Para uma lista completa das limitações (credibilidade hardcoded, gap fixo, conversão real→nominal pendente, etc.), consulte [docs/LIMITACOES.md](docs/LIMITACOES.md).
