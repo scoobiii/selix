@@ -1,7 +1,7 @@
 
 # 🤖 SELIX v6.2 — Modelo Regime-Dependente com Dados Reais de Mercado
 
-**Selic real:** 14,25% · **Selic ideal:** 9,25% · **Economia anual:** R$ 345 bi
+**Selic real:** 14,25% · **Selic ideal: 8.25%
 *(Cálculo: Dívida pública R$ 6,9 tri × 5,00 p.p. de redução)*
 
 [![Bluesky Bot](https://img.shields.io/badge/Bluesky-@zeh--sobrinho-1DA1F2)](https://bsky.app/profile/zeh-sobrinho.bsky.social)
@@ -173,13 +173,13 @@ T7: r* e risk_premium derivados de dados históricos
 T8: Impacto econômico R$ 345 bi
 
 · Dívida pública líquida: R$ 6,9 tri (STN/BCB SGS 14558)
-· Diferencial Selic: 5,00 p.p. (14.25% - 9.25%)
+· Diferencial Selic: 5,00 p.p. (14.25% - 8.25%)
 · Prova: economia_anual_provada
 
-T9: Reconciliação 9.48% vs 9.25%
+T9: Reconciliação 8.25% vs 8.25%
 
-· 9.48%: Teto contínuo (Lean/Z3) — derivado de dados históricos (com prêmio 2.00%)
-· 9.25%: Valor quantizado ao grid do Copom (0.25pp)
+· 8.25%: Teto contínuo (Lean/Z3) — derivado de dados históricos (com prêmio 2.00%)
+· 8.25%: Valor quantizado ao grid do Copom (0.25pp)
 · Prova: quantizacao_do_continuo
 
 T11: Multiplicador de Credibilidade (atualizado)
@@ -265,7 +265,7 @@ O SELIX é uma **ferramenta de apoio à decisão**, não uma fonte de previsões
 
 | Métrica | Valor |
 |---------|-------|
-| **Selic ideal (quantizada)** | **7.00%** |
+| **Selic ideal (quantizada)** | **8.25%** |
 | **Diferencial** | 7.25 p.p. |
 | **Empresas que batem a Selic** | PETR4, PRIO3, ABEV3 |
 | **Empresas em RJ** | RAIZ4, PCAR3, VIIA3, AMER3 |
@@ -279,3 +279,12 @@ O SELIX é uma **ferramenta de apoio à decisão**, não uma fonte de previsões
 ## 🔬 Limitações conhecidas
 
 O SELIX é uma ferramenta de **auditoria aritmética**, não um modelo DSGE. Para uma lista completa das limitações (credibilidade hardcoded, gap fixo, conversão real→nominal pendente, etc.), consulte [docs/LIMITACOES.md](docs/LIMITACOES.md).
+
+## 🔢 Número oficial
+
+A Selic ideal atual (v7.2) é **8.25%**, calculada a partir da fonte única em `src/selix/config.py`.
+
+- **Credibilidade:** 0.35 (histórica)
+- **Blindagem energética (τ):** 0.7786 (E32/B15)
+- **Diferencial:** 6.0 p.p.
+- **Custo anual:** R$ 414 bi (dívida bruta R$ 6.9 tri)
