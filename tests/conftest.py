@@ -6,18 +6,25 @@ import os
 import sys
 import pytest
 import sqlite3
+import hashlib
 from pathlib import Path
 
-# Adiciona o diretório raiz ao PYTHONPATH
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-# Chave de teste padrão
 TEST_API_KEY = "test_api_key_123"
 TEST_MASTER_KEY = "master_123_super_secret"
 
+# Hash da chave de teste
+TEST_KEY_HASH = hashlib.sha256(f"selix_salt_2026{TEST_API_KEY}".encode()).hexdigest()
+
+def get_api_headers():
+    return {"X-API-Key": TEST_API_KEY}
+
+def get_admin_headers():
+    return {"X-Admin-Key": TEST_MASTER_KEY}
+
 @pytest.fixture(autouse=True)
 def setup_test_env():
-    """Configura o ambiente para todos os testes."""
     os.environ["MASTER_API_KEY"] = TEST_MASTER_KEY
     os.environ["SELIX_API_KEYS"] = TEST_API_KEY
     os.environ["SELIX_DB_PATH"] = ":memory:"
@@ -25,12 +32,10 @@ def setup_test_env():
 
 @pytest.fixture
 def test_db():
-    """Cria um banco de dados em memória para testes."""
     conn = sqlite3.connect(":memory:")
     conn.row_factory = sqlite3.Row
-    # Cria tabelas básicas
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS api_keys (
+    conn.executescript("""
+        CREATE TABLE api_keys (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             key_hash TEXT NOT NULL UNIQUE,
             client_name TEXT NOT NULL,
@@ -39,31 +44,29 @@ def test_db():
             expires_at TIMESTAMP,
             is_active BOOLEAN DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
+        );
+        CREATE TABLE commodities (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT, preco_usd REAL, unidade TEXT, fonte TEXT, criado_em TIMESTAMP
+        );
+        CREATE TABLE selic_historico (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            tipo TEXT, valor REAL, fonte TEXT, criado_em TIMESTAMP
+        );
     """)
-    # Insere chave de teste
-    import hashlib
-    key_hash = hashlib.sha256(f"selix_salt_2026{TEST_API_KEY}".encode()).hexdigest()
     conn.execute(
         "INSERT INTO api_keys (key_hash, client_name, plan) VALUES (?, ?, ?)",
-        (key_hash, "test_client", "pro")
+        (TEST_KEY_HASH, "test_client", "pro")
     )
+    conn.execute("INSERT INTO commodities (nome, preco_usd, fonte) VALUES ('Brent', 95.19, 'yahoo_finance')")
+    conn.execute("INSERT INTO selic_historico (tipo, valor, fonte) VALUES ('efetiva', 14.25, 'bcb')")
     conn.commit()
     return conn
 
 @pytest.fixture
 def api_headers():
-    """Headers padrão para testes de API."""
-    return {"X-API-Key": TEST_API_KEY}
+    return get_api_headers()
 
 @pytest.fixture
 def admin_headers():
-    """Headers padrão para testes admin."""
-    return {"X-Admin-Key": TEST_MASTER_KEY}
-
-# Função auxiliar para headers (pode ser chamada diretamente)
-def get_api_headers():
-    return {"X-API-Key": TEST_API_KEY}
-
-def get_admin_headers():
-    return {"X-Admin-Key": TEST_MASTER_KEY}
+    return get_admin_headers()
