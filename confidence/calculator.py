@@ -14,13 +14,17 @@ Calcula o Índice de Confiança Selix (ICS) baseado em:
 """
 
 import sqlite3
+import os
+import logging
 import requests
 import yfinance as yf
 from textblob import TextBlob
 import feedparser
 from datetime import datetime
 
-DB_PATH = "/root/selix/selix.db"
+logger = logging.getLogger(__name__)
+
+DB_PATH = os.getenv("SELIX_DB_PATH", "/root/selix/selix.db")
 
 class SelixConfidenceCalculator:
     """Calculadora do Índice de Confiança Selix (ICS)"""
@@ -39,7 +43,7 @@ class SelixConfidenceCalculator:
                 vol = returns.std() * (252 ** 0.5)
                 return max(0, min(1, 1 - vol * 2))
         except Exception as e:
-            print(f"Erro volatilidade: {e}")
+            logger.warning(f"Erro volatilidade: {e}")
         return 0.5
     
     def get_combustiveis_stability(self):
@@ -55,7 +59,7 @@ class SelixConfidenceCalculator:
                 spread = abs(gas - diesel) + abs(gas - etanol)
                 return max(0, min(1, 1 - (spread / 15)))
         except Exception as e:
-            print(f"Erro estabilidade: {e}")
+            logger.warning(f"Erro estabilidade: {e}")
         return 0.5
     
     def get_geopolitical_risk(self):
@@ -76,7 +80,7 @@ class SelixConfidenceCalculator:
             total_risk = sum(risks.values())
             return max(0, min(1, 1 - (total_risk / 5)))
         except Exception as e:
-            print(f"Erro risco geopolítico: {e}")
+            logger.warning(f"Erro risco geopolítico: {e}")
         return 0.5
     
     def get_sentdex_score(self):
@@ -102,7 +106,7 @@ class SelixConfidenceCalculator:
                     regions["europa"] * 0.2 + regions["asia"] * 0.1)
             return max(0, min(1, (sent + 1) / 2))
         except Exception as e:
-            print(f"Erro sentdex: {e}")
+            logger.warning(f"Erro sentdex: {e}")
         return 0.5
     
     def get_mix_confidence(self, brent):
