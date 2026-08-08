@@ -1,11 +1,11 @@
 
-# 🤖 SELIX v6.2 — Modelo Regime-Dependente com Dados Reais de Mercado
+# 🤖 SELIX v7.2 — Modelo Regime-Dependente com Dados Reais de Mercado
 
 **Selic real:** 14,25% · **Selic ideal: 8.25%
 *(Cálculo: Dívida pública R$ 6,9 tri × 5,00 p.p. de redução)*
 
 [![Bluesky Bot](https://img.shields.io/badge/Bluesky-@zeh--sobrinho-1DA1F2)](https://bsky.app/profile/zeh-sobrinho.bsky.social)
-[![API v6.2](https://img.shields.io/badge/API-v6.2-green)](https://github.com/scoobiii/selix)
+[![API v7.2](https://img.shields.io/badge/API-v7.2-green)](https://github.com/scoobiii/selix)
 [![Tests](https://img.shields.io/badge/tests-93%2F93-brightgreen)](https://github.com/scoobiii/selix)
 [![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/scoobiii/selix)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -21,7 +21,7 @@ O sistema publica automaticamente no Bluesky, fornece uma API REST e funciona 24
 
 ---
 
-## 🧮 Modelo Econômico — SELIX v6.2
+## 🧮 Modelo Econômico — SELIX v7.2
 
 ### Equação Fundamental com Multiplicador de Credibilidade
 
@@ -62,7 +62,7 @@ juro_real_necessario = inflação × (1 + prêmio_risco) × (1 + (1 - credibilid
 
 | Métrica | Status |
 |---------|--------|
-| **Versão** | v6.2.0-stable |
+| **Versão** | v7.2.0-stable |
 | **Build** | ✅ Passando |
 | **Testes** | 93/93 ✅ |
 | **Cobertura core.py** | 100% ✅ |
@@ -229,7 +229,7 @@ MIT © 2026 – Zeh Sobrinho, GOS3, MEX Energia
 🏆 Histórico de Versões
 
 Versão Data Mudanças
-v6.2.0 2026-08-04 Prêmio de risco atualizado para 1.16% (CDS 5Y)
+v7.2.0 2026-08-04 Prêmio de risco atualizado para 1.16% (CDS 5Y)
 v6.1.0 2026-08-04 Modelo regime-dependente com multiplicador de credibilidade
 v5.4.1 2026-08-04 Provas formais T7, T8, T9
 v5.3.0 2026-08-04 Sprint GOS3: cobertura 100%, infraestrutura mobile
@@ -237,7 +237,7 @@ v5.0.0 2026-07-28 Lançamento inicial com API, bot, worker
 
 ---
 
-O SELIX v6.2 está 100% completo e pronto para produção! 🚀🏆
+O SELIX v7.2 está 100% completo e pronto para produção! 🚀🏆
 
 ## 💰 Reconciliação dos Impactos — R$ 270/345/430 bi
 
@@ -266,7 +266,7 @@ O SELIX é uma **ferramenta de apoio à decisão**, não uma fonte de previsões
 | Métrica | Valor |
 |---------|-------|
 | **Selic ideal (quantizada)** | **8.25%** |
-| **Diferencial** | 7.25 p.p. |
+| **Diferencial** | 6.0 p.p. |
 | **Empresas que batem a Selic** | PETR4, PRIO3, ABEV3 |
 | **Empresas em RJ** | RAIZ4, PCAR3, VIIA3, AMER3 |
 | **Fator de blindagem energética (τ)** | 0.7786 (E32/B15) |
@@ -288,3 +288,18 @@ A Selic ideal atual (v7.2) é **8.25%**, calculada a partir da fonte única em `
 - **Blindagem energética (τ):** 0.7786 (E32/B15)
 - **Diferencial:** 6.0 p.p.
 - **Custo anual:** R$ 414 bi (dívida bruta R$ 6.9 tri)
+
+## 🏗️ Arquitetura alvo (v8.0)
+
+A camada HTTP atual usa Flask + SQLite. Para produção, estamos migrando para:
+
+| Componente | Atual | Alvo (v8.0) |
+|------------|-------|-------------|
+| **Framework** | Flask | FastAPI (async, HTTP/2) |
+| **Banco de dados** | SQLite | PostgreSQL (Supabase/Neon) |
+| **Cache** | ❌ | Redis |
+| **Balanceador** | ❌ | NGINX |
+| **Streaming** | ❌ | Chunked responses |
+| **Paginação** | ❌ | `limit` e `offset` |
+
+Veja detalhes em [BACKLOG_V8_HTTP.md](BACKLOG_V8_HTTP.md).
