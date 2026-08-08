@@ -31,3 +31,10 @@
 - Credibilidade calculada (0.35)
 - Selic ideal = 8.25%
 - 69/69 testes passando
+
+## 🧹 Dívida Técnica (identificada)
+
+| Item | Descrição | Prioridade |
+|------|-----------|------------|
+| `importlib.reload` nos testes | Testes de schema contract usam `importlib.reload()` para ler `SELIX_DB_PATH`. Causa raiz: módulo importado antes do monkeypatch. Investigar e eliminar workaround. | Baixa |
+| Documentação do Redis | README não menciona Redis como dependência opcional. | Média |

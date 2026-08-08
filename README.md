@@ -6,7 +6,7 @@
 
 [![Bluesky Bot](https://img.shields.io/badge/Bluesky-@zeh--sobrinho-1DA1F2)](https://bsky.app/profile/zeh-sobrinho.bsky.social)
 [![API v7.2](https://img.shields.io/badge/API-v7.2-green)](https://github.com/scoobiii/selix)
-[![Tests](https://img.shields.io/badge/tests-93%2F93-brightgreen)](https://github.com/scoobiii/selix)
+[![Tests](https://img.shields.io/badge/tests-128%2F128-brightgreen)](https://github.com/scoobiii/selix)
 [![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/scoobiii/selix)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Termux](https://img.shields.io/badge/Termux-24%2F7-blue)](https://github.com/scoobiii/selix)
@@ -64,7 +64,7 @@ juro_real_necessario = inflação × (1 + prêmio_risco) × (1 + (1 - credibilid
 |---------|--------|
 | **Versão** | v7.2.0-stable |
 | **Build** | ✅ Passando |
-| **Testes** | 93/93 ✅ |
+| **Testes** | 128/128 ✅ |
 | **Cobertura core.py** | 100% ✅ |
 | **Stress test** | 80 VUs, p95=152ms ✅ |
 | **Disponibilidade** | 24/7 no Termux/Android |
@@ -88,6 +88,27 @@ source venv/bin/activate
 pkg install python
 pip install -r requirements.txt
 
+### Redis (opcional, para cache)
+
+O Selix usa Redis como cache opcional para melhor performance. Se não instalado, o sistema funciona com cache em memória.
+
+**Linux / Ubuntu / Debian (incluindo proot-distro):**
+```bash
+apt install redis-server -y
+redis-server --daemonize yes
+redis-cli ping  # Deve responder PONG
+```
+
+**Termux (Android):**
+```bash
+pkg install redis
+redis-server --daemonize yes
+redis-cli ping  # Deve responder PONG
+```
+
+> O teste `test_redis_connection` será executado se o Redis estiver disponível; caso contrário, será pulado (SKIPPED) sem afetar a suíte.
+
+
 # Configurar credenciais
 cp .env.example .env
 nano .env
@@ -110,7 +131,7 @@ nano .env
 ```bash
 pytest tests/ -v
 pytest tests/ --cov=src.selix --cov-report=html
-# Resultado: 93/93 testes passando ✅
+# Resultado: 128/128 testes passando ✅
 ```
 
 ---
