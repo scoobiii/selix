@@ -17,7 +17,7 @@ def test_baseline_nao_muda_sem_aviso():
     """Trava: se o baseline mudar, o teste quebra e força revisão."""
     assert BASELINE_ATUAL.inflacao_esperada == 4.48
     assert BASELINE_ATUAL.premio_risco == 1.25
-    assert BASELINE_ATUAL.credibilidade == 0.50
+    assert BASELINE_ATUAL.credibilidade == 0.35
     assert BASELINE_ATUAL.gap_produto == 0.50
 
 

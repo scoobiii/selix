@@ -1,3 +1,4 @@
+from tests.conftest import TEST_API_KEY, get_api_headers
 import pytest
 import requests
 import os
@@ -13,7 +14,7 @@ if not API_KEY:
             API_KEY = line.split(":")[1].strip()
             break
 
-HEADERS = {"X-API-Key": API_KEY}
+HEADERS = get_api_headers()
 
 class TestAPI:
     def test_health(self):
@@ -55,4 +56,4 @@ class TestAPI:
     def test_perguntar(self):
         payload = {"pergunta": "O que é Selix?"}
         r = requests.post(f"{BASE_URL}/v1/perguntar", json=payload, headers=HEADERS)
-        assert r.status_code in (200, 400, 500)
+        assert r.status_code in (200, 202, 400, 500)

@@ -1,0 +1,44 @@
+name: Deploy SELIX to GCloud Run
+
+on:
+  push:
+    branches: [main]
+
+env:
+  PROJECT_ID: selix-gos3
+  SERVICE: selix-api
+  REGION: us-central1
+  IMAGE: gcr.io/selix-gos3/selix-api
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Auth GCloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCLOUD_SA_KEY }}
+
+      - name: Setup GCloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and Push
+        run: |
+          gcloud auth configure-docker
+          docker build -t ${{ env.IMAGE }}:${{ github.sha }} .
+          docker push ${{ env.IMAGE }}:${{ github.sha }}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE }}
+          region: ${{ env.REGION }}
+          image: ${{ env.IMAGE }}:${{ github.sha }}
+          flags: --allow-unauthenticated --memory=512Mi --cpu=1 --max-instances=3
+
+      - name: Smoke test
+        run: |
+          URL=$(gcloud run services describe ${{ env.SERVICE }} --region ${{ env.REGION }} --format 'value(status.url)')
+          curl -f $URL/v1/health || exit 1

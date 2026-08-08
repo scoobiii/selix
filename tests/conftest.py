@@ -60,3 +60,10 @@ def api_headers():
 def admin_headers():
     """Headers padrão para testes admin."""
     return {"X-Admin-Key": TEST_MASTER_KEY}
+
+# Função auxiliar para headers (pode ser chamada diretamente)
+def get_api_headers():
+    return {"X-API-Key": TEST_API_KEY}
+
+def get_admin_headers():
+    return {"X-Admin-Key": TEST_MASTER_KEY}
