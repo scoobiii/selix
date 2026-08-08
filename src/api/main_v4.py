@@ -282,9 +282,6 @@ def admin_generate_key():
     new_key = create_api_key(client_name, plan, days_valid)
     return jsonify(new_key), 201
 
-if __name__ == '__main__':
-    print("\n🚀 SELIX API v4.0 – com autenticação e validação")
-    app.run(host='0.0.0.0', port=5000, debug=False)
 
 # ============================================================
 # ADMIN – GESTÃO DE API KEYS (listar, revogar, renovar)
@@ -369,3 +366,40 @@ def stripe_webhook():
 def api_docs():
     from flask import send_from_directory
     return send_from_directory('/root/selix/docs', 'api_docs.yaml')
+
+# ============================================================
+# ENDPOINT DE CRÉDITO PJ (SELIX Credit)
+# ============================================================
+
+from src.selix.credito import analisar_credito_pj, analisar_portfolio, get_empresas_que_batem_selix
+
+@app.route('/v1/credito/pj', methods=['GET'])
+@require_api_key
+def credito_pj():
+    codigo = request.args.get('codigo')
+    if not codigo:
+        return jsonify({"erro": "Parâmetro 'codigo' é obrigatório"}), 400
+    resultado = analisar_credito_pj(codigo.upper())
+    if "erro" in resultado:
+        return jsonify(resultado), 404
+    return jsonify(resultado)
+
+@app.route('/v1/credito/portfolio', methods=['POST'])
+@require_master_key
+def credito_portfolio():
+    data = request.get_json() or {}
+    empresas = data.get('empresas', [])
+    if not empresas:
+        return jsonify({"erro": "Lista de empresas vazia"}), 400
+    resultado = analisar_portfolio(empresas)
+    return jsonify(resultado)
+
+@app.route('/v1/credito/batem_selix', methods=['GET'])
+@require_api_key
+def batem_selix():
+    empresas = get_empresas_que_batem_selix()
+    return jsonify({"empresas": empresas, "selix_ideal": SELIC_IDEAL})
+
+if __name__ == "__main__":
+    print("\n🚀 SELIX API v4.0 – com autenticação e validação")
+    app.run(host="0.0.0.0", port=5000, debug=False)
