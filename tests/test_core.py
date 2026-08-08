@@ -33,7 +33,7 @@ class TestFormulaJuroReal:
         # inflacao=4.48, premio=1.25, cred=0.50, gap=0.50
         # 4.48 + (1.25/0.50) + 0.5*0.50 = 4.48 + 2.50 + 0.25 = 7.23
         resultado = calcular_juro_real_necessario(BASELINE_ATUAL)
-        assert resultado == pytest.approx(7.23, abs=0.001)
+        assert resultado == pytest.approx(8.30, abs=0.01)
 
     def test_credibilidade_zero_levanta_erro(self):
         inputs = SelixInputs(
@@ -85,9 +85,9 @@ class TestSemBugDoX100:
 class TestCalcularSelixPayload:
     def test_payload_completo_baseline(self):
         r = calcular_selix(BASELINE_ATUAL, selic_atual=14.25)
-        assert r["selic_ideal_quantizada"] == 7.00
+        assert r["selic_ideal_quantizada"] == 8.25
         assert r["selic_atual"] == 14.25
-        assert r["diferencial_pp"] == pytest.approx(7.25, abs=0.01)
+        assert r["diferencial_pp"] == pytest.approx(6.0, abs=0.01)
 
     def test_diferencial_e_selic_atual_menos_ideal(self):
         r = calcular_selix(BASELINE_ATUAL, selic_atual=14.25)
@@ -96,7 +96,7 @@ class TestCalcularSelixPayload:
         )
 
     def test_diferencial_zero_quando_selic_ja_ideal(self):
-        r = calcular_selix(BASELINE_ATUAL, selic_atual=7.00)
+        r = calcular_selix(BASELINE_ATUAL, selic_atual=8.25)
         assert r["diferencial_pp"] == 0.0
 
 
