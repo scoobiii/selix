@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 
-DB_PATH = "/root/selix/selix.db"
+DB_PATH = os.getenv("SELIX_DB_PATH", "/root/selix/selix.db")
 SALT = os.getenv("API_KEY_SALT", "selix_salt_2026")
 
 def hash_key(raw_key: str) -> str:

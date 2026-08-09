@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import pytest
+import os
 import sqlite3
 import requests
 from contextlib import closing
@@ -9,7 +10,7 @@ API_KEY = "test_api_key_123"
 
 def get_db_connection():
     """Cria conexão com fechamento automático via context manager"""
-    conn = sqlite3.connect('/root/selix/selix.db', timeout=5)
+    conn = sqlite3.connect(os.getenv("SELIX_DB_PATH", "/root/selix/selix.db"), timeout=5)
     conn.row_factory = sqlite3.Row
     return conn
 
