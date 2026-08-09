@@ -1,3 +1,4 @@
+import hashlib
 #!/usr/bin/env python3
 """
 SELIX — Inicialização do banco de dados (todas as tabelas)
@@ -159,22 +160,3 @@ def init_db():
         )
         print(f"✅ Chave de teste inserida: {raw_key}")
 
-    conn.commit()
-    conn.close()
-    print(f"✅ Banco inicializado: {DB_PATH}")
-
-if __name__ == "__main__":
-    init_db()
-    # Chave de teste para CI (expira em 2099, rate limit alto)
-    cursor.execute("""
-        INSERT OR IGNORE INTO api_keys 
-        (key_hash, client_name, plan, rate_limit_per_minute, expires_at, is_active) 
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (
-        hashlib.sha256("test_api_key_123".encode()).hexdigest(),
-        "test_client",
-        "test",           # plano test, não pro
-        9999,             # rate limit alto
-        "2099-01-01",     # nunca expira
-        1                 # ativa
-    ))
