@@ -62,6 +62,7 @@ jobs:
       - name: Start API in background
         env:
           SELIX_DB_PATH: /tmp/selix_ci.db
+          SELIX_LOG_DIR: /tmp/selix_logs
           MASTER_API_KEY: master_123_super_secret
           SELIX_API_KEYS: test_api_key_123
           PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/src
