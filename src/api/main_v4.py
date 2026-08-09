@@ -15,7 +15,8 @@ import uuid
 load_dotenv('/root/selix/.env')
 app = Flask(__name__)
 CORS(app)
-DB_PATH = '/root/selix/selix.db'
+import os
+DB_PATH = os.getenv('SELIX_DB_PATH', '/root/selix/selix.db')
 
 # ============================================================
 # FILA E WORKER PARA TAREFAS ASSÍNCRONAS (RESOLVE O GARGALO)
