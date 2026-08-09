@@ -24,7 +24,7 @@ def get_brent_cached():
 
 
 DB_PATH = "/root/selix/selix.db"
-LOG_DIR = "/root/selix/logs"
+LOG_DIR = os.getenv("SELIX_LOG_DIR", "/tmp/selix_logs")
 os.makedirs(LOG_DIR, exist_ok=True)
 
 logging.basicConfig(
