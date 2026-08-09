@@ -1,3 +1,5 @@
+[![CI](https://github.com/scoobiii/selix/actions/workflows/tests.yml/badge.svg)](https://github.com/scoobiii/selix/actions/workflows/tests.yml)
+
 
 # 🤖 SELIX v7.2 — Modelo Regime-Dependente com Dados Reais de Mercado
 
