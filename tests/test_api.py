@@ -14,7 +14,7 @@ if not API_KEY:
             API_KEY = line.split(":")[1].strip()
             break
 
-HEADERS = get_api_headers()
+HEADERS = {"X-API-Key": "test_api_key_123"}
 
 class TestAPI:
     def test_health(self):

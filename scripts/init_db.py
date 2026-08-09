@@ -165,3 +165,16 @@ def init_db():
 
 if __name__ == "__main__":
     init_db()
+    # Chave de teste para CI (expira em 2099, rate limit alto)
+    cursor.execute("""
+        INSERT OR IGNORE INTO api_keys 
+        (key_hash, client_name, plan, rate_limit_per_minute, expires_at, is_active) 
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        hashlib.sha256("test_api_key_123".encode()).hexdigest(),
+        "test_client",
+        "test",           # plano test, não pro
+        9999,             # rate limit alto
+        "2099-01-01",     # nunca expira
+        1                 # ativa
+    ))
