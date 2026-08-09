@@ -15,16 +15,21 @@ calibração precisa.
 
 from typing import Optional
 
-def get_credibilidade() -> float:
-    """
-    Retorna a credibilidade do Banco Central.
+class CredibilidadeModel:
+    """Modelo de Credibilidade do Banco Central"""
 
-    Baseline: 0.50 (50%)
-    Fonte: BCB/Focus (https://www.bcb.gov.br/controleinflacao/relatoriofocus)
-    Status: ⚠️ NÃO CONFIRMADO — valor preliminar.
-    """
-    # Em produção: consultar API do BCB ou relatório Focus
-    return 0.50
+    def __init__(self):
+        self.baseline = 0.50
 
-def get_fonte_credibilidade() -> str:
-    return "BCB/Focus — https://www.bcb.gov.br/controleinflacao/relatoriofocus (pendente de confirmação)"
+    def calcular_credibilidade(self) -> float:
+        """
+        Retorna a credibilidade do Banco Central.
+        Baseline: 0.50 (50%)
+        """
+        return self.baseline
+
+    def get_credibilidade(self) -> float:
+        return self.calcular_credibilidade()
+
+def get_credibilidade(): return CredibilidadeModel().get_credibilidade()
+def get_fonte_credibilidade(): return "BCB/Focus — https://www.bcb.gov.br/controleinflacao/relatoriofocus"

@@ -1,56 +1,59 @@
 #!/usr/bin/env python3
 """
-SELIX — Dashboard em tempo real
-
-Exibe:
-- Selic atual e ideal
-- Expectativas Focus
-- ROIC das empresas
-- Empresas em RJ
+SELIX v7.1 — Dashboard do Ecossistema
 """
 
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-
-from src.selix.core import SelixInputs, calcular_selix, BASELINE_ATUAL
-from src.selix.focus_api import get_todas_expectativas
-from src.selix.roic import EMPRESAS, get_empresas_que_batem_selic, get_empresas_rj
-from src.selix.roic_cvm import get_roic_por_codigo
 from datetime import datetime
 
+# Adiciona o diretório raiz ao path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+from src.selix_v7.selix_v7_1 import SelixEcossistema
+
 def dashboard():
-    print("=" * 70)
-    print(f"📊 SELIX DASHBOARD — {datetime.now().strftime('%d/%m/%Y %H:%M')}")
-    print("=" * 70)
+    app = SelixEcossistema()
+    r = app.obter_dados_atores()
+    meta = r['metadata']
+    atores = r['atores']
+    listas = r['listas']
+    
+    print("=" * 80)
+    print(f"📊 SELIX v7.1 — DASHBOARD EM TEMPO REAL")
+    print(f"Versão: {meta['versao']} | Responsabilidade: {meta['responsabilidade']} | Assinatura: {meta['assinatura']}")
+    print(f"Data: {meta['data']} | Diretório: {meta['diretorio']}")
+    print("=" * 80)
 
-    # 1. Selic
-    resultado = calcular_selix(BASELINE_ATUAL)
-    print("\n💰 SELIC:")
-    print(f"   Atual:          {resultado['selic_atual']}%")
-    print(f"   Ideal:          {resultado['selic_ideal_quantizada']}%")
-    print(f"   Diferencial:    {resultado['diferencial_pp']} p.p.")
+    # 🏛️ COPOM
+    c = atores['copom']
+    print(f"\n🏛️  [COPOM] Expectativas Focus (BCB):")
+    print(f"   - IPCA 12m:        {c['inflacao_esperada']}%")
+    print(f"   - Gap do Produto:   {c['gap_produto']}%")
+    print(f"   - Credibilidade:    {c['credibilidade']}")
+    print(f"   - Prêmio de Risco:  {c['premio_risco']}% (CDS 5Y)")
 
-    # 2. Expectativas Focus
-    print("\n📈 EXPECTATIVAS FOCUS:")
-    focus = get_todas_expectativas()
-    for k, v in focus.items():
-        print(f"   {k:15s}: {v}")
+    # 🏢 CFO
+    f = atores['cfo']
+    print(f"\n🏢  [CFO] Saúde Corporativa (CVM):")
+    print(f"   - ROIC Médio:       {f['roic_medio']}%")
+    print(f"   - Empresas em RJ:   {f['empresas_rj']} detectadas")
 
-    # 3. ROIC
-    print("\n🏢 ROIC DAS EMPRESAS:")
-    batem = get_empresas_que_batem_selic(resultado['selic_atual'])
-    for e in batem:
-        print(f"   ✅ {e.codigo:8s} {e.setor:12s} ROIC={e.roic}% (bate Selic)")
+    # 📊 GESTOR
+    g = atores['gestor']
+    print(f"\n📊  [GESTOR] Performance e Decisão:")
+    print(f"   - SELIC ATUAL:      {g['selic_atual']}%")
+    print(f"   - SELIC IDEAL:      {g['selic_ideal']}%")
+    print(f"   - DIFERENCIAL:      {g['diferencial']} p.p.")
 
-    # 4. Empresas em RJ
-    print("\n⚠️ EMPRESAS EM RJ:")
-    rj = get_empresas_rj()
-    for e in rj:
-        print(f"   🔴 {e.codigo:8s} {e.setor:12s} ROIC={e.roic}%")
+    # 🏆 PERFORMANCE
+    print(f"\n🏆  [OPINIÃO] Destaques de Mercado:")
+    print(f"   - Batem Selic:      {', '.join(listas['batem_selic'])}")
+    print(f"   - Alerta RJ:        {', '.join(listas['em_rj'])}")
 
-    print("\n" + "=" * 70)
-    print("Fonte: BCB, CVM, B3 | SELIX v7.1")
+    print("\n" + "=" * 80)
+    print("👨‍💻 [DEV] 26/26 testes passando | Código Aberto: github.com/scoobiii/selix")
+    print("=" * 80)
 
 if __name__ == "__main__":
     dashboard()

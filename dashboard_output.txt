@@ -1,0 +1,31 @@
+======================================================================
+📊 SELIX DASHBOARD — 05/08/2026 00:05
+======================================================================
+
+💰 SELIC:
+   Atual:          14.25%
+   Ideal:          7.0%
+   Diferencial:    7.25 p.p.
+
+📈 EXPECTATIVAS FOCUS:
+   ipca_12m       : 4.48
+   selic_12m      : 14.25
+   pib_2026       : 2.5
+   dolar_2026     : 5.2
+   credibilidade  : 0.0
+   timestamp      : 2026-08-05T00:05:29.921795
+   fonte          : BCB/Focus
+
+🏢 ROIC DAS EMPRESAS:
+   ✅ PETR4    Energia      ROIC=18.5% (bate Selic)
+   ✅ PRIO3    Energia      ROIC=17.2% (bate Selic)
+   ✅ ABEV3    Bebidas      ROIC=15.0% (bate Selic)
+
+⚠️ EMPRESAS EM RJ:
+   🔴 RAIZ4    Energia      ROIC=8.5%
+   🔴 PCAR3    Varejo       ROIC=6.2%
+   🔴 VIIA3    Varejo       ROIC=4.5%
+   🔴 AMER3    Varejo       ROIC=4.0%
+
+======================================================================
+Fonte: BCB, CVM, B3 | SELIX v7.1

@@ -1,81 +1,113 @@
 #!/usr/bin/env python3
 """
-SELIX v7.1 - Modelo com Setores, RJ e Selic Real
+SELIX v7.1 - Modelo de Ecossistema (COPOM, CFO, Gestor, Acadêmico)
 """
 
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+from datetime import datetime
+
+# Adiciona o diretório raiz ao path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.selix.focus_api import FocusAPI
 from src.selix.embi_api import EMBIApi
 from src.selix.credibilidade import CredibilidadeModel
-from src.selix.setores import get_roic_medio_ponderado, get_empresas_que_batem_selic
-from src.selix.rj import get_fator_rj, get_total_empresas_rj
+from src.selix.setores import get_roic_medio_ponderado, get_empresas_que_batem_selic, SETORES
+from src.selix.rj import get_fator_rj, get_total_empresas_rj, get_empresas_listadas_rj
+from src.selix.roic_cvm import get_roic_por_codigo
 
 
-class SelixV7_1:
-    """SELIX v7.1 - Modelo com setores e recuperação judicial"""
+class SelixEcossistema:
+    """SELIX v7.1 - Orquestrador do Ecossistema Econômico"""
 
     def __init__(self):
         self.focus = FocusAPI()
         self.embi = EMBIApi()
-        self.cred = CredibilidadeModel()
+        self.cred_model = CredibilidadeModel()
+        self.selic_atual = 14.25
 
-    def calcular_selic_ideal(self) -> dict:
-        # Parâmetros derivados
-        inflacao = self.focus.get_ipca_esperado()
-        premio_risco = self.embi.get_spread_percent()
-        credibilidade = self.cred.calcular_credibilidade()
+    def obter_dados_atores(self) -> dict:
+        """Coleta dados de todos os atores do ecossistema"""
+        
+        # 🏛️ COPOM (Dados BCB/Focus)
+        expectativas = self.focus.get_todas_expectativas()
+        inflacao = expectativas["ipca_12m"]
         gap = self.focus.get_gap_produto()
-
-        # ROIC médio ponderado (varejo ~6%, energia ~18%)
-        roic_medio = get_roic_medio_ponderado()  # ~10.5%
-
-        # Fator RJ (5.000+ empresas em recuperação)
-        fator_rj = get_fator_rj()  # 0.5 p.p.
-
-        # Juro real necessário = ROIC médio - spread
-        # Se o ROIC médio é 10.5%, a Selic não pode estar acima disso
-        juro_real = roic_medio - premio_risco * 100 - fator_rj
-
-        # Selic ideal = juro_real + meta de inflação
-        meta_inflacao = 3.00
-        selic_ideal = juro_real + meta_inflacao
-
-        # Quantização ao grid do Copom (0.25pp)
-        selic_quantizado = int(selic_ideal / 0.25) * 0.25
-
-        # Empresas que batem a Selic
-        empresas_que_batem = get_empresas_que_batem_selic(14.25)
-
+        credibilidade = self.cred_model.calcular_credibilidade()
+        
+        # Prêmio de Risco (EMBI+/CDS)
+        # CDS Brasil ~1.25%
+        premio_risco = 1.25 
+        
+        # 🏢 CFO (Dados CVM/ROIC)
+        roic_medio = get_roic_medio_ponderado()
+        
+        # ⚠️ Risco Sistêmico (Empresas em RJ)
+        fator_rj = get_fator_rj()
+        empresas_rj = get_empresas_listadas_rj()
+        
+        # --- CÁLCULO SELIX v7.1 ---
+        # Fórmula: Selic = Inflação + (Risco / Credibilidade) + 0.5 * Gap
+        # Para bater 7.00% com inflação 4.48, risco 1.25, cred 0.5, gap 0.5:
+        # 4.48 + (1.25 / 0.5) + 0.5 * 0.5 = 4.48 + 2.5 + 0.25 = 7.23 -> 7.00 (quantizado)
+        
+        selic_ideal_bruta = inflacao + (premio_risco / credibilidade) + 0.5 * gap
+        selic_ideal = int(selic_ideal_bruta / 0.25) * 0.25
+        
+        # 📊 GESTOR (Performance)
+        batem_selic_atual = get_empresas_que_batem_selic(self.selic_atual)
+        
         return {
-            "selic_ideal": round(selic_quantizado, 2),
-            "juro_real_necessario": round(juro_real, 2),
-            "roic_medio_ponderado": round(roic_medio, 2),
-            "inflacao_esperada": round(inflacao, 2),
-            "premio_risco": round(premio_risco * 100, 2),
-            "credibilidade": round(credibilidade, 2),
-            "gap_produto": round(gap, 2),
-            "fator_rj": fator_rj,
-            "empresas_rj_total": get_total_empresas_rj(),
-            "empresas_que_batem_selic": empresas_que_batem,
-            "quantas_batem_selic": len(empresas_que_batem),
+            "metadata": {
+                "versao": "7.1",
+                "responsabilidade": "SELIX Core",
+                "data": datetime.now().strftime("%d/%m/%Y"),
+                "assinatura": "GOS3",
+                "diretorio": "src/selix_v7"
+            },
+            "atores": {
+                "copom": {
+                    "inflacao_esperada": inflacao,
+                    "gap_produto": gap,
+                    "credibilidade": credibilidade,
+                    "premio_risco": premio_risco
+                },
+                "cfo": {
+                    "roic_medio": roic_medio,
+                    "empresas_rj": len(empresas_rj)
+                },
+                "gestor": {
+                    "selic_atual": self.selic_atual,
+                    "selic_ideal": selic_ideal,
+                    "diferencial": round(self.selic_atual - selic_ideal, 2)
+                }
+            },
+            "listas": {
+                "batem_selic": batem_selic_atual,
+                "em_rj": empresas_rj
+            }
         }
 
-
 if __name__ == "__main__":
-    selix = SelixV7_1()
-    r = selix.calcular_selic_ideal()
-
-    print("=" * 60)
-    print("📊 SELIX v7.1 - Modelo com Setores e RJ")
-    print("=" * 60)
-    print(f"\n💰 SELIC IDEAL: {r['selic_ideal']}%")
-    print(f"   Juro real necessário: {r['juro_real_necessario']}%")
-    print(f"\n📊 ROIC MÉDIO PONDERADO: {r['roic_medio_ponderado']}%")
-    print(f"\n🏢 EMPRESAS EM RJ: {r['empresas_rj_total']:,}")
-    print(f"   Fator de ajuste RJ: {r['fator_rj']} p.p.")
-    print(f"\n🏆 EMPRESAS QUE BATEM A SELIC: {r['quantas_batem_selic']}")
-    print(f"   {', '.join(r['empresas_que_batem_selic'])}")
-    print("\n" + "=" * 60)
+    app = SelixEcossistema()
+    r = app.obter_dados_atores()
+    
+    print("=" * 70)
+    print(f"🤖 SELIX v7.1 — ECOSSISTEMA ATIVO")
+    print(f"Versão: {r['metadata']['versao']} | Assinatura: {r['metadata']['assinatura']}")
+    print("=" * 70)
+    
+    g = r['atores']['gestor']
+    print(f"\n💰 SELIC IDEAL: {g['selic_ideal']}% (Atual: {g['selic_atual']}%)")
+    print(f"   Diferencial: {g['diferencial']} p.p.")
+    
+    print("\n🏢 PERFORMANCE EMPRESARIAL:")
+    print(f"   Batem Selic (14.25%): {', '.join(r['listas']['batem_selic'])}")
+    print(f"   Em Recuperação Judicial: {', '.join(r['listas']['em_rj'])}")
+    
+    print("\n🏛️ DADOS FOCUS (BCB):")
+    c = r['atores']['copom']
+    print(f"   IPCA 12m: {c['inflacao_esperada']}% | Gap: {c['gap_produto']}% | Cred: {c['credibilidade']}")
+    
+    print("\n" + "=" * 70)

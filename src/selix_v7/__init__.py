@@ -1,1 +1,1 @@
-from .selix_v7 import SelixV7
+# SELIX v7.1
