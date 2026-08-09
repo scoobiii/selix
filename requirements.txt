@@ -34,7 +34,7 @@ MarkupSafe==3.0.3
 marshmallow==4.3.0
 multitasking==0.0.13
 nltk==3.10.0
-numpy==2.5.1
+numpy==2.2.6
 packaging==26.2
 pandas==3.0.5
 peewee==4.3.0
