@@ -39,3 +39,8 @@ generate_swagger.py
 *.bak
 *.backup
 src/selix_v7/
+scripts/add_*.sh
+scripts/apply_*.sh
+scripts/update_docs.sh
+scripts/*_redis_service.py
+*.bak.*

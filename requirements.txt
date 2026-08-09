@@ -71,3 +71,4 @@ z3-solver==5.0.0.0
 setuptools>=65.0.0
 diskcache>=5.0.0
 diskcache>=5.0.0
+flask-cors
