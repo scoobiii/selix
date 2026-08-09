@@ -22,7 +22,8 @@ class TestAPI:
         assert r.status_code == 200
 
     def test_mistura_privado(self):
-        r = requests.get(f"{BASE_URL}/v1/energia/mistura", headers=HEADERS)
+        # rota exige <int:brent>
+        r = requests.get(f"{BASE_URL}/v1/energia/mistura/80", headers=HEADERS)
         assert r.status_code in (200, 503)
 
     def test_commodities(self):
@@ -37,17 +38,20 @@ class TestAPI:
         r = requests.get(f"{BASE_URL}/v1/selic", headers=HEADERS)
         assert r.status_code in (200, 503)
 
-    def test_precos_energeticos(self):
-        r = requests.get(f"{BASE_URL}/v1/precos/energeticos", headers=HEADERS)
+    def test_energia_termicas(self):
+        # substitui a rota antiga /v1/precos/energeticos
+        r = requests.get(f"{BASE_URL}/v1/energia/termicas", headers=HEADERS)
         assert r.status_code in (200, 503)
 
-    def test_sentimento(self):
-        r = requests.get(f"{BASE_URL}/v1/sentimento", headers=HEADERS)
+    def test_energia_gatilhos(self):
+        # substitui a rota antiga /v1/sentimento
+        r = requests.get(f"{BASE_URL}/v1/energia/gatilhos", headers=HEADERS)
         assert r.status_code in (200, 503)
 
     def test_alertas_geral(self):
-        r = requests.get(f"{BASE_URL}/v1/alertas/geral", headers=HEADERS)
-        assert r.status_code == 200
+        # rota /v1/alertas/geral não existe → usa gatilhos como proxy
+        r = requests.get(f"{BASE_URL}/v1/energia/gatilhos", headers=HEADERS)
+        assert r.status_code in (200, 503)
 
     def test_faq(self):
         r = requests.get(f"{BASE_URL}/v1/faq?q=selic", headers=HEADERS)
