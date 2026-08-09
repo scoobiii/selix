@@ -63,3 +63,36 @@
 - **Futuro (v9.0, após validação):** Lançar o "Selo de Auditoria" com lastro de mercado (Big Five).
 
 **Prazo estimado:** Q1 2027 (após validação das asset managers).
+
+## 🔒 Selo GOS3 (Processo) — GATEADO (não declarar antes disso)
+
+Diferente do Selo de Auditoria SELIX (validação de mercado externa), o Selo GOS3
+certifica o **protocolo de engenharia**, não o modelo econômico. É auto-verificável
+pelos próprios artefatos do repositório — não depende de validação de terceiros.
+
+| Critério | Status | Critério de conclusão |
+|----------|--------|----------------------|
+| **Anti-truncation policy** | ✅ Provável | Nenhum commit com `...` ou código cortado nos últimos 30 dias |
+| **Handoff/Decisions/Gotchas** | ⚠️ Parcial | `docs/handoff.md`, `docs/decisions.md`, `docs/gotchas.md` atualizados a cada sessão (≥ 5 sessões consecutivas) |
+| **3 fases pré-código** | ❌ Não iniciado | Log de decisões por feature (Discovery → Refinement → Architecture) documentado em `docs/decisions.md` |
+| **CI automatizado** | ❌ Não iniciado | GitHub Actions rodando `pytest` a cada push na `main` |
+| **Reprodutibilidade cross-ambiente** | ⚠️ Parcial | CI passa em Ubuntu + Termux + proot-distro (≥ 2 ambientes distintos) |
+| **Zero regressão sustentada** | ❌ Não iniciado | Nenhum teste quebrado por > 24h nas últimas 4 semanas consecutivas |
+
+⚠️ **Não declarar "GOS3-compliant"** até os 6 critérios acima estarem ✅.
+
+**GOS3 = Protocolo de Engenharia**
+- Mede **como** o código é construído, não **o que** o código faz.
+- Auto-verificável pelo repositório (não depende de validação externa).
+- Pode ser alcançado **independentemente** do Selo SELIX (não espera validação de mercado).
+
+**Comparação com Selo SELIX:**
+
+| Dimensão | Selo GOS3 | Selo SELIX |
+|----------|-----------|------------|
+| O que mede | Processo de engenharia | Validação econômica |
+| Quem valida | Auto-verificável (repositório) | Mercado (Big Five asset managers) |
+| Gates | CI, handoff, reprodutibilidade | Asset managers, peer review, track record |
+| Depende de | Ninguém | Validação externa |
+
+**Prazo estimado:** sem compromisso de data — item de maior alavancagem é configurar CI (item 4), do qual os demais critérios (zero regressão, reprodutibilidade) dependem para virar evidência contínua em vez de foto manual.
