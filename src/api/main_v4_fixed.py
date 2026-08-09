@@ -115,7 +115,7 @@ API_KEY_CACHE_TIME = {}
 # FALLBACK: CHAVES DO .ENV
 # ============================================================
 MASTER_API_KEY = os.getenv('MASTER_API_KEY', '')
-SELIX_API_KEY = os.getenv('SELIX_API_KEY', '')
+SELIX_API_KEY = os.getenv('SELIX_API_KEYS', os.getenv('SELIX_API_KEY', ''))
 if not MASTER_API_KEY and not SELIX_API_KEY:
     logger.warning("⚠️ Nenhuma chave configurada no .env! Gerando chave temporária...")
     MASTER_API_KEY = hashlib.sha256(os.urandom(32)).hexdigest()[:32]
