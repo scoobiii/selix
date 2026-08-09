@@ -42,7 +42,7 @@ def verify_api_key(raw_key: str) -> Optional[Dict[str, Any]]:
     conn.close()
     if not row:
         return None
-    if not row["is_active"] or datetime.now() > datetime.fromisoformat(row["expires_at"]):
+    if not row["is_active"] or (row["expires_at"] and datetime.now() > datetime.fromisoformat(row["expires_at"])):
         return None
     return dict(row)
 

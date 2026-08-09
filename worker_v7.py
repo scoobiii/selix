@@ -9,7 +9,8 @@ from datetime import datetime
 import os
 
 from diskcache import Cache
-cache = Cache("/root/selix/cache")
+import os
+cache = Cache(os.getenv("SELIX_CACHE_DIR", os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache")))
 
 import hashlib
 
