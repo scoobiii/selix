@@ -41,11 +41,13 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install pytest
 
+      - name: Criar diretório de cache
+        run: mkdir -p /tmp/selix_cache
       - name: Rodar suíte de testes
         env:
           SELIX_DB_PATH: /tmp/selix_ci.db
         run: |
-          PYTHONPATH=$(pwd):$(pwd)/scripts pytest -v --tb=short
+          PYTHONPATH=$(pwd):$(pwd)/scripts:$(pwd)/src pytest -v --tb=short
 
       - name: Resumo
         if: always()
