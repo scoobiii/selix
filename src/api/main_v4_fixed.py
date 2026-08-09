@@ -82,8 +82,8 @@ from dotenv import load_dotenv
 # ============================================================
 load_dotenv('/root/selix/.env')
 
-DB_PATH = '/root/selix/selix.db'
-LOG_DIR = '/root/selix/logs'
+DB_PATH = os.getenv("SELIX_DB_PATH", "/root/selix/selix.db")
+LOG_DIR = os.getenv("SELIX_LOG_DIR", "/root/selix/logs")
 os.makedirs(LOG_DIR, exist_ok=True)
 LOG_FILE = os.path.join(LOG_DIR, 'main_v4_fixed.log')
 
