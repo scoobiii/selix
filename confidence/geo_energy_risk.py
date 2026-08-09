@@ -5,14 +5,17 @@ SELIX - Calculadora de Risco Geoenergético Global
 Local: /root/selix/confidence/geo_energy_risk.py
 """
 
+import os
 import sqlite3
 import requests
 import yfinance as yf
 import json
 from datetime import datetime
 
-DB_PATH = "/root/selix/selix.db"
-LOG_PATH = "/root/selix/logs/geo_risk.log"
+DB_PATH = os.getenv("SELIX_DB_PATH", "/root/selix/selix.db")
+LOG_PATH = os.path.join(os.getenv("SELIX_LOG_DIR", "/root/selix/logs"), "geo_risk.log")
+
+os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
 
 def log(msg):
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')

@@ -7,7 +7,7 @@ import os, sys, time, subprocess, sqlite3, json
 import schedule
 from datetime import datetime, date
 
-LOG_FILE = "/root/selix/logs/campaign.log"
+LOG_FILE = os.path.join(os.getenv("SELIX_LOG_DIR", "/root/selix/logs"), "campaign.log")
 DB_PATH  = "/root/selix/selix.db"
 CAMPAIGN = "/root/selix/agents/bluesky_bot/selix_campaign.py"
 VENV_PY  = "/root/selix/venv/bin/python"
