@@ -28,7 +28,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: 'pip'
+          cache: "pip"
 
       - name: Instalar dependências
         run: |
@@ -39,8 +39,7 @@ jobs:
       - name: Inicializar banco de dados
         env:
           SELIX_DB_PATH: /tmp/selix_ci.db
-        run: |
-          python scripts/init_db.py
+        run: python scripts/init_db.py
 
       - name: Criar diretórios de cache e logs
         run: |
@@ -53,8 +52,7 @@ jobs:
           SELIX_CACHE_DIR: /tmp/selix_cache
           SELIX_LOG_DIR: /tmp/selix_logs
           PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/scripts:${{ github.workspace }}/src
-        run: |
-          pytest -v --tb=short
+        run: pytest -v --tb=short
 
       - name: Resumo
         if: always()
