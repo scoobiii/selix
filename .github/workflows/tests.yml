@@ -31,7 +31,7 @@ jobs:
         env:
           SELIX_DB_PATH: /tmp/selix_ci.db
         run: |
-          mkdir -p /tmp/selix_cache /tmp/selix_logs logs
+          mkdir -p /tmp/selix_cache /tmp/selix_logs
           python scripts/init_db.py
 
       - name: Unit / core tests (sem servidor)
@@ -41,14 +41,12 @@ jobs:
           SELIX_LOG_DIR: /tmp/selix_logs
           MASTER_API_KEY: master_123_super_secret
           SELIX_API_KEYS: test_api_key_123
-          PYTHONPATH: \( {{ github.workspace }}: \){{ github.workspace }}/src:${{ github.workspace }}/scripts
+          PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/src:${{ github.workspace }}/scripts
         run: |
           pytest tests/ -v --tb=short \
             --ignore=tests/test_api.py \
             --ignore=tests/test_security.py \
             --ignore=tests/test_admin_api.py \
-            --ignore=tests/test_campaign_supervisor.py \
-            --ignore=tests/test_metrics_agent.py \
             -k "not (api or live or integration)"
 
       - name: Start API in background
@@ -56,9 +54,8 @@ jobs:
           SELIX_DB_PATH: /tmp/selix_ci.db
           MASTER_API_KEY: master_123_super_secret
           SELIX_API_KEYS: test_api_key_123
-          PYTHONPATH: \( {{ github.workspace }}: \){{ github.workspace }}/src
+          PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/src
         run: |
-          mkdir -p /tmp/selix_logs logs
           nohup python src/api/main_v4_fixed.py > /tmp/selix_logs/api.log 2>&1 &
           for i in $(seq 1 30); do
             if curl -sf http://127.0.0.1:5000/v1/health >/dev/null; then
@@ -76,7 +73,7 @@ jobs:
           SELIX_DB_PATH: /tmp/selix_ci.db
           MASTER_API_KEY: master_123_super_secret
           SELIX_API_KEYS: test_api_key_123
-          PYTHONPATH: \( {{ github.workspace }}: \){{ github.workspace }}/src:${{ github.workspace }}/scripts
+          PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/src:${{ github.workspace }}/scripts
         run: |
           pytest tests/test_api.py tests/test_security.py tests/test_admin_api.py -v --tb=short
 
@@ -86,5 +83,5 @@ jobs:
           echo "## SELIX CI" >> $GITHUB_STEP_SUMMARY
           echo "- Branch: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Log API:" >> $GITHUB_STEP_SUMMARY
-          tail -n 40 /tmp/selix_logs/api.log 2>/dev/null >> $GITHUB_STEP_SUMMARY || true
+          echo "- Log API (se existir):" >> $GITHUB_STEP_SUMMARY
+          tail -n 30 /tmp/selix_logs/api.log 2>/dev/null >> $GITHUB_STEP_SUMMARY
