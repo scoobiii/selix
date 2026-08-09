@@ -7,8 +7,8 @@ import os, sys, time, json, sqlite3, subprocess
 import psutil, requests
 from datetime import datetime
 
-DB_PATH  = "/root/selix/selix.db"
-LOG_DIR  = "/root/selix/logs"
+DB_PATH = os.getenv("SELIX_DB_PATH", "/root/selix/selix.db")
+LOG_DIR = os.getenv("SELIX_LOG_DIR", "/tmp/selix_logs")
 API_URL  = "http://localhost:5000/v1/health"
 INTERVAL = 60   # segundos entre coletas
 

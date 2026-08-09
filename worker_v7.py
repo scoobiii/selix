@@ -1,3 +1,4 @@
+import os
 #!/usr/bin/env python3
 # worker_v7.py - Múltiplas fontes reais, rotaciona para evitar bloqueio
 
