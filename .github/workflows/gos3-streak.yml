@@ -1,0 +1,21 @@
+name: GOS3 Streak Check
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-streak:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verifica ultimos 7 runs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          FAILURES=$(gh run list --workflow="SELIX Test Suite" --limit 7 --json conclusion --jq '[.[] | select(.conclusion != "success")] | length' -R ${{ github.repository }})
+          if [ "$FAILURES" -eq 0 ]; then
+            echo "🏆 SELO GOS3: 7/7 sem quebra" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ $FAILURES quebra(s) — selo nao emitido" >> $GITHUB_STEP_SUMMARY
+          fi
