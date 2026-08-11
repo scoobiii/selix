@@ -29,3 +29,9 @@
 ### Pendente
 - test_alertas_geral SKIPPED
 - ~50 arquivos com /root/selix hardcoded
+## [v7.2.3] - 2026-08-11
+
+### Limpeza
+- Removido whitepaper.md com dados desatualizados (9,25%).
+- Substituído pela nova seção de Lastro Acadêmico e endpoint DSGE Kalman.
+
