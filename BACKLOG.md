@@ -1,5 +1,24 @@
 # 📋 BACKLOG — SELIX v7.2
 
+
+## ✅ Concluído em 11/08/2026
+
+| Item | Status |
+|------|--------|
+| Publicador de Snapshot no Bluesky (CI) | ✅ |
+| Fonte Única de Verdade no bot (`SELIC_IDEAL` + `DIFERENCIAL`) | ✅ |
+| Workflow GitHub Actions (`bluesky_ci.yml`) | ✅ |
+| Política anti-fallback (falha visível) | ✅ |
+
+## ⏳ Próximo (Agente de Respostas)
+
+| Item | Prioridade | Status |
+|------|------------|--------|
+| Monitoramento de menções/respostas | Alta | ⏳ Não iniciado |
+| Filtro de perfis alinhados (lista branca) | Alta | ⏳ Não iniciado |
+| Respostas automáticas com números oficiais | Alta | ⏳ Não iniciado |
+| Workflow `agente_respostas.yml` | Alta | ⏳ Não iniciado |
+
 ## ✅ Sprint GOS8 — Concluído (08/08/2026)
 
 | Item | Status |
@@ -96,3 +115,17 @@ pelos próprios artefatos do repositório — não depende de validação de ter
 | Depende de | Ninguém | Validação externa |
 
 **Prazo estimado:** sem compromisso de data — item de maior alavancagem é configurar CI (item 4), do qual os demais critérios (zero regressão, reprodutibilidade) dependem para virar evidência contínua em vez de foto manual.
+
+
+## 🔒 Selo GOS3 — GATEADO (Dia 1/7)
+
+| Critério | Status | Critério de conclusão |
+|----------|--------|----------------------|
+| CI automatizado | ✅ | GitHub Actions rodando pytest a cada push |
+| Zero regressão | ⏳ | 7 dias consecutivos sem quebra |
+| Reprodutibilidade | ⏳ | CI passa em Ubuntu + Termux |
+| Handoff/Decisions | ⏳ | docs/handoff.md atualizado |
+
+⚠️ **Não declarar "GOS3-compliant"** até os 4 critérios acima estarem ✅.
+
+**Prazo estimado:** 16/08/2026

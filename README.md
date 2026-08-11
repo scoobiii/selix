@@ -326,3 +326,15 @@ A camada HTTP atual usa Flask + SQLite. Para produção, estamos migrando para:
 | **Paginação** | ❌ | `limit` e `offset` |
 
 Veja detalhes em [BACKLOG_V8_HTTP.md](BACKLOG_V8_HTTP.md).
+
+## 📡 Publicação Automática no Bluesky
+
+O SELIX publica automaticamente o **snapshot oficial** no Bluesky duas vezes por dia (09h e 17h BRT).
+
+- **Conta:** [@zeh-sobrinho.bsky.social](https://bsky.app/profile/zeh-sobrinho.bsky.social)
+- **Fonte:** `src.selix.config` (mesma constante usada pela API e pela landing)
+- **Política:** Nunca publica número de fallback. Se o core não carregar, o post é cancelado.
+- **Workflow:** `.github/workflows/bluesky_ci.yml`
+
+> O bot atual é apenas um publicador de snapshot. O agente de respostas inteligentes ainda não está ativo.
+

@@ -1,71 +1,31 @@
-# 📝 CHANGELOG — SELIX
-
-## [v7.2] — 2026-08-08
+## [v7.2.2] - 2026-08-11
 
 ### Adicionado
-- Modelo regime-dependente com multiplicador de credibilidade
-- Endpoints de crédito PF/PJ (`/v1/credito/*`)
-- Fator de blindagem energética τ (E32/B15)
-- Credibilidade calculada (0.35) via histórico 2020-2025
-- Fonte única de verdade (`config.py` com SELIC_IDEAL = 8.25%)
-- SQLite WAL mode otimizado
-- CI/CD para GCloud Run (deploy.yml)
+- Publicador canônico de snapshot no Bluesky via GitHub Actions
+- Workflow `bluesky_ci.yml` (roda 2x por dia + disparo manual)
+- Script `scripts/bluesky_ci_publisher.py` com Fonte Única de Verdade (`src.selix.config`)
+- Política de falha visível: se o import do config quebrar, o bot **não** posta número de fallback
+
+### Observação
+- O bot atual publica apenas o snapshot oficial.
+- Agente de respostas automáticas / monitoramento de menções ainda não está ativo.
+
+# Changelog
+
+## [v7.2.1] - 2026-08-09
 
 ### Corrigido
-- Admin API: 6/6 testes passando
-- metrics_agent: 20/20 testes passando
-- roic_cvm: fallback sem pandas
-- test_alertas_geral: dados de teste no banco
-- Testes de API com headers padronizados via conftest.py
-- Duplicatas de endpoints de crédito removidas
-
-### Testes
-- 69/69 testes passando (100%)
-- Cobertura geral: 83%
-- Cobertura core.py: 100%
-
-### Documentação
-- README atualizado para v7.2
-- LIMITACOES.md atualizado
-- BACKLOG.md criado
-
----
-
-## [v7.1] — 2026-08-07
+- DB_PATH configurável via SELIX_DB_PATH em 0 arquivos
+- LOG_DIR configurável via SELIX_LOG_DIR em 0 arquivos
+- main_v4_fixed.py como entrypoint da API
+- Schema do banco completo (8 tabelas)
+- Autenticação via SELIX_API_KEYS com fallback
+- Rotas dos testes alinhadas com a API real
 
 ### Adicionado
-- Primeira versão do modelo regime-dependente
-- Endpoint `/v1/credito/pj`
+- Workflow GitHub Actions com Redis
+- scripts/init_db.py com schema completo
 
-### Corrigido
-- Credibilidade hardcoded → calculada
-
----
-
-## [v4.0.0] — 2026-06-01
-
-### Added
-- API v4.0 com 12 endpoints documentados
-- Worker resiliente com fallbacks inteligentes
-- Módulo de risco geoenergético global
-- Índice de confiança calculado
-- Separação entre fatos e cenários
-- Testes automatizados (pytest + k6)
-- Rate limiting via NGINX
-
-### Changed
-- Migração para arquitetura com proveniência
-- SQLite otimizado com WAL mode
-- Bot do Bluesky com threads segmentadas
-
-### Fixed
-- Correção de latência (WAL mode)
-- Correção de warnings do pytest
-- Cobertura de código aumentada para 41%
-
-## [3.5.0] — 2026-05-31
-
-### Added
-- Primeira versão funcional do worker
-- API básica com endpoints de energia
-- Bot do Bluesky com posts manuais
+### Pendente
+- test_alertas_geral SKIPPED
+- ~50 arquivos com /root/selix hardcoded
