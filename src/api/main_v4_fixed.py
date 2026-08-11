@@ -776,6 +776,10 @@ def selic_snapshot():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+
+from scripts.dsge_kalman import register_dsge_endpoint
+register_dsge_endpoint(app)
+
 if __name__ == "__main__":
     try:
         if init():

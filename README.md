@@ -172,6 +172,7 @@ Sociedade Jornalistas, formadores de opinião Dados confiáveis para debate púb
 
 O que o SELIX NÃO é:
 
+· ❌ Estimador original de r*: o endpoint `/v1/dsge/rstar` apenas expõe a estimativa publicada por Santos (INTELI, arXiv:2606.19000); não reimplementa o ensemble multi-bloco nem o filtro de Kalman.
 · ❌ Modelo DSGE: Não substitui o SAMBA do BCB nem modelos de equilíbrio geral dinâmico
 · ❌ Accountability institucional: Não tem mandato legal nem acesso privilegiado a dados internos
 · ❌ Estimativa estocástica: Não incorpora incerteza em tempo real com simulações de Monte Carlo
@@ -338,3 +339,22 @@ O SELIX publica automaticamente o **snapshot oficial** no Bluesky duas vezes por
 
 > O bot atual é apenas um publicador de snapshot. O agente de respostas inteligentes ainda não está ativo.
 
+
+
+#### `/v1/dsge/rstar`
+
+Expõe o **proxy operacional de taxa neutra real** publicado por Santos (INTELI),
+arXiv:2606.19000 — não é uma reimplementação local do ensemble multi-bloco do
+paper, e não usa Kalman/IS-Phillips (esse bloco recebe peso zero no paper).
+
+```json
+{
+  "rstar_proxy_real_pct": 9.48,
+  "fonte": "Santos (INTELI), arXiv:2606.19000 -- ensemble multi-bloco (nao Kalman/IS-Phillips)",
+  "nota": "Valor e taxa real (comparavel ao r* do BCB, ~5.0%). Nao somar inflacao para obter nominal.",
+  "atualizado_em": "..."
+}
+```
+
+> **Atenção:** 9,48% é grandeza **real**, comparável ao r* do BCB (~5,0%,
+> Tabela 6 do paper) — não é Selic nominal e não deve ser somado à inflação.
