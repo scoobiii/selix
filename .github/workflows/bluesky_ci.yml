@@ -1,0 +1,23 @@
+name: Publicar Snapshot SELIX (Fonte Única)
+
+on:
+  schedule:
+    - cron: "0 12 * * *"   # 09:00 BRT
+    - cron: "0 20 * * *"   # 17:00 BRT
+  workflow_dispatch:
+
+jobs:
+  publish-snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Instalar requests
+        run: pip install requests
+      - name: Executar Publisher
+        env:
+          BLUESKY_USERNAME: ${{ secrets.BLUESKY_USERNAME }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+        run: python scripts/bluesky_ci_publisher.py
