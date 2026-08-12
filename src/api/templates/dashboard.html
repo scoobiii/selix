@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SELIX — Inteligência Econômica</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header com GOS3 -->
+        <div class="header">
+            <div class="header-left">
+                <h1>⚡ SELIX</h1>
+                <div class="gos3-badge">
+                    <span class="seal">🏆</span>
+                    <div class="status-gos3">
+                        <span class="label">Selo GOS3</span>
+                        <span class="value gold" id="gos3-status">EM VALIDAÇÃO</span>
+                    </div>
+                    <div class="streak">
+                        <span class="dot-small" id="gos3-dot"></span>
+                        <span id="gos3-streak">Dia 2/7</span>
+                    </div>
+                </div>
+            </div>
+            <div class="status">
+                <span class="dot"></span>
+                <span>API v4.0 · Dados em tempo real</span>
+            </div>
+        </div>
+
+        <!-- Cards -->
+        <div class="grid">
+            <div class="card"><div class="label">Selic Atual</div><div class="value negative" id="selic-atual">—</div><div class="sub">Fonte: BCB</div></div>
+            <div class="card"><div class="label">Selic Ideal</div><div class="value positive" id="selic-ideal">—</div><div class="sub">Modelo SELIX</div></div>
+            <div class="card"><div class="label">Diferencial</div><div class="value neutral" id="diferencial">—</div><div class="sub">Atual vs. Ideal</div></div>
+            <div class="card"><div class="label">Status</div><div class="value" style="font-size:16px;">✅</div><div class="sub">Sistema operacional</div></div>
+        </div>
+
+        <!-- Simulador -->
+        <div class="simulator">
+            <h3>🧪 Simulador de Cenários "What-If"</h3>
+            <div class="row">
+                <div class="field"><label>Inflação (%)</label><input id="inflacao" type="number" value="4.48" step="0.01"></div>
+                <div class="field"><label>Prêmio Risco (CDS)</label><input id="premio" type="number" value="1.16" step="0.01"></div>
+                <div class="field"><label>Credibilidade</label><input id="credibilidade" type="number" value="0.35" step="0.01"></div>
+                <div class="field"><label>Gap Produto</label><input id="gap" type="number" value="-0.5" step="0.1"></div>
+            </div>
+            <button class="btn" onclick="simularCenario()">Simular</button>
+            <div id="cenario-resultado"></div>
+        </div>
+
+        <!-- Ações -->
+        <div style="display:flex; gap:12px; margin-bottom:30px; flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="gerarRelatorio()">📄 Gerar Relatório de Auditoria</button>
+            <button class="btn btn-secondary" onclick="window.location.href='/v1/faq'">❓ FAQ</button>
+        </div>
+
+        <!-- Relatório -->
+        <div id="relatorio-container" style="display:none;" class="table-container">
+            <table><thead><tr><th>Data</th><th>Valor</th><th>Fonte</th><th>Modelo</th></tr></thead>
+            <tbody id="relatorio-body"></tbody></table>
+        </div>
+    </div>
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

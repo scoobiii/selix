@@ -6,7 +6,7 @@
 import pytest, sys, os, json, sqlite3
 from unittest.mock import patch, MagicMock, mock_open
 
-sys.path.insert(0, "/root/selix/scripts")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "scripts"))
 import metrics_agent as ma
 
 # ── FIXTURES ────────────────────────────────────────────────────

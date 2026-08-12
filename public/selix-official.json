@@ -1,0 +1,9 @@
+{
+  "selic_ideal": 8.25,
+  "diferencial": 6.0,
+  "selic_atual": 14.25,
+  "fonte": "src.selix.config",
+  "versao": "v7.2.2",
+  "updated_at": "2026-08-11T17:23:49.842747Z",
+  "disclaimer": "Ferramenta de apoio à decisão — não substitui o COPOM."
+}

@@ -777,8 +777,6 @@ def selic_snapshot():
 
 
 
-from scripts.dsge_kalman import register_dsge_endpoint
-register_dsge_endpoint(app)
 
 if __name__ == "__main__":
     try:
