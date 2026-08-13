@@ -47,3 +47,15 @@
 - O cálculo é centralizado no SELIX Engine.
 - Planejamento de WASM para simulações interativas no navegador.
 - Distribuição via GitHub Pages (estático) + VPS/Cloud Run (API/Enterprise).
+
+## [v8.0.0-alpha] - 2026-08-13
+
+### 🚀 Nova Estratégia de Produto
+- Evolução do SELIX para um **ecossistema de inteligência econômica**.
+- O `selix-official.json` agora é o **artefato oficial** gerado pelo sistema (Fonte Única de Verdade).
+- Estrutura de monetização definida (FREE / PRO / ENTERPRISE).
+
+### 🏗️ Arquitetura
+- Cálculo centralizado no SELIX Engine.
+- Planejamento de WASM para simulações interativas no navegador.
+- Distribuição via GitHub Pages (estático) + VPS/Cloud Run (API/Enterprise).
