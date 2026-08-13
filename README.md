@@ -358,19 +358,3 @@ O SELIX é desenhado como um **produto de infraestrutura financeira**.
 
 > O **`selix-official.json`** público continuará sendo a base do ecossistema e não será uma barreira paga. A receita vem das camadas de valor agregado (Análises, API, e Integrações).
 
-## 💰 Modelo de Negócio e Monetização
-
-O SELIX é desenhado como um **produto de infraestrutura financeira**.
-
-**🔄 O Fluxo de Valor**  
-`SELIX Engine (Calcula) → selix-official.json (Publica) → Plataformas (Consomem)`
-
-**📊 Planos Disponíveis**
-
-| Nível | Produto | O que oferece | Monetização |
-| :--- | :--- | :--- | :--- |
-| **FREE** | **SELIX 1D™** | Ticker Público, Widget HTML, Dashboard Básico. | **Gratuito** (Aquisição e Marca). |
-| **PRO** | **SELIX Analytics** | Simulador WASM (interativo), Histórico Completo, Alertas, Exportação de Dados. | **Assinatura Mensal/Anual**. |
-| **ENTERPRISE** | **SELIX API** | API Privada dedicada, Webhooks em tempo real, SLA de 99.9%, Modelos proprietários. | **Contrato Corporativo (Sob demanda)**. |
-
-> O **`selix-official.json`** público continuará sendo a base do ecossistema e não será uma barreira paga. A receita vem das camadas de valor agregado (Análises, API e Integrações).
