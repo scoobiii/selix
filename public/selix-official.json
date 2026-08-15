@@ -1,9 +1,12 @@
 {
   "selic_ideal": 8.25,
-  "diferencial": 6.0,
-  "selic_atual": 14.25,
-  "fonte": "src.selix.config",
-  "versao": "v7.2.2",
-  "updated_at": "2026-08-11T17:23:49.842747Z",
+  "diferencial": 5.75,
+  "selic_atual": 14.0,
+  "selic_atual_fonte": "BCB SGS 432",
+  "selic_atual_serie": 432,
+  "selic_atual_data_bcb": "15/08/2026",
+  "fonte": "src.selix.config + BCB SGS",
+  "versao": "v7.2.3",
+  "updated_at": "2026-08-15T16:04:20.576121Z",
   "disclaimer": "Ferramenta de apoio à decisão — não substitui o COPOM."
 }
