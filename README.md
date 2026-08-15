@@ -3,7 +3,7 @@
 
 # 🤖 SELIX v7.2 — Modelo Regime-Dependente com Dados Reais de Mercado
 
-**Selic real:** 14,25% · **Selic ideal: 8.25%
+**Selic real:** 14,00% · **Selic ideal: 8.25%
 *(Cálculo: Dívida pública R$ 6,9 tri × 5,00 p.p. de redução)*
 
 [![Bluesky Bot](https://img.shields.io/badge/Bluesky-@zeh--sobrinho-1DA1F2)](https://bsky.app/profile/zeh-sobrinho.bsky.social)
@@ -56,7 +56,7 @@ juro_real_necessario = inflação × (1 + prêmio_risco) × (1 + (1 - credibilid
 |---------|--------|-------------|---------|----------|
 | **R$ 270 bi** | R$ 5,4 tri | 5,0 p.p. | R$ 270 bi | Dívida líquida (STN) |
 | **R$ 345 bi** | R$ 6,9 tri | 5,0 p.p. | R$ 345 bi | Dívida bruta (BCB) |
-| **R$ 430 bi** | R$ 5,4 tri | 8,0 p.p. | R$ 430 bi | Selic 2D (14,25%) → 1D (6,25%) |
+| **R$ 430 bi** | R$ 5,4 tri | 8,0 p.p. | R$ 430 bi | Selic 2D (14,00%) → 1D (6,25%) |
 
 ---
 
@@ -196,7 +196,7 @@ T7: r* e risk_premium derivados de dados históricos
 T8: Impacto econômico R$ 345 bi
 
 · Dívida pública líquida: R$ 6,9 tri (STN/BCB SGS 14558)
-· Diferencial Selic: 5,00 p.p. (14.25% - 8.25%)
+· Diferencial Selic: 5,75 p.p. (14.00% - 8.25%)
 · Prova: economia_anual_provada
 
 T9: Reconciliação 8.25% vs 8.25%
