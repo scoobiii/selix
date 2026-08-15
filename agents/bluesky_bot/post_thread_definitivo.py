@@ -5,6 +5,7 @@
 # Responsabilidade: Publicar thread completa (12 posts) do Selix no Bluesky com fallback HTTP
 # Assinatura: GOS3/2026-06-02/agents/bluesky_bot/post_thread_definitivo.py
 
+from agents.bluesky_bot.selic_live import get_selic_atual
 import os
 import sys
 import sqlite3
@@ -92,7 +93,7 @@ def fetch_dados():
                 'selic_val': selic_val, 'sent': calcular_sentimento(brent)}
     print("⚠️  Usando valores mock")
     return {'brent': 97.36, 'e_mix': 27, 'b_mix': 14,
-            'selic_val': 14.25, 'sent': "negativo"}
+            'selic_val': get_selic_atual(), 'sent': "negativo"}
 
 # ========== GERAÇÃO DOS POSTS ==========
 def gerar_posts(dados):

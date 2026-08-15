@@ -29,6 +29,13 @@ REPO_LINK = "github.com/scoobiii/selix"
 
 def get_fato(indicador):
     conn = sqlite3.connect(DB_PATH)
+    # Selic efetiva: prioriza view sincronizada do BCB
+    if indicador == "selic":
+        cur = conn.execute("SELECT valor, data FROM selic LIMIT 1")
+        row = cur.fetchone()
+        if row is not None:
+            conn.close()
+            return (row[0], "%", "BCB SGS 432", row[1])
     cur = conn.execute("""
         SELECT o.valor, o.unidade, f.nome as fonte, o.timestamp
         FROM observacoes o

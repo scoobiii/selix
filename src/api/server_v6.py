@@ -45,11 +45,12 @@ def get_convergence_plan():
 def atualizar_dados():
     global INFLACAO, SELIC_BCB, ULTIMA_ATUALIZACAO
     try:
-        import requests
-        resp = requests.get("https://api.bcb.gov.br/dados/serie/bcdata.sgs.13522/dados/ultimos/1?formato=json", timeout=10)
-        if resp.status_code == 200: INFLACAO = float(resp.json()[0]["valor"])
-        resp = requests.get("https://api.bcb.gov.br/dados/serie/bcdata.sgs.1178/dados/ultimos/1?formato=json", timeout=10)
-        if resp.status_code == 200: SELIC_BCB = float(resp.json()[0]["valor"])
+        from src.providers.bcb_provider import BCBProvider
+        provider = BCBProvider()
+        r_infl = provider._fetch_sgs(13522)
+        if r_infl.get("success"): INFLACAO = r_infl["rate"]
+        r_selic = provider._fetch_sgs(1178)
+        if r_selic.get("success"): SELIC_BCB = r_selic["rate"]
     except: pass
     ULTIMA_ATUALIZACAO = datetime.now().isoformat()
 

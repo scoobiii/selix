@@ -51,15 +51,12 @@ def get_inflacao_real():
     """Consulta IPCA-12 via API BCB SGS (série 13522)"""
     global INFLACAO
     try:
-        import requests
-        url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.13522/dados/ultimos/1?formato=json"
-        resp = requests.get(url, timeout=10)
-        if resp.status_code == 200:
-            dados = resp.json()
-            if dados and len(dados) > 0:
-                INFLACAO = float(dados[0]["valor"])
-                print(f"[Dados] IPCA atualizado: {INFLACAO}%")
-                return INFLACAO
+        from src.providers.bcb_provider import BCBProvider
+        r = BCBProvider()._fetch_sgs(13522)
+        if r.get("success"):
+            INFLACAO = r["rate"]
+            print(f"[Dados] IPCA atualizado: {INFLACAO}%")
+            return INFLACAO
     except Exception as e:
         print(f"[Erro] Falha ao consultar BCB: {e}")
     return INFLACAO
@@ -81,14 +78,12 @@ def get_selic_real():
     global SELIC_BCB
     try:
         import requests
-        url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1178/dados/ultimos/1?formato=json"
-        resp = requests.get(url, timeout=10)
-        if resp.status_code == 200:
-            dados = resp.json()
-            if dados and len(dados) > 0:
-                SELIC_BCB = float(dados[0]["valor"])
-                print(f"[Dados] Selic atualizada: {SELIC_BCB}%")
-                return SELIC_BCB
+        from src.providers.bcb_provider import BCBProvider
+        r = BCBProvider()._fetch_sgs(1178)
+        if r.get("success"):
+            SELIC_BCB = r["rate"]
+            print(f"[Dados] Selic atualizada: {SELIC_BCB}%")
+            return SELIC_BCB
     except Exception as e:
         print(f"[Erro] Falha ao consultar Selic: {e}")
     return SELIC_BCB

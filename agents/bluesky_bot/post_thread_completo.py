@@ -109,7 +109,8 @@ def fetch_dados():
         }
     print("⚠️ Usando valores mock")
     brent = 97.36
-    selic_val = 14.25
+    from agents.bluesky_bot.selic_live import get_selic_atual
+    selic_val = get_selic_atual()
     e_mix = 27
     b_mix = 14
     sent = calcular_sentimento(brent)

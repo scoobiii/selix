@@ -102,7 +102,7 @@ def calcular_juro_real_necessario(
 
 def calcular_selix(
     inputs: SelixInputs,
-    selic_atual: float = 14.25,
+    selic_atual: float = 14.0,
     mix: Optional[EnergyMix] = None,
     choque_energia: float = 0.0,
 ) -> dict:
@@ -167,7 +167,7 @@ class SELIX:
     RELACAO_GLOBAL = 1.0
     PREMIO_RISCO_BRASIL = 1.25
 
-    def __init__(self, inflacao=None, roe=None, selic_bacen=14.25):
+    def __init__(self, inflacao=None, roe=None, selic_bacen=14.0):
         self.inflacao = inflacao or 4.48
         self.roe = roe or 31.23
         self.selic_bacen = selic_bacen

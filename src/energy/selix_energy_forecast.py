@@ -64,9 +64,18 @@ def carregar_dados_historicos():
 def carregar_dados_api():
     """Tentativa de carregar dados reais via API (opcional)"""
     try:
-        # API do BCB para preços de commodities (opcional)
-        url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1376/dados/ultimos/12?formato=json"
-        resp = requests.get(url, timeout=5)
+        # API do BCB para preços de commodities — intervalo explícito
+        # (contorna bug do /ultimos/N que pode retornar datas futuras)
+        from datetime import date, timedelta
+        fim = date.today()
+        ini = fim - timedelta(days=30)
+        url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1376/dados"
+        params = {
+            "formato": "json",
+            "dataInicial": ini.strftime("%d/%m/%Y"),
+            "dataFinal": fim.strftime("%d/%m/%Y"),
+        }
+        resp = requests.get(url, params=params, timeout=5)
         if resp.status_code == 200:
             dados = resp.json()
             df_api = pd.DataFrame(dados)

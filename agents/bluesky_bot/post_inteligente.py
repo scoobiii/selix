@@ -69,7 +69,8 @@ def fetch_dados():
         return dict(brent=brent, e_mix=27, b_mix=14, selic_val=selic_val,
                     sent="negativo" if brent > 90 else "neutro")
     print("⚠️  Mock")
-    return dict(brent=97.36, e_mix=27, b_mix=14, selic_val=14.25, sent="negativo")
+    from agents.bluesky_bot.selic_live import get_selic_atual
+    return dict(brent=97.36, e_mix=27, b_mix=14, selic_val=get_selic_atual(), sent="negativo")
 
 
 # ── POSTS ─────────────────────────────────────────────────────────────────

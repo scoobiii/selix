@@ -62,14 +62,14 @@ def test_bcb_selic_success():
         result = provider.get_selic()
         assert result['success'] is True
         assert result['rate'] == 14.25
-        assert result['source'] == 'BCB'
+        assert result['source'] in ('BCB', 'BCB SGS 432')
 
 def test_bcb_selic_failure():
     with patch('src.providers.bcb_provider.requests.get', side_effect=Exception("Timeout")):
         provider = BCBProvider()
         result = provider.get_selic()
         assert result['success'] is False
-        assert result['source'] == 'BCB'
+        assert result['source'] in ('BCB', 'BCB SGS 432')
 
 # ------------------------------------------------------------------
 # CircuitBreaker

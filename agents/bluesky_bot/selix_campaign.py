@@ -10,6 +10,7 @@ import os, sys, json, time, sqlite3, requests, argparse, fcntl
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from atproto import Client, models
+from agents.bluesky_bot.selic_live import get_selic_atual
 
 load_dotenv('/root/selix/.env')
 
@@ -85,7 +86,7 @@ def fetch_dados():
                     sent="negativo" if brent>90 else "neutro")
     except Exception:
         return dict(brent=97.0, e_mix=27, b_mix=14,
-                    sv=14.25, sent="negativo")
+                    sv=get_selic_atual(), sent="negativo")
 
 # ══════════════════════════════════════════════════════════════════
 # CALENDÁRIO 30 DIAS — 3 POSTS/DIA — 10 SEGMENTOS
@@ -157,7 +158,7 @@ def gerar_calendario(d, link_agent=None):
         ],
         "academia": [
             f"🎓 Teoria por trás do Selix\n\nNão é MMT nem ortodoxia.\nÉ calibração: razão J/I global 1,14×\naplicada ao IPCA projetado (4%).\n= 4,56% como piso neutro.\n\nDetalhes: {R}{cc('academia')}",
-            f"📐 Lean 4 + Z3 como prova formal\n\ntheorem selicReal : nominal - ipca = real\ntheorem metaOtima : ipca * 1.14 = 4.56\ntheorem premioRisco : 14.25 - 4.56 = 9.69\n\nVerificável em: {R}{cc('academia')}",
+            f"📐 Lean 4 + Z3 como prova formal\n\ntheorem selicReal : nominal - ipca = real\ntheorem metaOtima : ipca * 1.14 = 4.56\ntheorem premioRisco : 14.00 - 4.56 = 9.44\n\nVerificável em: {R}{cc('academia')}",
             f"🔬 Taxa neutra vs Selic atual\n\nTaxa neutra BCB: ~5,5% real\nCom IPCA 4%: neutro nominal = 9,5%\nSelic atual: {sv}% = +{round(sv-9.5,2)}pp de aperto\n\nQuem justifica esse aperto além do BCB?\n🔗 {R}{cc('academia')}",
             f"📚 Literatura sobre captura regulatória\n\nStigler (1971): agências capturadas por regulados.\nBCB → sistema financeiro = porta giratória.\nSelix quantifica o custo: R$270 bi/ano.\n\nArtigo completo: {R}{cc('academia', 'midia')}",
         ],

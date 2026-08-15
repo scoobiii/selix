@@ -73,7 +73,7 @@ stop:
 	@rm -f $(API_PID)
 
 bot:
-	cd /root/selix && bash -c "source venv/bin/activate && python agents/bluesky_bot/post_profissional.py"
+	cd /root/selix && bash -c "source venv/bin/activate && PYTHONPATH=/root/selix python -c 'from src.selix.sync_selic import sync_selic_from_bcb; print(\"selic sync:\", sync_selic_from_bcb())' && python agents/bluesky_bot/post_profissional.py"
 
 # -----------------------------
 # Testes
