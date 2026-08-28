@@ -1,0 +1,48 @@
+name: vortex-cross-validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  selix-over-vortex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout SELIX
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install SELIX dependencies
+        run: pip install -r requirements.txt
+
+      - name: Checkout Vortex runtime
+        uses: actions/checkout@v4
+        with:
+          repository: scoobiii/vortex
+          ref: feat/selix-cross-repo-validation
+          path: vortex-source
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: vortex-source/package-lock.json
+
+      - name: Install Vortex dependencies
+        working-directory: vortex-source
+        run: npm install
+
+      - name: Execute SELIX over Vortex
+        env:
+          VORTEX_DIR: vortex-source
+        run: PYTHONPATH="$GITHUB_WORKSPACE" python scripts/validate_vortex.py
+
+      - name: Run Vortex deterministic gate
+        working-directory: vortex-source
+        run: npm run test:selix
