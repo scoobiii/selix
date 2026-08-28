@@ -2,8 +2,8 @@
 """SELIX SPI — autoridade operacional para dados atuais.
 
 Regra: dados CURRENT nunca são aceitos de fixtures, arte, prompt ou constante.
-A taxa de mercado vem do BCB SGS 432 em runtime. O valor ideal vem do modelo
-canônico do SELIX (config/core), não de um número legado embutido no SPI.
+A taxa de mercado vem exclusivamente do BCB SGS 432 em runtime. O valor ideal
+vem do modelo canônico do SELIX (config/core), não de um número legado.
 """
 from __future__ import annotations
 
@@ -21,14 +21,10 @@ class CurrentDataError(RuntimeError):
 
 
 def fetch_current_selic() -> dict[str, Any]:
-    """Busca a SELIC atual diretamente no provider BCB.
-
-    Não usa selix-official.json como cache de mercado: esse JSON é um snapshot
-    publicável, enquanto esta função é a autoridade dinâmica para execução.
-    """
-    result = BCBProvider().get_selic()
+    """Busca a SELIC CURRENT exclusivamente pela série BCB SGS 432."""
+    result = BCBProvider().get_selic_meta()
     if not result.get("success"):
-        raise CurrentDataError(f"BCB indisponível: {result}")
+        raise CurrentDataError(f"BCB SGS 432 indisponível: {result}")
     if result.get("serie") != SGS_META:
         raise CurrentDataError(
             f"Fonte não canônica para SELIC atual: {result.get('source')}"
@@ -75,3 +71,5 @@ def assert_current_provenance(data: dict[str, Any]) -> None:
         raise CurrentDataError("current SELIC source is not canonical")
     if data.get("provenance") != "runtime:BCB SGS 432":
         raise CurrentDataError("current SELIC provenance is not runtime BCB")
+    if not data.get("selic_atual_data_bcb"):
+        raise CurrentDataError("current SELIC is missing BCB observation date")
