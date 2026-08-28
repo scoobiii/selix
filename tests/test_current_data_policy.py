@@ -22,6 +22,7 @@ def test_spi_accepts_only_runtime_bcb_provenance():
         "selic_atual_serie": 432,
         "selic_atual_fonte": "BCB SGS 432",
         "provenance": "runtime:BCB SGS 432",
+        "selic_atual_data_bcb": "15/08/2026",
     }
     spi.assert_current_provenance(good)
 
@@ -37,7 +38,10 @@ def test_operational_context_contains_no_legacy_selic_few_shot():
         ROOT / "SelixModelfile",
         ROOT / "src" / "selix" / "core.py",
         ROOT / "src" / "selix" / "spi.py",
+        ROOT / "src" / "providers" / "bcb_provider.py",
         ROOT / "scripts" / "postar_correcao.py",
+        ROOT / "scripts" / "postar_thread_simples.py",
+        ROOT / "scripts" / "postar_thread_bluesky.py",
     ]
     forbidden = ("14.25", "14,25", "9.25", "9,25")
     for path in operational:
