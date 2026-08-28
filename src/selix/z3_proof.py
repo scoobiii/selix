@@ -1,107 +1,67 @@
 #!/usr/bin/env python3
-"""
-T8 REAL: Prova formal do impacto econômico com Z3
-Deriva R$ 345 bi a partir de dados oficiais
-"""
+"""T8 REAL: prova do impacto usando dados CURRENT do SPI.
 
-from z3 import *
-import json
-import sys
+Nenhuma taxa Selic é hardcoded aqui. A prova recebe a observação dinâmica do
+SPI (BCB SGS 432) e o valor ideal do modelo canônico.
+"""
+from __future__ import annotations
 
-def provar_impacto_economico():
-    """Prova formal com Z3: debt_stock → economia_anual = 345 bi"""
-    
-    # Criar solver
+from typing import Any
+from z3 import Real, Solver, sat
+
+from src.selix.spi import build_current_snapshot, assert_current_provenance
+
+
+def provar_impacto_economico(divida_bi: float = 6900) -> dict[str, Any]:
+    """Calcula/prova o impacto para a dívida informada com dados CURRENT."""
+    current = build_current_snapshot()
+    assert_current_provenance(current)
+
     s = Solver()
-    
-    # Variáveis
-    selic_atual = Real('selic_atual')
-    selic_ideal = Real('selic_ideal')
-    divida_publica = Real('divida_publica')
-    economia_anual = Real('economia_anual')
-    diferencial = Real('diferencial')
-    
-    # Axiomas com fontes oficiais
-    s.add(selic_atual == 14.25)        # Fonte: BCB SGS 11
-    s.add(selic_ideal == 9.25)         # Fonte: SELIX T9
-    s.add(divida_publica == 6900)      # Fonte: STN/BCB SGS 14558 (R$ bi)
-    
-    # Definições formais
+    selic_atual = Real("selic_atual")
+    selic_ideal = Real("selic_ideal")
+    divida_publica = Real("divida_publica")
+    economia_anual = Real("economia_anual")
+    diferencial = Real("diferencial")
+
+    s.add(selic_atual == current["selic_atual"])
+    s.add(selic_ideal == current["selic_ideal"])
+    s.add(divida_publica == divida_bi)
     s.add(diferencial == selic_atual - selic_ideal)
     s.add(economia_anual == divida_publica * (diferencial / 100))
-    
-    # PROVAR que a economia é exatamente 345 bi
-    s.add(economia_anual == 345)
-    
-    # Verificar consistência
-    if s.check() == sat:
-        model = s.model()
-        resultado = {
-            "status": "✅ PROVADO",
-            "selic_atual": float(model[selic_atual].as_decimal(10)),
-            "selic_ideal": float(model[selic_ideal].as_decimal(10)),
-            "divida_publica_bi": float(model[divida_publica].as_decimal(10)),
-            "diferencial_pp": float(model[diferencial].as_decimal(10)),
-            "economia_anual_bi": float(model[economia_anual].as_decimal(10)),
-            "formula": "economia = divida × (diferencial / 100)",
-            "fonte_selic": "BCB SGS 11",
-            "fonte_divida": "STN/BCB SGS 14558",
-        }
-        return resultado
-    else:
-        return {"status": "❌ INCONSISTENTE", "erro": "Prova falhou"}
 
-def provar_cenario_alternativo(divida_bi, descricao):
-    """Prova formal para diferentes cenários"""
-    s = Solver()
-    
-    selic_atual = Real('selic_atual')
-    selic_ideal = Real('selic_ideal')
-    divida_publica = Real('divida_publica')
-    economia_anual = Real('economia_anual')
-    
-    s.add(selic_atual == 14.25)
-    s.add(selic_ideal == 9.25)
-    s.add(divida_publica == divida_bi)
-    s.add(economia_anual == divida_publica * ((selic_atual - selic_ideal) / 100))
-    
-    if s.check() == sat:
-        model = s.model()
-        return {
-            "descricao": descricao,
-            "divida_bi": divida_bi,
-            "economia_bi": float(model[economia_anual].as_decimal(10)),
-        }
-    return None
+    if s.check() != sat:
+        return {"status": "INCONSISTENTE", "erro": "Prova falhou"}
 
-def main():
-    print("🧮 PROVA FORMAL COM Z3 - T8 REAL")
+    model = s.model()
+    return {
+        "status": "PROVADO",
+        "status_data": current["status"],
+        "selic_atual": current["selic_atual"],
+        "selic_ideal": current["selic_ideal"],
+        "diferencial_pp": current["diferencial"],
+        "divida_publica_bi": divida_bi,
+        "economia_anual_bi": float(model[economia_anual].as_decimal(10).rstrip("?")),
+        "fonte_selic": current["selic_atual_fonte"],
+        "serie_selic": current["selic_atual_serie"],
+        "data_bcb": current["selic_atual_data_bcb"],
+        "provenance": current["provenance"],
+        "formula": "economia = divida × (diferencial / 100)",
+    }
+
+
+def provar_cenario_alternativo(divida_bi: float, descricao: str) -> dict[str, Any]:
+    resultado = provar_impacto_economico(divida_bi)
+    resultado["descricao"] = descricao
+    return resultado
+
+
+def main() -> None:
+    print("PROVA FORMAL COM Z3 - T8 REAL (CURRENT)")
     print("=" * 60)
-    
-    # Provar o cenário principal
-    print("\n📊 Cenário Principal (dados oficiais):")
     resultado = provar_impacto_economico()
-    print(json.dumps(resultado, indent=2))
-    
-    # Testar cenários alternativos
-    print("\n" + "=" * 60)
-    print("📊 CENÁRIOS ALTERNATIVOS:")
-    
-    cenarios = [
-        (6900, "Dívida atual (STN/BCB) → R$ 345 bi"),
-        (5400, "Cenário para R$ 270 bi"),
-        (6000, "Cenário intermediário"),
-    ]
-    
-    for divida, descricao in cenarios:
-        resultado = provar_cenario_alternativo(divida, descricao)
-        if resultado:
-            print(f"  - {descricao}: R$ {resultado['economia_bi']:.2f} bi/ano")
-    
-    print("\n" + "=" * 60)
-    print("✅ PROVA FORMAL CONCLUÍDA")
-    print("Fórmula: economia_anual = divida_publica × ((selic_atual - selic_ideal) / 100)")
-    print("Fontes: BCB SGS 11 (Selic), STN/BCB SGS 14558 (Dívida)")
+    print(resultado)
+
 
 if __name__ == "__main__":
     main()
