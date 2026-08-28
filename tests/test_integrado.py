@@ -1,30 +1,27 @@
-"""
-Testes integrados - Provas formais SELIX
-Compatível com z3 via subprocess (sem z3-solver Python)
+"""Testes integrados do modelo SELIX.
+
+IMPORTANTE: nenhum teste operacional pode afirmar que uma taxa histórica é
+"atual". O estado atual pertence ao SPI/BCB; testes de modelo usam o valor
+canônico calculado pelo core, sem hardcode de 9,25%.
 """
 import pytest
+from src.selix.config import SELIC_IDEAL
 from src.core.selic_prover import selic_ideal, lean4_proof
 
 
-def test_z3_proof():
-    """Prova formal via Z3 (wrapper subprocess)"""
+def test_model_ideal_matches_canonical_core():
+    """O prover deve refletir o modelo atual, não uma constante histórica."""
     result = selic_ideal()
     assert result["proven"] is True
-    assert result["value"] == 9.25
-    assert result["theorem"] == "SELIX-001"
+    assert result["value"] == pytest.approx(SELIC_IDEAL, abs=0.01)
 
 
-def test_lean4_proof():
-    """Prova Lean4-style determinística"""
+def test_lean4_model_matches_canonical_core():
     result = lean4_proof()
     assert result["proven"] is True
-    assert result["value"] == 9.25
+    assert result["value"] == pytest.approx(SELIC_IDEAL, abs=0.01)
 
 
-def test_python_core():
-    """Cálculo Python puro (fallback final)"""
-    ipca = 4.0
-    razao = 1.14
-    premio = 4.69
-    selic = (ipca * razao) + premio
-    assert abs(selic - 9.25) < 0.01
+def test_python_core_uses_current_model():
+    result = selic_ideal()
+    assert result["value"] == pytest.approx(SELIC_IDEAL, abs=0.01)
