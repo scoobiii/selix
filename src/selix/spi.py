@@ -66,12 +66,14 @@ def reject_caller_owned_market_data(payload: dict[str, Any]) -> None:
 
 
 def assert_current_provenance(data: dict[str, Any]) -> None:
-    """Gate duro: somente BCB SGS 432 pode representar SELIC CURRENT."""
+    """Gate duro: somente BCB SGS 432 com observação identificável."""
     if data.get("status") != "current":
         raise CurrentDataError("data is not CURRENT")
     if data.get("selic_atual_serie") != SGS_META:
         raise CurrentDataError("current SELIC must use BCB SGS 432")
     if data.get("selic_atual_fonte") != CANONICAL_SOURCE:
         raise CurrentDataError("current SELIC source is not canonical")
+    if not data.get("selic_atual_data_bcb"):
+        raise CurrentDataError("current SELIC is missing BCB observation date")
     if data.get("provenance") != "runtime:BCB SGS 432":
         raise CurrentDataError("current SELIC provenance is not runtime BCB")
