@@ -25,9 +25,21 @@ def test_current_provenance_requires_bcb_432():
         "status": "current",
         "selic_atual_serie": SGS_META,
         "selic_atual_fonte": CANONICAL_SOURCE,
+        "selic_atual_data_bcb": "2026-08-05",
         "provenance": "runtime:BCB SGS 432",
     }
     assert_current_provenance(valid)
+
+
+def test_current_provenance_requires_bcb_observation_date():
+    invalid = {
+        "status": "current",
+        "selic_atual_serie": SGS_META,
+        "selic_atual_fonte": CANONICAL_SOURCE,
+        "provenance": "runtime:BCB SGS 432",
+    }
+    with pytest.raises(CurrentDataError):
+        assert_current_provenance(invalid)
 
 
 def test_stale_or_static_provenance_is_rejected():
@@ -35,6 +47,7 @@ def test_stale_or_static_provenance_is_rejected():
         "status": "current",
         "selic_atual_serie": 432,
         "selic_atual_fonte": "fixture",
+        "selic_atual_data_bcb": "2026-08-05",
         "provenance": "fixture:historical",
     }
     with pytest.raises(CurrentDataError):
