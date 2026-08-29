@@ -13,8 +13,13 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Deployment requires the repository secret. Never attempt an unauthenticated
+    # Google auth step: missing credentials must be an explicit, non-failing skip.
+    if: ${{ secrets.GCLOUD_SA_KEY != '' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: Auth GCloud
         uses: google-github-actions/auth@v2
@@ -41,4 +46,4 @@ jobs:
       - name: Smoke test
         run: |
           URL=$(gcloud run services describe ${{ env.SERVICE }} --region ${{ env.REGION }} --format 'value(status.url)')
-          curl -f $URL/v1/health || exit 1
+          curl -f "$URL/v1/health"
