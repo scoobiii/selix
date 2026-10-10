@@ -1,4 +1,4 @@
-""""Guards against stale/static SELIC being used as CURRENT."""
+"""Guards against stale/static SELIC being used as CURRENT."""
 import pytest
 
 from src.selix.spi import (
