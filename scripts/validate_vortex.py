@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cross-repository validation: SELIX model -> Vortex SELIX runtime."""
+"""Run the SELIX model through the real VUC governed execution pipeline."""
 from __future__ import annotations
 
 import json
@@ -11,76 +11,78 @@ from src.selix.config import get_selic_ideal
 from src.selix.core import BASELINE_ATUAL
 
 
-def parse_json_object(stdout: str) -> dict:
-    """Extract the first JSON object even when npm or the CLI prints a prefix."""
-    decoder = json.JSONDecoder()
-    for index, char in enumerate(stdout):
-        if char != "{":
-            continue
-        try:
-            value, _end = decoder.raw_decode(stdout[index:])
-        except json.JSONDecodeError:
-            continue
-        if isinstance(value, dict):
-            return value
-    raise ValueError(
-        "Vortex did not emit a JSON object; stdout prefix: "
-        + repr(stdout[:300])
-    )
-
-
 def main() -> int:
-    vortex = os.environ.get("VORTEX_DIR", "vortex-source")
-    ideal = get_selic_ideal()
-    ipca = BASELINE_ATUAL.inflacao_esperada
-    request = {
-        "invocation_id": "selix-repo-vortex-validation",
-        "agent": "selix",
-        "action": "selix.selic1d",
-        "payload": {
-            "selic_atual": 14.25,
-            "selic_ideal": ideal,
-            "ipca": ipca,
-            "source": "scoobiii/selix@HEAD",
-        },
-        "context": {"sandbox": True},
+    vuc = os.environ.get("VUC_DIR", "vuc-source")
+    ideal = round(get_selic_ideal(), 2)
+    payload = {
+        "selic_ideal": ideal,
+        "ipca": float(BASELINE_ATUAL.inflacao_esperada),
+        "source": "scoobiii/selix",
     }
     env = os.environ.copy()
-    env["SELIX_INVOCATION_JSON"] = json.dumps(request, separators=(",", ":"))
+    env["SELIX_RESULT_JSON"] = json.dumps(payload, separators=(",", ":"))
+
+    # Run inside the checked-out VUC repository. The SELIX result is passed
+    # through VUC's governed execution pipeline and its proof is verified.
+    js = r'''
+import { executeVortexPipeline } from "./src/vortex/gateway.ts";
+import { verifyExecutionProof } from "./src/vortex/verifier.ts";
+
+const selix = JSON.parse(process.env.SELIX_RESULT_JSON);
+const response = await executeVortexPipeline(
+  {
+    request_id: `selix-ci-${process.env.GITHUB_RUN_ID || "local"}-${Date.now()}`,
+    operation: "inspect",
+    target: { resource: "selix://model" },
+    input: { selix, source: "scoobiii/selix" }
+  },
+  async () => ({ selix, source: "scoobiii/selix" })
+);
+const proof = response.execution_proof;
+const verification = proof ? verifyExecutionProof(proof) : { valid: false, reasons: ["missing proof"] };
+console.log(JSON.stringify({
+  status: response.status,
+  output: response.output,
+  proof: proof ? { executed: proof.executed, status: proof.status, output_hash: proof.output_hash, proof_hash: proof.proof_hash } : null,
+  proof_valid: verification.valid,
+  verification_reasons: verification.reasons
+}));
+if (response.status !== "EXECUTION_SUCCESS" || !proof || proof.executed !== true ||
+    !verification.valid || response.output?.selix?.selic_ideal !== selix.selic_ideal) {
+  process.exitCode = 1;
+}
+'''
     proc = subprocess.run(
-        ["npm", "--silent", "run", "selix:selic1d"],
-        cwd=vortex,
-        env=env,
-        text=True,
-        capture_output=True,
-        check=False,
+        ["node", "--import", "tsx", "--input-type=module", "-e", js],
+        cwd=vuc, env=env, text=True, capture_output=True, check=False,
     )
     if proc.stdout:
         print(proc.stdout, end="")
     if proc.stderr:
         print(proc.stderr, file=sys.stderr, end="")
     if proc.returncode != 0:
+        print("SELIX → VUC governed execution: FAIL", file=sys.stderr)
         return proc.returncode
 
     try:
-        result = parse_json_object(proc.stdout)
-    except ValueError as exc:
-        print(f"CROSS-REPO OUTPUT: FAIL — {exc}", file=sys.stderr)
+        result = json.loads(proc.stdout.strip().splitlines()[-1])
+    except (json.JSONDecodeError, IndexError):
+        print("VUC did not emit a parseable JSON result", file=sys.stderr)
         return 1
 
-    if result.get("gate") != "PASS" or result.get("executed") is not True:
-        print("CROSS-REPO GATE: FAIL", file=sys.stderr)
+    if result.get("status") != "EXECUTION_SUCCESS":
+        print(f"VUC status mismatch: {result.get('status')}", file=sys.stderr)
         return 1
-    if result.get("evidence", {}).get("exit_code") != 0:
-        print("CROSS-REPO PROOF: FAIL", file=sys.stderr)
+    if result.get("proof_valid") is not True or result.get("proof", {}).get("executed") is not True:
+        print("VUC execution proof invalid or execution not confirmed", file=sys.stderr)
         return 1
-    if result.get("result", {}).get("selic_ideal") != round(ideal, 2):
-        print("SELIX/Vortex result mismatch", file=sys.stderr)
+    if result.get("output", {}).get("selix", {}).get("selic_ideal") != ideal:
+        print("SELIX/VUC output mismatch", file=sys.stderr)
         return 1
 
-    print("CROSS-REPO GATE: PASS")
-    print(f"SELIX model ideal: {ideal:.2f}")
-    print(f"Vortex output hash: {result['evidence']['output_hash']}")
+    print("SELIX → VUC: PASS")
+    print(f"SELIX ideal: {ideal:.2f}%")
+    print(f"VUC proof hash: {result['proof']['proof_hash']}")
     return 0
 
 
