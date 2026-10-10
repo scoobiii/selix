@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Coleta Selic no BCB (SGS). Sem número discricionário no código."""
+"""Coleta Selic no BCB (SGS) sem fallback de série para o caminho CURRENT."""
 from datetime import date, timedelta
 import requests
 from .base_provider import DataProvider
@@ -14,7 +14,6 @@ class BCBProvider(DataProvider):
         return {"success": False, "source": "BCB"}
 
     def _fetch_sgs(self, codigo: int) -> dict:
-        # /dados/ultimo está 502; range recente funciona
         fim = date.today()
         ini = fim - timedelta(days=30)
         url = f"https://api.bcb.gov.br/dados/serie/bcdata.sgs.{codigo}/dados"
@@ -43,11 +42,22 @@ class BCBProvider(DataProvider):
             "source": f"BCB SGS {codigo}",
         }
 
-    def get_selic(self) -> dict:
+    def get_selic_meta(self) -> dict:
+        """Caminho estrito para Selic CURRENT: somente SGS 432."""
         try:
-            r = self._fetch_sgs(SGS_META)
-            if r.get("success"):
-                return r
+            return self._fetch_sgs(SGS_META)
+        except Exception as e:
+            return {"success": False, "source": "BCB", "serie": SGS_META, "error": str(e)}
+
+    def get_selic(self) -> dict:
+        """Compatibilidade legada; mantém fallback da série diária 11.
+
+        CURRENT não deve usar este método: use `get_selic_meta()`.
+        """
+        r = self.get_selic_meta()
+        if r.get("success"):
+            return r
+        try:
             r2 = self._fetch_sgs(SGS_DIARIA)
             if r2.get("success"):
                 r2["nota"] = "fallback serie 11; meta 432 falhou"

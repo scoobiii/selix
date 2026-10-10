@@ -1,59 +1,80 @@
 #!/usr/bin/env python3
-"""
-SELIX - Thread de correção sobre os impactos da Selic
+"""Publica thread SELIX usando somente dados CURRENT verificados pelo SPI.
+
+Este script não contém taxas Selic em texto. Antes de publicar, consulta o
+SPI, valida provenance BCB SGS 432 e monta os números a partir do snapshot.
 """
 
 import os
-import sys
 import time
-from pathlib import Path
-
-# Carregar .env
-env_path = Path("/root/selix/.env")
-if env_path.exists():
-    with open(env_path) as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                key, value = line.split("=", 1)
-                os.environ[key] = value
+from src.selix.spi import build_current_snapshot, assert_current_provenance
 
 from atproto import Client
 
 HANDLE = os.getenv("BLUESKY_HANDLE") or os.getenv("BLUESKY_USERNAME")
 PASSWORD = os.getenv("BLUESKY_PASSWORD") or os.getenv("BLUESKY_APP_PASSWORD")
 
-posts = [
-    "🧵 Follow-up sobre os números do SELIX:\n\nOs R$ 345 bi/ano não são um número único — dependem da base da dívida considerada. Vamos aos fatos:",
-    
-    "📊 TRÊS CENÁRIOS, MESMA FÓRMULA:\n\n1️⃣ R$ 270 bi: dívida líquida (R$ 5,4 tri) × 5,0 p.p.\n2️⃣ R$ 345 bi: dívida bruta (R$ 6,9 tri) × 5,0 p.p.\n3️⃣ R$ 430 bi: Selic 2D→1D (14,25→6,25) × parcela pós-fixada\n\nTodos são válidos, com contextos diferentes.",
-    
-    "🔬 O QUE O SELIX PROVA:\n\n✅ A aritmética fecha: economia = dívida × diferencial/100\n✅ A Selic ideal é ~9,25% (quantizado)\n✅ O custo de oportunidade da Selic atual é mensurável\n\n❌ O SELIX NÃO PROVA qual base de dívida é 'a certa' — isso é escolha do analista.",
-    
-    "📖 FONTES:\n\n- Dívida líquida: STN (R$ 5,4 tri)\n- Dívida bruta: BCB (R$ 6,9 tri)\n- Selic: BCB SGS 11\n- Modelo: Lean/Z3 com provas formais\n\nCada número tem sua fonte e contexto.",
-    
-    "🎯 RECOMENDAÇÃO:\n\nO valor operacional do SELIX é R$ 345 bi (usando dívida bruta do BCB).\n\nMas o importante não é o número exato — é a direção: a Selic atual custa centenas de bilhões por ano ao Brasil.",
-    
-    "Repositório: https://github.com/scoobiii/selix\nBluesky: @zeh-sobrinho.bsky.social\nVersão: v6.1.0\n\nDados abertos. Código aberto. Provas formais."
-]
 
-client = Client()
-client.login(HANDLE, PASSWORD)
+def build_posts() -> list[str]:
+    current = build_current_snapshot()
+    assert_current_provenance(current)
 
-parent_ref = None
-parent_uri = None
+    atual = current["selic_atual"]
+    ideal = current["selic_ideal"]
+    diferencial = current["diferencial"]
+    fonte = current["selic_atual_fonte"]
+    data_bcb = current["selic_atual_data_bcb"]
 
-for i, text in enumerate(posts, 1):
-    print(f"Post {i}/{len(posts)}...")
-    if parent_ref is None:
-        response = client.send_post(text)
-    else:
-        response = client.send_post(text, reply_to={
-            "root": {"uri": parent_uri, "cid": parent_ref},
-            "parent": {"uri": parent_uri, "cid": parent_ref},
-        })
-    parent_uri = response.uri
-    parent_ref = response.cid
-    time.sleep(2)
+    return [
+        "🧵 Atualização SELIX — dados CURRENT verificados pelo SPI.",
+        (
+            f"📊 Selic CURRENT: {atual:.2f}% a.a.\n"
+            f"Selic ideal do modelo: {ideal:.2f}%\n"
+            f"Diferencial: {diferencial:.2f} p.p."
+        ),
+        (
+            "🔐 Proveniência: "
+            f"{fonte}; observação BCB: {data_bcb}; "
+            "snapshot obtido em runtime."
+        ),
+        (
+            "⚠️ Regra SELIX: número de mercado não é lido de arte, prompt, "
+            "few-shot ou prova histórica. Se o SPI não validar a fonte, a "
+            "publicação deve ser bloqueada."
+        ),
+        "📖 Modelo, código e evidências: https://github.com/scoobiii/selix",
+    ]
 
-print("✅ Thread de correção publicada!")
+
+def main() -> None:
+    if not HANDLE or not PASSWORD:
+        raise RuntimeError("Credenciais Bluesky não configuradas")
+
+    client = Client()
+    client.login(HANDLE, PASSWORD)
+
+    posts = build_posts()
+    parent_uri = None
+    parent_cid = None
+
+    for text in posts:
+        if parent_uri is None:
+            response = client.send_post(text)
+        else:
+            response = client.send_post(
+                text,
+                reply_to={
+                    "root": {"uri": root_uri, "cid": root_cid},
+                    "parent": {"uri": parent_uri, "cid": parent_cid},
+                },
+            )
+        if parent_uri is None:
+            root_uri, root_cid = response.uri, response.cid
+        parent_uri, parent_cid = response.uri, response.cid
+        time.sleep(2)
+
+    print("✅ Thread CURRENT publicada com provenance BCB SGS 432")
+
+
+if __name__ == "__main__":
+    main()
