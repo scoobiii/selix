@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0.0",
+  "document_type": "long_term_national_targets",
+  "country": "BR",
+  "currency_basis": "current_usd",
+  "status": "aspirational_targets_not_forecasts",
+  "owner": "Zeh Sobrinho",
+  "indicators": [
+    {
+      "id": "gdp_per_capita",
+      "name": "PIB per capita nominal",
+      "baseline": {
+        "value": 10000,
+        "unit": "USD/person/year",
+        "status": "approximate_reference",
+        "year": null
+      },
+      "target": {
+        "value": 130000,
+        "unit": "USD/person/year",
+        "status": "aspirational"
+      },
+      "multiple": 13,
+      "source": {
+        "name": "World Bank",
+        "indicator": "NY.GDP.PCAP.CD",
+        "url": "https://data.worldbank.org/indicator/NY.GDP.PCAP.CD?locations=BR"
+      },
+      "assumptions": [
+        "Nominal current USD; sensitive to exchange rates and inflation",
+        "A valid path requires explicit population, real growth, inflation and exchange-rate scenarios"
+      ]
+    },
+    {
+      "id": "selic",
+      "name": "Taxa Selic nominal",
+      "baseline": {
+        "value": null,
+        "unit": "percent_per_year",
+        "status": "fetch_observed_value_from_bcb"
+      },
+      "target": {
+        "value": 9.99,
+        "unit": "percent_per_year",
+        "comparison": "below",
+        "status": "single_digit_policy_goal"
+      },
+      "source": {
+        "name": "Banco Central do Brasil",
+        "url": "https://www3.bcb.gov.br/sgspub/"
+      },
+      "assumptions": [
+        "Observed Selic and SELIX estimated ideal rate must remain separate",
+        "Target is not a forecast; sustainable convergence depends on inflation expectations, risk premium and credibility"
+      ]
+    },
+    {
+      "id": "electricity_per_capita",
+      "name": "Consumo de eletricidade per capita",
+      "baseline": {
+        "value": 2300,
+        "unit": "kWh/person/year",
+        "status": "approximate_reference",
+        "year": null,
+        "scope": "to_be_confirmed_total_or_residential"
+      },
+      "target": {
+        "value": 20000,
+        "unit": "kWh/person/year",
+        "status": "aspirational",
+        "scope": "total_electricity_use_per_capita"
+      },
+      "multiple": 8.6956521739,
+      "source": {
+        "name": "World Bank",
+        "indicator": "EG.USE.ELEC.KH.PC",
+        "url": "https://data.worldbank.org/indicator/EG.USE.ELEC.KH.PC?locations=BR"
+      },
+      "assumptions": [
+        "Confirm and consistently use total electricity use, not residential consumption, before comparing observations",
+        "Track firm supply, grid capacity, storage, cost, reliability and curtailment",
+        "Electricity consumption per capita alone does not establish productivity or welfare"
+      ]
+    }
+  ],
+  "horizons": [
+    2035,
+    2050
+  ],
+  "updated_at": "2026-10-10"
+}
