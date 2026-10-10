@@ -1,0 +1,48 @@
+name: selix-over-vuc
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  selix-over-vuc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout SELIX
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install SELIX dependencies
+        run: pip install -r requirements.txt
+
+      - name: Checkout VUC runtime
+        uses: actions/checkout@v4
+        with:
+          repository: scoobiii/vuc
+          ref: main
+          path: vuc-source
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: vuc-source/package-lock.json
+
+      - name: Install VUC dependencies
+        working-directory: vuc-source
+        run: npm ci
+
+      - name: Execute SELIX through VUC runtime
+        env:
+          VUC_DIR: vuc-source
+        run: PYTHONPATH="$GITHUB_WORKSPACE" python scripts/validate_vortex.py
+
+      - name: Run VUC CLI contract gate
+        working-directory: vuc-source
+        run: npm run test:cli
