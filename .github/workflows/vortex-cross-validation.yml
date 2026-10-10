@@ -1,4 +1,4 @@
-name: vortex-cross-validation
+name: selix-over-vuc
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  selix-over-vortex:
+  selix-over-vuc:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout SELIX
@@ -20,29 +20,29 @@ jobs:
       - name: Install SELIX dependencies
         run: pip install -r requirements.txt
 
-      - name: Checkout Vortex runtime
+      - name: Checkout VUC runtime
         uses: actions/checkout@v4
         with:
-          repository: scoobiii/vortex
-          ref: feat/selix-cross-repo-validation
-          path: vortex-source
+          repository: scoobiii/vuc
+          ref: main
+          path: vuc-source
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
-          cache-dependency-path: vortex-source/package-lock.json
+          cache-dependency-path: vuc-source/package-lock.json
 
-      - name: Install Vortex dependencies
-        working-directory: vortex-source
-        run: npm install
+      - name: Install VUC dependencies
+        working-directory: vuc-source
+        run: npm ci
 
-      - name: Execute SELIX over Vortex
+      - name: Execute SELIX through VUC runtime
         env:
-          VORTEX_DIR: vortex-source
+          VUC_DIR: vuc-source
         run: PYTHONPATH="$GITHUB_WORKSPACE" python scripts/validate_vortex.py
 
-      - name: Run Vortex deterministic gate
-        working-directory: vortex-source
-        run: npm run test:selix
+      - name: Run VUC CLI contract gate
+        working-directory: vuc-source
+        run: npm run test:cli
