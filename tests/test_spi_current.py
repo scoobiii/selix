@@ -1,4 +1,4 @@
-"""Guards against stale/static SELIC being used as CURRENT."""
+""""Guards against stale/static SELIC being used as CURRENT."""
 import pytest
 
 from src.selix.spi import (
@@ -26,6 +26,7 @@ def test_current_provenance_requires_bcb_432():
         "selic_atual_serie": SGS_META,
         "selic_atual_fonte": CANONICAL_SOURCE,
         "provenance": "runtime:BCB SGS 432",
+        "selic_atual_data_bcb": "2026-08-28",
     }
     assert_current_provenance(valid)
 
@@ -36,6 +37,7 @@ def test_stale_or_static_provenance_is_rejected():
         "selic_atual_serie": 432,
         "selic_atual_fonte": "fixture",
         "provenance": "fixture:historical",
+        "selic_atual_data_bcb": "2026-08-28",
     }
     with pytest.raises(CurrentDataError):
         assert_current_provenance(invalid)
