@@ -91,8 +91,14 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          echo "## SELIX CI" >> $GITHUB_STEP_SUMMARY
-          echo "- Branch: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Log API (se existir):" >> $GITHUB_STEP_SUMMARY
-          tail -n 30 /tmp/selix_logs/api.log 2>/dev/null >> $GITHUB_STEP_SUMMARY
+          echo "## SELIX CI" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Branch: \`${{ github.ref_name }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f /tmp/selix_logs/api.log ]; then
+            echo "- API log (últimas 30 linhas):" >> "$GITHUB_STEP_SUMMARY"
+            tail -n 30 /tmp/selix_logs/api.log >> "$GITHUB_STEP_SUMMARY" || {
+              echo "- Aviso: não foi possível ler o log da API." >> "$GITHUB_STEP_SUMMARY"
+            }
+          else
+            echo "- API log não gerado nesta execução." >> "$GITHUB_STEP_SUMMARY"
+          fi
