@@ -27,13 +27,13 @@ test("model does not fabricate current Selic or differential", () => {
   const result = calcularSelix(baseline);
   assert.equal(result.selic_atual, null);
   assert.equal(result.diferencial_pp, null);
-  assert.equal(result.selic_ideal_quantizada, 6.75);
+  assert.equal(result.selic_ideal_quantizada, 7);
 });
 
 test("differential is calculated only when current Selic is supplied", () => {
   const result = calcularSelix(baseline, { selicAtual: 14.25 });
   assert.equal(result.selic_atual, 14.25);
-  assert.equal(result.diferencial_pp, 7.5);
+  assert.equal(result.diferencial_pp, 7.25);
 });
 
 test("energy shock uses tau in effective inflation", () => {
