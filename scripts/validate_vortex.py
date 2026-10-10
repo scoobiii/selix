@@ -11,6 +11,24 @@ from src.selix.config import get_selic_ideal
 from src.selix.core import BASELINE_ATUAL
 
 
+def parse_json_object(stdout: str) -> dict:
+    """Extract the first JSON object even when npm or the CLI prints a prefix."""
+    decoder = json.JSONDecoder()
+    for index, char in enumerate(stdout):
+        if char != "{":
+            continue
+        try:
+            value, _end = decoder.raw_decode(stdout[index:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, dict):
+            return value
+    raise ValueError(
+        "Vortex did not emit a JSON object; stdout prefix: "
+        + repr(stdout[:300])
+    )
+
+
 def main() -> int:
     vortex = os.environ.get("VORTEX_DIR", "vortex-source")
     ideal = get_selic_ideal()
@@ -30,19 +48,26 @@ def main() -> int:
     env = os.environ.copy()
     env["SELIX_INVOCATION_JSON"] = json.dumps(request, separators=(",", ":"))
     proc = subprocess.run(
-        ["npm", "run", "selix:selic1d"],
+        ["npm", "--silent", "run", "selix:selic1d"],
         cwd=vortex,
         env=env,
         text=True,
         capture_output=True,
         check=False,
     )
-    print(proc.stdout, end="")
+    if proc.stdout:
+        print(proc.stdout, end="")
     if proc.stderr:
         print(proc.stderr, file=sys.stderr, end="")
     if proc.returncode != 0:
         return proc.returncode
-    result = json.loads(proc.stdout)
+
+    try:
+        result = parse_json_object(proc.stdout)
+    except ValueError as exc:
+        print(f"CROSS-REPO OUTPUT: FAIL — {exc}", file=sys.stderr)
+        return 1
+
     if result.get("gate") != "PASS" or result.get("executed") is not True:
         print("CROSS-REPO GATE: FAIL", file=sys.stderr)
         return 1
@@ -52,6 +77,7 @@ def main() -> int:
     if result.get("result", {}).get("selic_ideal") != round(ideal, 2):
         print("SELIX/Vortex result mismatch", file=sys.stderr)
         return 1
+
     print("CROSS-REPO GATE: PASS")
     print(f"SELIX model ideal: {ideal:.2f}")
     print(f"Vortex output hash: {result['evidence']['output_hash']}")
