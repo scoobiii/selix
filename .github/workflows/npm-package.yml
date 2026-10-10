@@ -1,0 +1,34 @@
+name: SELIX npm package
+
+on:
+  push:
+    branches: [main, feat/npm-mvp-selix-core]
+    paths:
+      - "packages/selix-core/**"
+      - ".github/workflows/npm-package.yml"
+  pull_request:
+    paths:
+      - "packages/selix-core/**"
+      - ".github/workflows/npm-package.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test-package:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/selix-core
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Test
+        run: npm test
+      - name: Verify npm tarball contents
+        run: npm pack --dry-run
+      - name: Smoke test CLI
+        run: |
+          printf '%s\n' '{"inputs":{"inflacaoEsperada":4.48,"premioRisco":1.25,"credibilidade":0.5,"gapProduto":0.5}}' | node bin/selix-core.js
