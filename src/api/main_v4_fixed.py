@@ -433,7 +433,7 @@ def worker_loop():
             task_id, pergunta = task_queue.get(timeout=1)
             logger.info(f"📝 Processando task {task_id}: {pergunta[:50]}...")
             # Simula processamento (substituir por RAG real)
-            resposta = f"🧠 [SELIX] Pergunta processada: '{pergunta}'. A Selic ideal é 9,48%."
+            resposta = "Agente de respostas indisponível: não há integração dinâmica validada para responder a esta pergunta. Nenhuma taxa foi estimada."
             with task_lock:
                 task_results[task_id] = {
                     "status": "completed",
@@ -586,7 +586,7 @@ def faq():
     faq_data = {
         "para_fundos": {
             "pergunta": "Como o SELIX ajuda na precificação de ativos?",
-            "resposta": "O SELIX calcula a Selic ideal com base em inflacao, CDS, credibilidade e gap. Isso permite antecipar movimentos da taxa e ajustar duration de carteiras."
+            "resposta": "O SELIX estima uma taxa ideal a partir dos parâmetros configurados no modelo. É um cenário analítico, não uma previsão garantida nem uma taxa oficial do Banco Central."
         },
         "para_cfos": {
             "pergunta": "Como o SELIX ajuda no planejamento financeiro?",
@@ -602,7 +602,7 @@ def faq():
         },
         "para_todos": {
             "pergunta": "O que e a Selic Ideal?",
-            "resposta": "E a taxa de juros que equilibra inflacao, risco e credibilidade fiscal. O SELIX calcula este valor diariamente com base em dados publicos."
+            "resposta": "É uma estimativa do modelo para análise de cenários; não é uma taxa oficial do Banco Central nem uma previsão garantida."
         }
     }
     return jsonify(faq_data)
