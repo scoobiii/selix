@@ -450,6 +450,8 @@ def credito_pj():
     if not codigo:
         return jsonify({"erro": "Parâmetro 'codigo' é obrigatório"}), 400
     resultado = analisar_credito_pj(codigo.upper())
+    if resultado.get("status") == "unavailable":
+        return jsonify(resultado), 503
     if "erro" in resultado:
         return jsonify(resultado), 404
     return jsonify(resultado)
@@ -462,6 +464,12 @@ def credito_portfolio():
     if not empresas:
         return jsonify({"erro": "Lista de empresas vazia"}), 400
     resultado = analisar_portfolio(empresas)
+    if any(item.get("status") == "unavailable" for item in resultado if isinstance(item, dict)):
+        return jsonify({
+            "status": "unavailable",
+            "error": "official_bcb_data_unavailable",
+            "results": resultado,
+        }), 503
     return jsonify(resultado)
 
 @app.route('/v1/credito/batem_selix', methods=['GET'])
