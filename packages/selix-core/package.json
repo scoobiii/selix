@@ -1,0 +1,47 @@
+{
+  "name": "selix-core",
+  "version": "0.1.0",
+  "description": "Deterministic SELIX economic calculation core, with explicit separation between model outputs and current market data.",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js"
+    }
+  },
+  "bin": {
+    "selix-core": "./bin/selix-core.js"
+  },
+  "files": [
+    "src/",
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "pack:check": "npm pack --dry-run"
+  },
+  "keywords": [
+    "selix",
+    "economics",
+    "selic",
+    "brazil",
+    "economic-model"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scoobiii/selix.git",
+    "directory": "packages/selix-core"
+  },
+  "homepage": "https://github.com/scoobiii/selix/tree/main/packages/selix-core",
+  "bugs": {
+    "url": "https://github.com/scoobiii/selix/issues"
+  }
+}
