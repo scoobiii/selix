@@ -436,9 +436,9 @@ def worker_loop():
             resposta = "Agente de respostas indisponível: não há integração dinâmica validada para responder a esta pergunta. Nenhuma taxa foi estimada."
             with task_lock:
                 task_results[task_id] = {
-                    "status": "completed",
+                    "status": "unavailable",
                     "resposta": resposta,
-                    "timestamp": datetime.now().isoformat()
+                    "timestamp": datetime.now().astimezone().isoformat()
                 }
             logger.info(f"✅ Task {task_id} concluída")
         except queue.Empty:
