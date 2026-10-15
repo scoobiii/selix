@@ -70,7 +70,7 @@ import queue
 import uuid
 import socket
 import signal
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 from collections import defaultdict
 from flask import Flask, jsonify, request
@@ -358,26 +358,38 @@ def get_gatilhos():
 @app.route('/v1/selic', methods=['GET'])
 @require_api_key
 def get_selic():
-    """Última Selic (selic_historico ou fallback)."""
+    """Retorna a observação oficial mais recente da meta Selic (BCB SGS 432)."""
     try:
-        conn = get_db()
-        row = None
-        try:
-            row = conn.execute("""
-                SELECT valor AS rate, criado_em AS timestamp
-                FROM selic_historico
-                WHERE tipo = 'efetiva'
-                ORDER BY criado_em DESC LIMIT 1
-            """).fetchone()
-        except Exception:
-            pass
-        conn.close()
-        if row:
-            return jsonify({"rate": row["rate"], "timestamp": row["timestamp"]})
-        return jsonify({"rate": 14.25, "timestamp": None, "fonte": "fallback"})
-    except Exception as e:
-        logger.error(f"❌ Erro ao buscar Selic: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        from src.providers.bcb_provider import BCBProvider
+
+        result = BCBProvider().get_selic_meta()
+        if (
+            not result.get("success")
+            or result.get("serie") != 432
+            or not result.get("data_bcb")
+        ):
+            logger.warning("BCB SGS 432 indisponível; bloqueando resposta CURRENT")
+            return jsonify({
+                "status": "unavailable",
+                "error": "official_bcb_data_unavailable",
+                "source": "BCB SGS 432",
+            }), 503
+
+        return jsonify({
+            "status": "current",
+            "rate": float(result["rate"]),
+            "observation_date": result["data_bcb"],
+            "series": 432,
+            "source": "BCB SGS 432",
+            "retrieved_at": datetime.now(timezone.utc).isoformat(),
+        })
+    except Exception:
+        logger.exception("Falha ao consultar BCB SGS 432")
+        return jsonify({
+            "status": "unavailable",
+            "error": "official_bcb_data_unavailable",
+            "source": "BCB SGS 432",
+        }), 503
 
 @app.route('/v1/commodities', methods=['GET'])
 @require_api_key
@@ -421,12 +433,12 @@ def worker_loop():
             task_id, pergunta = task_queue.get(timeout=1)
             logger.info(f"📝 Processando task {task_id}: {pergunta[:50]}...")
             # Simula processamento (substituir por RAG real)
-            resposta = f"🧠 [SELIX] Pergunta processada: '{pergunta}'. A Selic ideal é 9,48%."
+            resposta = "Agente de respostas indisponível: não há integração dinâmica validada para responder a esta pergunta. Nenhuma taxa foi estimada."
             with task_lock:
                 task_results[task_id] = {
-                    "status": "completed",
+                    "status": "unavailable",
                     "resposta": resposta,
-                    "timestamp": datetime.now().isoformat()
+                    "timestamp": datetime.now().astimezone().isoformat()
                 }
             logger.info(f"✅ Task {task_id} concluída")
         except queue.Empty:
@@ -574,7 +586,7 @@ def faq():
     faq_data = {
         "para_fundos": {
             "pergunta": "Como o SELIX ajuda na precificação de ativos?",
-            "resposta": "O SELIX calcula a Selic ideal com base em inflacao, CDS, credibilidade e gap. Isso permite antecipar movimentos da taxa e ajustar duration de carteiras."
+            "resposta": "O SELIX estima uma taxa ideal a partir dos parâmetros configurados no modelo. É um cenário analítico, não uma previsão garantida nem uma taxa oficial do Banco Central."
         },
         "para_cfos": {
             "pergunta": "Como o SELIX ajuda no planejamento financeiro?",
@@ -590,7 +602,7 @@ def faq():
         },
         "para_todos": {
             "pergunta": "O que e a Selic Ideal?",
-            "resposta": "E a taxa de juros que equilibra inflacao, risco e credibilidade fiscal. O SELIX calcula este valor diariamente com base em dados publicos."
+            "resposta": "É uma estimativa do modelo para análise de cenários; não é uma taxa oficial do Banco Central nem uma previsão garantida."
         }
     }
     return jsonify(faq_data)
@@ -603,23 +615,57 @@ def faq():
 @app.route('/v1/selic/cenario', methods=['POST'])
 @require_api_key
 def selic_cenario():
-    """Simulador what-if — core real (SelixInputs + calcular_selix)."""
+    """Simulador what-if ancorado na observação oficial SGS 432."""
     try:
+        from src.providers.bcb_provider import BCBProvider
         from src.selix.core import SelixInputs, calcular_selix
+
         dados = request.get_json(silent=True) or {}
+        if "selic_atual" in dados:
+            return jsonify({
+                "status": "error",
+                "error": "caller_owned_current_selic_not_allowed",
+            }), 400
+
+        result = BCBProvider().get_selic_meta()
+        if (
+            not result.get("success")
+            or result.get("serie") != 432
+            or not result.get("data_bcb")
+        ):
+            logger.warning("BCB SGS 432 indisponível; bloqueando cenário CURRENT")
+            return jsonify({
+                "status": "unavailable",
+                "error": "official_bcb_data_unavailable",
+                "source": "BCB SGS 432",
+            }), 503
+
         inputs = SelixInputs(
             inflacao_esperada=float(dados.get('inflacao', 4.48)),
             premio_risco=float(dados.get('premio_risco', dados.get('preco_risco_cds', 1.25))),
             credibilidade=float(dados.get('credibilidade', 0.5)),
             gap_produto=float(dados.get('gap_produto', dados.get('gap', 0.5))),
         )
-        selic_atual = float(dados.get('selic_atual', 14.25))
-        choque = float(dados.get('choque_energia', 0.0))
-        payload = calcular_selix(inputs, selic_atual=selic_atual, choque_energia=choque)
-        return jsonify({"status": "success", **payload})
-    except Exception as e:
+        payload = calcular_selix(
+            inputs,
+            selic_atual=float(result["rate"]),
+            choque_energia=float(dados.get('choque_energia', 0.0)),
+        )
+        return jsonify({
+            "status": "success",
+            "selic_atual": float(result["rate"]),
+            "selic_atual_serie": 432,
+            "selic_atual_fonte": "BCB SGS 432",
+            "selic_atual_data_bcb": result["data_bcb"],
+            "provenance": "runtime:BCB SGS 432",
+            **payload,
+        })
+    except Exception:
         logger.exception("selic_cenario")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        return jsonify({
+            "status": "unavailable",
+            "error": "selix_scenario_unavailable",
+        }), 503
 
 
 @app.route('/v1/relatorio/auditoria', methods=['GET'])
@@ -687,23 +733,28 @@ def selic_snapshot():
             tau = float(getattr(cfg, "TAU", getattr(cfg, "tau", 0.7786)))
             divida_tri = float(getattr(cfg, "DIVIDA_BRUTA_TRI", 6.9))
         except Exception:
-            inflacao, premio, cred, gap, tau, divida_tri = 4.48, 1.16, 0.35, -0.5, 0.7786, 6.9
+            logger.exception("snapshot: parâmetros do modelo indisponíveis")
+            return jsonify({
+                "status": "unavailable",
+                "error": "model_parameters_unavailable",
+            }), 503
 
-        # 2) selic atual (DB ou fallback)
-        selic_atual = 14.25
-        try:
-            with get_db() as conn:
-                row = conn.execute(
-                    "SELECT rate FROM selic_historico ORDER BY timestamp DESC LIMIT 1"
-                ).fetchone()
-                if row is None:
-                    row = conn.execute(
-                        "SELECT valor FROM selic_historico ORDER BY criado_em DESC LIMIT 1"
-                    ).fetchone()
-                if row is not None:
-                    selic_atual = float(row[0])
-        except Exception as e:
-            logger.warning(f"snapshot: selic DB: {e}")
+        # 2) Selic observada: somente fonte oficial SGS 432; sem DB/fallback.
+        from src.providers.bcb_provider import BCBProvider
+        result = BCBProvider().get_selic_meta()
+        if (
+            not result.get("success")
+            or result.get("serie") != 432
+            or not result.get("data_bcb")
+        ):
+            logger.warning("BCB SGS 432 indisponível; bloqueando snapshot CURRENT")
+            return jsonify({
+                "status": "unavailable",
+                "error": "official_bcb_data_unavailable",
+                "source": "BCB SGS 432",
+            }), 503
+        selic_atual = float(result["rate"])
+        selic_atual_data_bcb = result["data_bcb"]
 
         # 3) core
         ideal_q = None
@@ -726,10 +777,12 @@ def selic_snapshot():
                 juro = out.get("juro_real_necessario")
             else:
                 ideal_q = float(out)
-        except Exception as e:
-            logger.warning(f"snapshot: core: {e}")
-            ideal_q = 8.25
-            ideal_q = 8.25
+        except Exception:
+            logger.exception("snapshot: cálculo do modelo indisponível")
+            return jsonify({
+                "status": "unavailable",
+                "error": "selix_model_calculation_failed",
+            }), 503
 
         ideal_q = float(ideal_q)
         diferencial = round(selic_atual - ideal_q, 2)
@@ -768,8 +821,12 @@ def selic_snapshot():
                 "tau": tau,
                 "divida_bruta_tri": divida_tri,
             },
-            "fonte": "src.selix.config + core + DB",
-            "timestamp": datetime.now().isoformat(),
+            "fonte": "BCB SGS 432 + src.selix.config + core",
+            "selic_atual_serie": 432,
+            "selic_atual_fonte": "BCB SGS 432",
+            "selic_atual_data_bcb": selic_atual_data_bcb,
+            "provenance": "runtime:BCB SGS 432",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
     except Exception as e:
         logger.error(f"snapshot fatal: {e}")
@@ -787,52 +844,3 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"💥 Erro fatal: {e}")
         sys.exit(1)
-
-# =============================================================================
-# ROTAS DE API PARA O DASHBOARD INTERATIVO (/painel e /v1/...)
-# =============================================================================
-from flask import request, jsonify
-
-# Rota que o Painel usa para pegar a SELIC Atual e Ideal
-@app.route('/v1/selic', methods=['GET'])
-def api_get_selic():
-    try:
-        # Simula a resposta que o painel espera
-        return jsonify({
-            "status": "success",
-            "selic_atual": 14.25,
-            "selic_ideal": 8.25,
-            "diferenca": 6.00,
-            "fonte": "SELIX Model v4.0"
-        })
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-# Rota que o Painel usa para simular cenários (What-If)
-@app.route('/v1/selic/cenario', methods=['POST', 'OPTIONS'])
-def api_simular_cenario():
-    if request.method == 'OPTIONS':
-        return '', 200
-    try:
-        dados = request.get_json() or {}
-        inflacao = float(dados.get('inflacao', 4.48))
-        preco_risco = float(dados.get('preco_risco_cds', 1.16))
-        credibilidade = float(dados.get('credibilidade', 0.35))
-        gap = float(dados.get('gap_plank', -0.5))
-        
-        # Lógica de cálculo real (você pode substituir pela sua função depois)
-        selic_calculada = 9.25 + (inflacao * 0.3) - (preco_risco * 0.5) + (credibilidade * 2) + gap
-        
-        return jsonify({"status": "success", "selic_ideal": round(selic_calculada, 2), "input_usado": dados})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-# Rota para o botão "Gerar Relatório de Auditoria"
-@app.route('/v1/relatorio/auditoria', methods=['GET'])
-def api_relatorio_auditoria():
-    return jsonify({
-        "status": "success",
-        "titulo": "Relatório Auditoria SELIX",
-        "modelo": "Lean/Z3",
-        "detalhes": "Cálculos rastreáveis via logs e provas aritméticas formais."
-    })
