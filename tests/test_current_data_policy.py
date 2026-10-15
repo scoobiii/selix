@@ -17,6 +17,7 @@ OPERATIONAL = [
     ROOT / "src" / "selix" / "spi.py",
     ROOT / "src" / "providers" / "bcb_provider.py",
     ROOT / "src" / "api" / "main_v4_fixed.py",
+    ROOT / "src" / "api" / "main_v4.py",
     ROOT / "scripts" / "postar_correcao.py",
     ROOT / "scripts" / "postar_thread_simples.py",
     ROOT / "scripts" / "postar_thread_bluesky.py",
@@ -83,3 +84,12 @@ def test_api_current_selic_paths_are_runtime_bcb_and_fail_closed():
     assert '"selic_atual": 14.25' not in api_source
     assert "ideal_q = 8.25" not in api_source
     assert "Selic ideal é 9,48%" not in api_source
+
+
+def test_deployed_api_entrypoint_uses_runtime_bcb_for_current_selic():
+    api_source = (ROOT / "src" / "api" / "main_v4.py").read_text(encoding="utf-8")
+    assert api_source.count("BCBProvider().get_selic_meta()") >= 2
+    assert "official_bcb_data_unavailable" in api_source
+    assert "selic_atual_data_bcb" in api_source
+    assert "INSERT INTO selic_historico (tipo, valor, fonte) VALUES ('efetiva', 14.25, 'bcb')" not in api_source
+    assert "ideal 9,25%" not in api_source
