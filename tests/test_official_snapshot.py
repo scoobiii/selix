@@ -69,7 +69,9 @@ def test_publisher_accepts_matching_snapshot_hash(tmp_path):
 def test_publisher_rejects_snapshot_when_content_changes_without_hash_update(tmp_path):
     from scripts import bluesky_ci_publisher as publisher
     data = _publisher_snapshot()
-    data["market"]["selic_atual"] = 14.0
+    # Change metadata that does not affect the arithmetic invariant so this
+    # test specifically exercises content-hash verification.
+    data["model"]["tau"] = 0.8
     target = tmp_path / "snapshot.json"
     target.write_text(json.dumps(data), encoding="utf-8")
     with patch.object(publisher, "SNAPSHOT_PATH", target):
