@@ -18,6 +18,7 @@ OPERATIONAL = [
     ROOT / "src" / "providers" / "bcb_provider.py",
     ROOT / "src" / "api" / "main_v4_fixed.py",
     ROOT / "src" / "api" / "main_v4.py",
+    ROOT / "src" / "selix" / "credito.py",
     ROOT / "scripts" / "postar_correcao.py",
     ROOT / "scripts" / "postar_thread_simples.py",
     ROOT / "scripts" / "postar_thread_bluesky.py",
