@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys, os, sqlite3
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 from collections import defaultdict
 from flask import Flask, jsonify, request
@@ -169,13 +169,56 @@ def get_empresas_rj():
 @app.route('/v1/selic', methods=['GET'])
 @require_api_key
 def get_selic():
+    """Retorna somente a observação oficial atual da meta Selic (BCB SGS 432)."""
+    try:
+        from src.providers.bcb_provider import BCBProvider
+
+        result = BCBProvider().get_selic_meta()
+        if (
+            not result.get("success")
+            or result.get("serie") != 432
+            or not result.get("data_bcb")
+        ):
+            return jsonify({
+                "status": "unavailable",
+                "error": "official_bcb_data_unavailable",
+                "source": "BCB SGS 432",
+            }), 503
+
+        return jsonify({
+            "status": "current",
+            "rate": float(result["rate"]),
+            "observation_date": result["data_bcb"],
+            "series": 432,
+            "source": "BCB SGS 432",
+            "retrieved_at": datetime.now(timezone.utc).isoformat(),
+        })
+    except Exception:
+        app.logger.exception("Falha ao consultar BCB SGS 432")
+        return jsonify({
+            "status": "unavailable",
+            "error": "official_bcb_data_unavailable",
+            "source": "BCB SGS 432",
+        }), 503
+
+
+@app.route('/v1/selic/historico', methods=['GET'])
+@require_api_key
+def get_selic_historico():
+    """Retorna registros históricos locais; não os declara como CURRENT."""
     conn = get_db()
-    cur = conn.execute("SELECT tipo, valor, fonte, criado_em FROM selic_historico ORDER BY criado_em DESC")
+    cur = conn.execute(
+        "SELECT tipo, valor, fonte, criado_em FROM selic_historico ORDER BY criado_em DESC"
+    )
     rows = cur.fetchall()
     conn.close()
     if not rows:
-        return jsonify({"erro": "Dados de Selic não disponíveis"}), 503
-    return jsonify([dict(row) for row in rows])
+        return jsonify({"erro": "Histórico local não disponível"}), 503
+    return jsonify({
+        "status": "historical",
+        "warning": "Registros locais legados não são prova de taxa atual.",
+        "observations": [dict(row) for row in rows],
+    })
 
 @app.route('/v1/precos/energeticos', methods=['GET'])
 @require_api_key
@@ -202,25 +245,51 @@ def get_sentimento():
 @app.route('/v1/alertas/geral', methods=['GET'])
 @require_api_key
 def alertas_geral():
-    conn = get_db()
-    cur = conn.execute('SELECT produto, preco_usd FROM precos_energeticos ORDER BY criado_em DESC')
-    precos = {row['produto']: row['preco_usd'] for row in cur.fetchall()}
-    cur = conn.execute('SELECT valor FROM selic_historico WHERE tipo="efetiva" ORDER BY criado_em DESC LIMIT 1')
-    selic_row = cur.fetchone()
-    conn.close()
-    if not selic_row:
-        return jsonify({"erro": "Dados de Selic não disponíveis para alertas"}), 503
-    selic_atual = selic_row['valor']
-    alertas = []
-    if precos.get('Gasolina', 0) > 7.0:
-        alertas.append(f"Gasolina alta: R${precos['Gasolina']}/l")
-    if precos.get('Diesel', 0) > 6.5:
-        alertas.append(f"Diesel alto: R${precos['Diesel']}/l")
-    if selic_atual > 9.5:
-        alertas.append(f"Selic elevada: {selic_atual}% (ideal 9,25%)")
-    if not alertas:
-        return jsonify({"mensagem": "Nenhum alerta no momento."}), 200
-    return jsonify({"alertas": alertas, "selic_atual": selic_atual})
+    try:
+        from src.providers.bcb_provider import BCBProvider
+        from src.selix.config import SELIC_IDEAL
+
+        result = BCBProvider().get_selic_meta()
+        if (
+            not result.get("success")
+            or result.get("serie") != 432
+            or not result.get("data_bcb")
+        ):
+            return jsonify({
+                "status": "unavailable",
+                "error": "official_bcb_data_unavailable",
+                "source": "BCB SGS 432",
+            }), 503
+
+        conn = get_db()
+        cur = conn.execute('SELECT produto, preco_usd FROM precos_energeticos ORDER BY criado_em DESC')
+        precos = {row['produto']: row['preco_usd'] for row in cur.fetchall()}
+        conn.close()
+
+        selic_atual = float(result["rate"])
+        alertas = []
+        if precos.get('Gasolina', 0) > 7.0:
+            alertas.append("Gasolina acima do limite configurado")
+        if precos.get('Diesel', 0) > 6.5:
+            alertas.append("Diesel acima do limite configurado")
+        if selic_atual > float(SELIC_IDEAL):
+            alertas.append("Selic acima da referência do modelo")
+        return jsonify({
+            "status": "current",
+            "alertas": alertas,
+            "selic_atual": selic_atual,
+            "selic_atual_serie": 432,
+            "selic_atual_fonte": "BCB SGS 432",
+            "selic_atual_data_bcb": result["data_bcb"],
+            "provenance": "runtime:BCB SGS 432",
+            "retrieved_at": datetime.now(timezone.utc).isoformat(),
+        })
+    except Exception:
+        app.logger.exception("Falha ao montar alertas com dados oficiais")
+        return jsonify({
+            "status": "unavailable",
+            "error": "current_alerts_unavailable",
+        }), 503
 
 @app.route('/v1/faq', methods=['GET'])
 @require_api_key
@@ -500,10 +569,8 @@ def criar_tabelas():
     if cur.fetchone()[0] == 0:
         conn.execute("INSERT INTO commodities (nome, preco_usd, fonte) VALUES ('Brent', 95.19, 'yahoo_finance')")
 
-    cur = conn.execute("SELECT COUNT(*) FROM selic_historico")
-    if cur.fetchone()[0] == 0:
-        conn.execute("INSERT INTO selic_historico (tipo, valor, fonte) VALUES ('efetiva', 14.25, 'bcb')")
-        conn.execute("INSERT INTO selic_historico (tipo, valor, fonte) VALUES ('selic_ideal', 9.25, 'selix')")
+    # Não semear taxa de mercado/modelo: CURRENT deve vir do BCB em runtime.
+    # O histórico local só pode conter observações realmente coletadas.
 
     cur = conn.execute("SELECT COUNT(*) FROM api_keys")
     if cur.fetchone()[0] == 0:
