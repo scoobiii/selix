@@ -16,6 +16,7 @@ OPERATIONAL = [
     ROOT / "src" / "selix" / "core.py",
     ROOT / "src" / "selix" / "spi.py",
     ROOT / "src" / "providers" / "bcb_provider.py",
+    ROOT / "src" / "api" / "main_v4_fixed.py",
     ROOT / "scripts" / "postar_correcao.py",
     ROOT / "scripts" / "postar_thread_simples.py",
     ROOT / "scripts" / "postar_thread_bluesky.py",
@@ -71,3 +72,14 @@ def test_operational_context_does_not_define_numeric_current_default():
     for path in OPERATIONAL:
         text = path.read_text(encoding="utf-8")
         assert not pattern.search(text), path
+
+
+def test_api_current_selic_paths_are_runtime_bcb_and_fail_closed():
+    api_source = (ROOT / "src" / "api" / "main_v4_fixed.py").read_text(encoding="utf-8")
+    assert api_source.count("BCBProvider().get_selic_meta()") >= 3
+    assert "official_bcb_data_unavailable" in api_source
+    assert "caller_owned_current_selic_not_allowed" in api_source
+    assert '"rate": 14.25' not in api_source
+    assert '"selic_atual": 14.25' not in api_source
+    assert "ideal_q = 8.25" not in api_source
+    assert "Selic ideal é 9,48%" not in api_source
