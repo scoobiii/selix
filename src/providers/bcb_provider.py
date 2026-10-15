@@ -70,4 +70,3 @@ class BCBProvider(DataProvider):
             return r
         except Exception as e:
             return {"success": False, "source": "BCB", "error": str(e)}
-}
