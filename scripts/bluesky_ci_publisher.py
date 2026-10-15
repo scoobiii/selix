@@ -1,15 +1,15 @@
-#!/usr/bin/env python3
 """Publish only a validated CI-generated SELIX official snapshot to Bluesky."""
+import hashlib
+import json
 import os
-import sys
 from datetime import datetime, timezone
 from pathlib import Path
-import json
 import requests
 
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT_PATH = ROOT / "public" / "selix-official.json"
 API_BASE = "https://bsky.social/xrpc"
+
 
 def load_snapshot():
     data = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
@@ -17,11 +17,25 @@ def load_snapshot():
         raise ValueError("snapshot must be verified and sourced from BCB SGS 432")
     market, model = data["market"], data["model"]
     current, ideal = float(market["selic_atual"]), float(model["selic_ideal"])
-    if abs(round(current - ideal, 2) - float(market["diferencial_pp"])) > 0.001:
+    differential = round(current - ideal, 2)
+    if abs(differential - float(market["diferencial_pp"])) > 0.001:
         raise ValueError("snapshot differential does not reconcile")
     if not data.get("content_sha256") or not data["source"].get("observation_date"):
         raise ValueError("snapshot provenance/hash missing")
+
+    # Recompute the digest from the canonical payload; merely having a hash
+    # field is not proof that the published values match that hash.
+    payload = dict(data)
+    supplied_hash = payload.pop("content_sha256")
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    expected_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+    if supplied_hash != expected_hash:
+        raise ValueError("snapshot content_sha256 mismatch")
+
+    if not 0.0 < current < 100.0 or not 0.0 < ideal < 100.0:
+        raise ValueError("snapshot rates outside valid range")
     return data
+
 
 def main():
     handle, password = os.getenv("BLUESKY_USERNAME"), os.getenv("BLUESKY_APP_PASSWORD")
@@ -41,18 +55,30 @@ def main():
         f"Snapshot SHA-256: {data['content_sha256']}\n\n"
         "Fonte: Banco Central do Brasil, SGS 432. Ferramenta de apoio à decisão; não substitui o COPOM."
     )
-    session_resp = requests.post(f"{API_BASE}/com.atproto.server.createSession",
-        json={"identifier": handle, "password": password}, timeout=20)
+    session_resp = requests.post(
+        f"{API_BASE}/com.atproto.server.createSession",
+        json={"identifier": handle, "password": password},
+        timeout=20,
+    )
     session_resp.raise_for_status()
     session = session_resp.json()
-    post_resp = requests.post(f"{API_BASE}/com.atproto.repo.createRecord",
+    post_resp = requests.post(
+        f"{API_BASE}/com.atproto.repo.createRecord",
         headers={"Authorization": f"Bearer {session['accessJwt']}"},
-        json={"repo": session["did"], "collection": "app.bsky.feed.post",
-              "record": {"$type": "app.bsky.feed.post", "text": post_text,
-                         "createdAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")}},
-        timeout=20)
+        json={
+            "repo": session["did"],
+            "collection": "app.bsky.feed.post",
+            "record": {
+                "$type": "app.bsky.feed.post",
+                "text": post_text,
+                "createdAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            },
+        },
+        timeout=20,
+    )
     post_resp.raise_for_status()
     print("Validated snapshot published successfully.")
+
 
 if __name__ == "__main__":
     main()
