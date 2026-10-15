@@ -1,86 +1,58 @@
 #!/usr/bin/env python3
-"""
-Publicador CI: importa a constante oficial do SELIX (src.selix.config)
-e posta o snapshot no Bluesky. Roda 100% no runner do GitHub Actions,
-sem depender de servidor HTTP local.
-
-Falha visivel: se o import do core quebrar, o script para com sys.exit(1)
-e NAO posta nada. Nunca publica numero de fallback como se fosse oficial.
-"""
+"""Publish only a validated CI-generated SELIX official snapshot to Bluesky."""
 import os
 import sys
+from datetime import datetime, timezone
+from pathlib import Path
+import json
 import requests
-from datetime import datetime
 
-sys.path.insert(0, os.getcwd())
-
-try:
-    from src.selix.config import SELIC_IDEAL, DIFERENCIAL
-except Exception as e:
-    print(f"ERRO FATAL: nao foi possivel importar src.selix.config: {e}")
-    print("Post cancelado — nunca publicamos numero de fallback como oficial.")
-    sys.exit(1)
-
-print(f"Core carregado: SELIC_IDEAL={SELIC_IDEAL}, DIFERENCIAL={DIFERENCIAL}")
-
-SELIC_ATUAL = round(SELIC_IDEAL + DIFERENCIAL, 2)
-
-BSKY_HANDLE = os.getenv("BLUESKY_USERNAME")
-BSKY_APP_PASSWORD = os.getenv("BLUESKY_APP_PASSWORD")
+ROOT = Path(__file__).resolve().parents[1]
+SNAPSHOT_PATH = ROOT / "public" / "selix-official.json"
 API_BASE = "https://bsky.social/xrpc"
 
-
-def get_bsky_session():
-    resp = requests.post(
-        f"{API_BASE}/com.atproto.server.createSession",
-        json={"identifier": BSKY_HANDLE, "password": BSKY_APP_PASSWORD},
-    )
-    resp.raise_for_status()
-    return resp.json()
-
-
-def post_to_bluesky(session, text):
-    post_resp = requests.post(
-        f"{API_BASE}/com.atproto.repo.createRecord",
-        headers={"Authorization": f"Bearer {session['accessJwt']}"},
-        json={
-            "repo": session["did"],
-            "collection": "app.bsky.feed.post",
-            "record": {
-                "$type": "app.bsky.feed.post",
-                "text": text,
-                "createdAt": datetime.utcnow().isoformat() + "Z",
-            },
-        },
-    )
-    post_resp.raise_for_status()
-    return post_resp.json()
-
+def load_snapshot():
+    data = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
+    if data.get("status") != "verified" or data.get("source", {}).get("series") != 432:
+        raise ValueError("snapshot must be verified and sourced from BCB SGS 432")
+    market, model = data["market"], data["model"]
+    current, ideal = float(market["selic_atual"]), float(model["selic_ideal"])
+    if abs(round(current - ideal, 2) - float(market["diferencial_pp"])) > 0.001:
+        raise ValueError("snapshot differential does not reconcile")
+    if not data.get("content_sha256") or not data["source"].get("observation_date"):
+        raise ValueError("snapshot provenance/hash missing")
+    return data
 
 def main():
-    if not BSKY_HANDLE or not BSKY_APP_PASSWORD:
-        print("ERRO: credenciais do Bluesky nao configuradas.")
-        sys.exit(1)
-
-    post_content = (
-        f"SELIX — snapshot automatico\n\n"
-        f"Selic atual: {SELIC_ATUAL}%\n"
-        f"Selic ideal (quantizada): {SELIC_IDEAL}%\n"
-        f"Diferencial: {DIFERENCIAL} p.p.\n\n"
-        f"Fonte: src.selix.config (mesma constante usada pela API e pela landing)\n"
-        f"Ferramenta de apoio a decisao — nao substitui o COPOM."
-    )
-
+    handle, password = os.getenv("BLUESKY_USERNAME"), os.getenv("BLUESKY_APP_PASSWORD")
+    if not handle or not password:
+        raise SystemExit("Missing Bluesky credentials; publication blocked")
     try:
-        print("Autenticando no Bluesky...")
-        session = get_bsky_session()
-        print("Publicando post...")
-        post_to_bluesky(session, post_content)
-        print("Post publicado com sucesso.")
-    except Exception as e:
-        print(f"ERRO ao postar: {e}")
-        sys.exit(1)
-
+        data = load_snapshot()
+    except Exception as exc:
+        raise SystemExit(f"Invalid official snapshot; publication blocked: {exc}")
+    market, model = data["market"], data["model"]
+    post_text = (
+        "SELIX — snapshot oficial\n\n"
+        f"Selic observada: {market['selic_atual']:.2f}%\n"
+        f"Selic ideal do modelo: {model['selic_ideal']:.2f}%\n"
+        f"Diferencial calculado: {market['diferencial_pp']:.2f} p.p.\n"
+        f"Observação BCB: {data['source']['observation_date']}\n"
+        f"Snapshot SHA-256: {data['content_sha256']}\n\n"
+        "Fonte: Banco Central do Brasil, SGS 432. Ferramenta de apoio à decisão; não substitui o COPOM."
+    )
+    session_resp = requests.post(f"{API_BASE}/com.atproto.server.createSession",
+        json={"identifier": handle, "password": password}, timeout=20)
+    session_resp.raise_for_status()
+    session = session_resp.json()
+    post_resp = requests.post(f"{API_BASE}/com.atproto.repo.createRecord",
+        headers={"Authorization": f"Bearer {session['accessJwt']}"},
+        json={"repo": session["did"], "collection": "app.bsky.feed.post",
+              "record": {"$type": "app.bsky.feed.post", "text": post_text,
+                         "createdAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")}},
+        timeout=20)
+    post_resp.raise_for_status()
+    print("Validated snapshot published successfully.")
 
 if __name__ == "__main__":
     main()
