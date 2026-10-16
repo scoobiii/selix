@@ -50,9 +50,6 @@ jobs:
             - Se a fonte oficial falhar ou os dados forem inválidos, a geração falha e não há atualização.
 
             Revise `source.observation_date`, `generated_at` e `content_sha256` antes de mesclar.
-          labels: |
-            automated
-            data-refresh
 
       - name: Upload generated snapshot artifact
         uses: actions/upload-artifact@v4
