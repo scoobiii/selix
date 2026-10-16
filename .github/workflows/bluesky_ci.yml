@@ -1,4 +1,4 @@
-name: Publicar Snapshot SELIX (Fonte Única)
+name: Atualizar snapshot SELIX com dados oficiais
 
 on:
   schedule:
@@ -7,15 +7,18 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
   publish-snapshot:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
@@ -23,9 +26,32 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Build official snapshot from BCB
+
+      - name: Build and validate live BCB snapshot
         run: python scripts/build_official_snapshot.py
-      - name: Upload canonical snapshot artifact
+
+      - name: Open or update PR with the fresh snapshot
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: automation/selix-official-snapshot
+          delete-branch: true
+          add-paths: |
+            selix-official.json
+            public/selix-official.json
+          commit-message: "chore(data): refresh verified BCB Selic snapshot"
+          title: "chore(data): refresh official SELIX snapshot"
+          body: |
+            Atualização automatizada do snapshot SELIX.
+
+            - Fonte da Selic observada: BCB SGS 432.
+            - O snapshot é gerado e validado pelo script `scripts/build_official_snapshot.py`.
+            - Esta automação abre/atualiza um PR; não grava diretamente em `main`.
+            - Se a fonte oficial falhar ou os dados forem inválidos, a geração falha e não há atualização.
+
+            Revise `source.observation_date`, `generated_at` e `content_sha256` antes de mesclar.
+
+      - name: Upload generated snapshot artifact
         uses: actions/upload-artifact@v4
         with:
           name: selix-official-snapshot
@@ -34,6 +60,7 @@ jobs:
             public/selix-official.json
           if-no-files-found: error
           retention-days: 30
+
       - name: Publish validated snapshot
         env:
           BLUESKY_USERNAME: ${{ secrets.BLUESKY_USERNAME }}
