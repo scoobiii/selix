@@ -91,33 +91,59 @@ class APIsReais:
             return {"erro": str(e), "status": "ERRO", "fonte": "ANP"}
     
     # ============================================================
-    # 3. SELIC - BCB Olinda API (REAL)
+    # 3. SELIC - BCB SGS 432 (runtime, sem fallback/cache)
     # ============================================================
     def selic_real(self) -> Dict:
-        cached = self._cache_get("selic")
-        if cached:
-            return cached
-        
+        """Consulta a meta oficial Selic no BCB SGS 432 a cada chamada."""
+        from src.providers.bcb_provider import BCBProvider
+
+        fetched_at = datetime.now().astimezone().isoformat()
         try:
-            # BCB Expectativas de mercado
-            url = "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/documentacao"
-            # Em produção: endpoint correto da BCB
-            # https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoTop5Anos
-            
-            # Dados reais do mercado
-            resultado = {
-                "selic": 14.5,
-                "meta_inflacao": 3.0,
-                "ipca_anual": 4.5,
-                "fonte": "BCB - Expectativas de Mercado",
-                "atualizado": datetime.now().isoformat(),
-                "status": "REAL"
+            result = BCBProvider().get_selic_meta()
+            if (
+                not result.get("success")
+                or result.get("serie") != 432
+                or result.get("rate") is None
+                or not result.get("data_bcb")
+            ):
+                return {
+                    "status": "ERRO",
+                    "fonte": result.get("source", "BCB SGS 432"),
+                    "serie": 432,
+                    "unidade": "% a.a.",
+                    "fetched_at": fetched_at,
+                    "erro": result.get("error", "BCB SGS 432 indisponível"),
+                }
+
+            observed_on = datetime.strptime(
+                result["data_bcb"], "%d/%m/%Y"
+            ).date().isoformat()
+            rate = float(result["rate"])
+            if not (0.0 < rate < 100.0):
+                raise ValueError("BCB SGS 432 retornou taxa fora do intervalo válido")
+
+            return {
+                "selic": rate,
+                "tipo": "selic_meta_bcb",
+                "fonte": "BCB SGS 432",
+                "serie": 432,
+                "observed_at": observed_on,
+                "fetched_at": fetched_at,
+                "unidade": "% a.a.",
+                "periodo_vigencia_desde": observed_on,
+                "status": "REAL",
             }
-            self._cache_set("selic", resultado)
-            return resultado
         except Exception as e:
-            return {"erro": str(e), "status": "ERRO", "fonte": "BCB"}
-    
+            # Sem cache, fallback de série diária ou taxa hardcoded.
+            return {
+                "status": "ERRO",
+                "fonte": "BCB SGS 432",
+                "serie": 432,
+                "unidade": "% a.a.",
+                "fetched_at": fetched_at,
+                "erro": str(e),
+            }
+
     # ============================================================
     # 4. CÂMBIO USD/BRL - AwesomeAPI (REAL)
     # ============================================================
