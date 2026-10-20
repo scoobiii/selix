@@ -32,7 +32,7 @@ if (
 console.log("Selic atual:", data.selic_atual);
 ```
 
-O endpoint deve ser implantado a partir de `src/api/main_v4_fastapi.py` atualizado. Ele delega ao SPI canônico, que consulta o BCB SGS 432 em tempo de requisição. Se o BCB falhar, responde HTTP 503 e não retorna uma taxa estimada ou antiga.
+O endpoint público é implementado em `src/api/main_v4.py`, que é o entrypoint do `Dockerfile` de produção. `src/api/main_v4_fastapi.py` também foi corrigido para não expor uma taxa derivada de constantes. Ele delega ao SPI canônico, que consulta o BCB SGS 432 em tempo de requisição. Se o BCB falhar, responde HTTP 503 e não retorna uma taxa estimada ou antiga.
 
 ## Snapshot versionado
 
