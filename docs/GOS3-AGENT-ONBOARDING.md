@@ -33,7 +33,7 @@ export async function getCurrentSelixSnapshot() {
   if (!base) throw new Error("SELIX_API_BASE_URL is required");
 
   const response = await fetch(
-    `${base.replace(/\\/$/, "")}/v1/selic/snapshot`,
+    `${base.replace(/\/$/, "")}/v1/selic/snapshot`,
     { cache: "no-store", headers: { Accept: "application/json" } }
   );
   if (!response.ok) throw new Error(`SELIX HTTP ${response.status}`);
