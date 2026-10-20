@@ -7,7 +7,8 @@ vem do modelo canônico do SELIX (config/core), não de um número legado.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+import math
+from datetime import date, datetime, timezone
 from typing import Any
 
 from src.providers.bcb_provider import BCBProvider, SGS_META
@@ -21,22 +22,39 @@ class CurrentDataError(RuntimeError):
 
 
 def fetch_current_selic() -> dict[str, Any]:
-    """Busca a SELIC CURRENT exclusivamente pela série BCB SGS 432."""
+    """Busca e valida a SELIC CURRENT exclusivamente pela série BCB SGS 432."""
     result = BCBProvider().get_selic_meta()
-    if not result.get("success"):
-        raise CurrentDataError(f"BCB SGS 432 indisponível: {result}")
-    if result.get("serie") != SGS_META:
-        raise CurrentDataError(
-            f"Fonte não canônica para SELIC atual: {result.get('source')}"
-        )
-    return result
+    if not isinstance(result, dict) or not result.get("success"):
+        raise CurrentDataError("BCB SGS 432 indisponível")
+    if result.get("serie") != SGS_META or result.get("source") != CANONICAL_SOURCE:
+        raise CurrentDataError("Fonte não canônica para Selic atual")
+
+    try:
+        rate = float(result["rate"])
+        observed = datetime.strptime(result["data_bcb"], "%d/%m/%Y").date()
+    except (KeyError, TypeError, ValueError) as exc:
+        raise CurrentDataError("Observação BCB SGS 432 inválida ou incompleta") from exc
+
+    if not math.isfinite(rate) or not 0.0 < rate < 100.0:
+        raise CurrentDataError("BCB SGS 432 retornou taxa inválida")
+    if observed > date.today():
+        raise CurrentDataError("BCB SGS 432 retornou observação futura")
+
+    # Normaliza os campos depois da validação; não confia no formato do adapter.
+    return {
+        **result,
+        "rate": rate,
+        "serie": SGS_META,
+        "source": CANONICAL_SOURCE,
+        "data_bcb": observed.strftime("%d/%m/%Y"),
+    }
 
 
 def build_current_snapshot() -> dict[str, Any]:
     """Produz somente o estado CURRENT autorizado pelo SPI."""
     bcb = fetch_current_selic()
     now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-    atual = round(float(bcb["rate"]), 2)
+    atual = round(bcb["rate"], 2)
     ideal = round(float(SELIC_IDEAL), 2)
     return {
         "status": "current",
@@ -45,7 +63,7 @@ def build_current_snapshot() -> dict[str, Any]:
         "diferencial": round(atual - ideal, 2),
         "selic_atual_fonte": CANONICAL_SOURCE,
         "selic_atual_serie": SGS_META,
-        "selic_atual_data_bcb": bcb.get("data_bcb"),
+        "selic_atual_data_bcb": bcb["data_bcb"],
         "fetched_at": now,
         "provenance": "runtime:BCB SGS 432",
     }
@@ -73,5 +91,3 @@ def assert_current_provenance(data: dict[str, Any]) -> None:
         raise CurrentDataError("current SELIC is missing BCB observation date")
     if data.get("provenance") != "runtime:BCB SGS 432":
         raise CurrentDataError("current SELIC provenance is not runtime BCB")
-    if not data.get("selic_atual_data_bcb"):
-        raise CurrentDataError("current SELIC is missing BCB observation date")
