@@ -22,8 +22,32 @@ def get_brent():
 
 @app.route('/v1/risk/selic', methods=['GET'])
 def get_selic():
-    selic = fonte.selic_real()
-    return jsonify({"selic_atual": selic['selic'], "selix_ideal": 9.48, "diferenca": round(selic['selic'] - 9.48, 2)})
+    """Legacy endpoint backed by the canonical BCB SGS 432 SPI."""
+    try:
+        from src.selix.spi import build_current_snapshot
+
+        data = build_current_snapshot()
+        response = jsonify({
+            "status": data["status"],
+            "selic_atual": data["selic_atual"],
+            "selix_ideal": data["selic_ideal"],
+            "diferenca": data["diferencial"],
+            "selic_atual_fonte": data["selic_atual_fonte"],
+            "selic_atual_serie": data["selic_atual_serie"],
+            "selic_atual_data_bcb": data["selic_atual_data_bcb"],
+            "fetched_at": data["fetched_at"],
+            "provenance": data["provenance"],
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response
+    except Exception:
+        response = jsonify({
+            "status": "unavailable",
+            "error": "official_bcb_data_unavailable",
+            "source": "BCB SGS 432",
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response, 503
 
 @app.route('/v1/valuation/gpa', methods=['GET'])
 def get_gpa():
