@@ -5,12 +5,14 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 OUTPUTS = (ROOT / "selix-official.json", ROOT / "public" / "selix-official.json")
 
 
