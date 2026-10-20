@@ -1,41 +1,50 @@
 # SELIX Framework — Integração Canônica
 
-Este diretório contém as especificações para integrar o SELIX como uma **fonte de verdade** em qualquer stack tecnológica (React, Vue, Angular, Python, Node.js, etc.).
+Este diretório documenta a integração do SELIX. **Um snapshot versionado não é uma fonte de dados em tempo real.**
 
-**Regra de Ouro:**
-> Nenhum front-end ou back-end deve hardcodar números oficiais (`8.25`, `6.0`, `14.25`, `9.48`, `10.75`). A fonte única de verdade é o `selix-official.json` (ou a API `/v1/selic`).
+## Contrato de dados atuais
 
-## Como consumir
+Para consumir a Selic com estado `CURRENT`, configure a URL real do serviço implantado em `VITE_SELIX_API_URL` e use o endpoint dinâmico:
 
-### 1. Via JSON público (estático)
 ```javascript
-fetch('https://raw.githubusercontent.com/scoobiii/selix/main/public/selix-official.json')
-  .then(res => res.json())
-  .then(data => {
-    console.log('Selic ideal:', data.selic_ideal);
-  });
+const API_BASE = import.meta.env.VITE_SELIX_API_URL;
+if (!API_BASE) throw new Error("Configure VITE_SELIX_API_URL com a URL implantada do SELIX");
+
+const response = await fetch(`${API_BASE.replace(/\/$/, "")}/v1/selic/snapshot`, {
+  cache: "no-store",
+  headers: { "Accept": "application/json" }
+});
+
+if (!response.ok) {
+  // 503 significa que não há observação oficial disponível.
+  // Não use o snapshot versionado como fallback.
+  throw new Error(`SELIX indisponível: HTTP ${response.status}`);
+}
+
+const data = await response.json();
+if (
+  data.status !== "current" ||
+  data.selic_atual_serie !== 432 ||
+  data.selic_atual_fonte !== "BCB SGS 432" ||
+  data.provenance !== "runtime:BCB SGS 432" ||
+  !data.selic_atual_data_bcb
+) {
+  throw new Error("Resposta SELIX sem proveniência CURRENT válida");
+}
+
+console.log("Selic atual:", data.selic_atual);
 ```
 
-### 2. Via API dinâmica (Cloud Run)
-```javascript
-fetch('https://api.selix.com/v1/selic/snapshot')
-  .then(res => res.json())
-  .then(data => {
-    console.log('Selic atual:', data.selic_atual);
-  });
-```
+O endpoint público é implementado em `src/api/main_v4.py`, que é o entrypoint do `Dockerfile` de produção. `src/api/main_v4_fastapi.py` também foi corrigido para não expor uma taxa derivada de constantes. Ele delega ao SPI canônico, que consulta o BCB SGS 432 em tempo de requisição. Se o BCB falhar, responde HTTP 503 e não retorna uma taxa estimada ou antiga.
 
-### 3. Via ticker viral (CDN)
-```html
-<script src="https://cdn.selix.com.br/ticker.js" data-theme="dark" data-size="md"></script>
-```
+## Snapshot versionado
 
-## Estrutura de pastas
+`public/selix-official.json` é um artefato de publicação e pode ficar desatualizado entre execuções do pipeline. Pode ser usado para arquivo ou contexto histórico, **nunca** para afirmar que a Selic está atual. Consumidores não devem usar GitHub Raw como fallback para uma resposta CURRENT.
 
--  → Especificações de produto (ticker, WASM, etc.)
--  → Este diretório (guias de integração)
--  → Estratégia geral de produto
+## Ticker / CDN
 
----
+Qualquer ticker ou interface que mostre a etiqueta ATUAL/CURRENT deve obter seus dados do endpoint dinâmico e validar os campos de proveniência acima. Se não conseguir validar, deve mostrar indisponibilidade, não o último valor conhecido.
 
-**Contato:**  (Bluesky)
+## Política canônica
+
+Consulte [CURRENT-DATA-POLICY.md](../CURRENT-DATA-POLICY.md). Nenhum número fixo, cache antigo, snapshot estático ou resposta de LLM pode substituir a observação oficial do BCB.
