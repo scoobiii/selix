@@ -1,35 +1,44 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-import json
-from datetime import datetime, timezone
 
-# Importa as funções do seu core
-from src.selix.config import SELIC_IDEAL, DIFERENCIAL
 from scripts.dsge_kalman import estimate_rstar
 
-app = FastAPI(title="SELIX FastAPI", version="v7.2.3")
+app = FastAPI(title="SELIX FastAPI", version="7.2.4")
+
 
 @app.get("/v1/health")
 async def health_check():
-    return {"status": "ok", "versao": "4.0-fastapi", "db": "ok"}
+    return {"status": "ok", "versao": app.version}
+
 
 @app.get("/v1/selic/snapshot")
 async def snapshot():
-    selic_atual = round(SELIC_IDEAL + DIFERENCIAL, 2)
-    economia_bi = 414  # Placeholder, se quiser puxar do banco depois
-    return {
-        "selic_atual": selic_atual,
-        "selic_ideal_quantizada": SELIC_IDEAL,
-        "diferencial_pp": DIFERENCIAL,
-        "economia_anual_bi": economia_bi,
-        "fonte": "src.selix.config"
-    }
+    """Retorna Selic CURRENT somente quando validada pelo SPI/BCB SGS 432."""
+    try:
+        from src.selix.spi import build_current_snapshot
+
+        return build_current_snapshot()
+    except Exception:
+        # Falha fechada: nunca converte indisponibilidade em valor estimado/antigo.
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "unavailable",
+                "error": "official_bcb_data_unavailable",
+                "source": "BCB SGS 432",
+                "provenance": "runtime:BCB SGS 432",
+            },
+            headers={"Cache-Control": "no-store"},
+        )
+
 
 @app.get("/v1/dsge/rstar")
 async def dsge_rstar():
-    # O estimate_rstar() retorna um dicionário, não uma string JSON. O FastAPI converte automaticamente.
+    # estimate_rstar() retorna um dicionário; FastAPI serializa automaticamente.
     return estimate_rstar()
+
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=5000)
