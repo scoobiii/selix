@@ -1,87 +1,72 @@
-# GOS3 Agent Onboarding — SELIX official snapshot
+# GOS3 Agent Onboarding — SELIX CURRENT data
 
-SELIX is a decision-support tool. It does not replace COPOM decisions.
+SELIX is a decision-support model. Its ideal rate is a model output, not a BCB decision.
 
-## Canonical input contract
+## Canonical runtime input
 
-Users and agents MUST obtain the current SELIX snapshot from the canonical public endpoint:
+A versioned JSON file in GitHub is an archival snapshot, never a live source. To claim a value is CURRENT, configure `SELIX_API_BASE_URL` with the actual deployed service URL and request:
 
-https://raw.githubusercontent.com/scoobiii/selix/main/public/selix-official.json
+`GET {SELIX_API_BASE_URL}/v1/selic/snapshot`
 
-Do not embed economic observations in agent code, tests, prompts, fixtures, or documentation. Read the JSON at execution time and validate its provenance fields.
+The deployment URL is environment-specific; this repository does not assert that a custom public hostname exists.
 
 ## Required validation
 
-A consumer MUST validate at least:
+Accept a response as CURRENT only when all of these hold:
 
-- the HTTP request succeeded;
-- the response is valid JSON;
-- required fields exist: `selic_ideal`, `diferencial`, `selic_atual`, `selic_atual_fonte`, `selic_atual_serie`, `selic_atual_data_bcb`, `versao`;
-- `selic_atual_fonte` identifies the BCB source;
-- `selic_atual_serie` identifies the BCB series;
+- HTTP status is 200;
+- `status === "current"`;
+- `selic_atual_fonte === "BCB SGS 432"`;
+- `selic_atual_serie === 432`;
+- `provenance === "runtime:BCB SGS 432"`;
 - `selic_atual_data_bcb` is present;
-- `diferencial` equals `selic_atual - selic_ideal`, using the repository's documented rounding policy.
+- `selic_atual` is finite and in the valid percentage range;
+- `diferencial` reconciles with `selic_atual - selic_ideal` under the documented rounding policy.
 
-If validation fails, stop. Do not substitute a remembered or hardcoded value.
+If the service returns 503, malformed data, or fails any check, stop. Do not fall back to GitHub Raw, a prior response, a fixture, a prompt, or a hardcoded rate.
 
 ## Minimal JavaScript consumer
 
 ```js
-const SNAPSHOT_URL =
-  "https://raw.githubusercontent.com/scoobiii/selix/main/public/selix-official.json";
+export async function getCurrentSelixSnapshot() {
+  const base = process.env.SELIX_API_BASE_URL;
+  if (!base) throw new Error("SELIX_API_BASE_URL is required");
 
-export async function getOfficialSelixSnapshot() {
-  const response = await fetch(SNAPSHOT_URL, { cache: "no-store" });
-  if (!response.ok) throw new Error(`SELIX snapshot HTTP ${response.status}`);
-
-  const snapshot = await response.json();
-  const required = [
-    "selic_ideal",
-    "diferencial",
-    "selic_atual",
-    "selic_atual_fonte",
-    "selic_atual_serie",
-    "selic_atual_data_bcb",
-    "versao",
-  ];
-
-  for (const field of required) {
-    if (!(field in snapshot)) throw new Error(`Missing snapshot field: ${field}`);
-  }
-
-  const expected = Number(
-    (Number(snapshot.selic_atual) - Number(snapshot.selic_ideal)).toFixed(2)
+  const response = await fetch(
+    `${base.replace(/\\/$/, "")}/v1/selic/snapshot`,
+    { cache: "no-store", headers: { Accept: "application/json" } }
   );
+  if (!response.ok) throw new Error(`SELIX HTTP ${response.status}`);
 
-  if (expected !== Number(snapshot.diferencial)) {
-    throw new Error("SELIX snapshot inconsistent: diferencial does not match inputs");
+  const data = await response.json();
+  if (
+    data.status !== "current" ||
+    data.selic_atual_fonte !== "BCB SGS 432" ||
+    data.selic_atual_serie !== 432 ||
+    data.provenance !== "runtime:BCB SGS 432" ||
+    !data.selic_atual_data_bcb ||
+    !Number.isFinite(data.selic_atual) ||
+    !(data.selic_atual > 0 && data.selic_atual < 100)
+  ) {
+    throw new Error("SELIX response lacks valid live BCB provenance");
   }
 
-  return snapshot;
+  const differential = Number((data.selic_atual - data.selic_ideal).toFixed(2));
+  if (differential !== Number(data.diferencial)) {
+    throw new Error("SELIX differential does not reconcile");
+  }
+  return data;
 }
 ```
 
-## SELIX → Vortex validation
+## SELIX → Vortex
 
-The Vortex integration MUST pass the snapshot-derived payload through the invocation boundary. The runtime MUST NOT replace snapshot fields with constants.
+The Vortex execution payload must be derived from the validated runtime response. The proof must bind to the payload actually executed, and the verifier must use an explicit trust store. A generated key identifier alone is not a trusted public key.
 
-The proof MUST bind to the payload actually executed:
+## Historical snapshot
 
-1. fetch official snapshot;
-2. validate snapshot;
-3. construct invocation payload from snapshot fields;
-4. execute SELIX through Vortex;
-5. validate `gate`, `executed`, `exit_code`, `input_hash`, and `output_hash`;
-6. verify that the proof input corresponds to the invocation payload.
+`public/selix-official.json` is marked `status=historical_snapshot` and `is_current=false`. It is for archival/distribution only and must not be accepted as a CURRENT input.
 
-## Snapshot generation
+## Security rule
 
-The repository's snapshot generator obtains the current rate from the BCB integration and writes `public/selix-official.json`. The generated file is the public machine-readable contract; consumers should not reconstruct it from README prose.
-
-## Fallbacks
-
-If the canonical raw endpoint is unavailable, use the repository's GitHub Pages publication if available, or query the BCB source directly according to the SELIX data policy. A fallback MUST remain live/dynamic and MUST NOT be replaced by a hardcoded observation.
-
-## Security / anti-hallucination rule
-
-Never turn a value observed in a previous run, README, chat, fixture, screenshot, or historical log into the current official input. The snapshot is the machine-readable source of truth for the execution being performed.
+Never turn a value observed in a previous run, README, chat, fixture, screenshot, or historical log into the current official input.
