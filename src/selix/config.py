@@ -23,9 +23,18 @@ CREDIBILIDADE = get_credibilidade()
 DIFERENCIAL = None  # Compatibilidade: derivar via get_diferencial().
 
 def get_selic_atual_from_bcb() -> dict:
-    """Busca somente a meta Selic oficial (BCB SGS 432), sem fallback de série."""
-    from src.providers.bcb_provider import BCBProvider
-    return BCBProvider().get_selic_meta()
+    """Compatibilidade legada sobre a consulta canônica validada do SPI."""
+    from src.selix.spi import fetch_current_selic, CurrentDataError
+
+    try:
+        return fetch_current_selic()
+    except CurrentDataError as exc:
+        return {
+            "success": False,
+            "source": "BCB SGS 432",
+            "serie": 432,
+            "error": str(exc),
+        }
 
 def get_diferencial(selic_atual: float | None = None) -> float | None:
     if selic_atual is None:
