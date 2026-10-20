@@ -6,7 +6,7 @@ O SELIX calcula indicadores do modelo e publica a observação da Selic obtida n
 
 Os valores operacionais são derivados pelo CI Runner e publicados no [snapshot oficial](public/selix-official.json). O snapshot inclui a série de origem, data da observação, instante de geração, parâmetros do modelo, diferencial calculado e hash de integridade.
 
-- [Snapshot oficial em JSON](https://github.com/scoobiii/selix/blob/main/public/selix-official.json)
+- [Snapshot histórico em JSON](public/selix-official.json)
 - [API pública do Banco Central — SGS](https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados)
 - [Workflow de validação](.github/workflows/tests.yml)
 - [Workflow de publicação](.github/workflows/bluesky_ci.yml)
@@ -21,7 +21,7 @@ Os valores operacionais são derivados pelo CI Runner e publicados no [snapshot 
 
 ## CI e publicação
 
-O CI Runner coleta e valida os dados oficiais, gera o snapshot canônico e os artefatos derivados. O publicador do Bluesky consome apenas o snapshot validado; não consulta constantes duplicadas nem calcula uma Selic atual por reconstrução de valores incompletos.
+O CI valida o código e gera um artefato histórico identificado como tal. O publicador do Bluesky consulta o SPI e o BCB em runtime; se a fonte falhar, a publicação é bloqueada.
 
 ## Limitações
 
