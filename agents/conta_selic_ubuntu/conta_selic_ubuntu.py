@@ -34,16 +34,20 @@ KEYWORDS = [
 ]
 
 # Respostas impactantes (viralizáveis)
-RESPOSTAS = [
-    "Selic ideal: 9,48% (não 14,50%). Economia de R$ 270 bi/ano. github.com/scoobiii/selix #SELIX",
-    "Juro real a 10% trava o Brasil. SELIX: 9,48% resolve. github.com/scoobiii/selix",
-    "Copom discricionário? SELIX é regra pública, código aberto, provada com Z3. github.com/scoobiii/selix",
-    "R$ 270 bi/ano é o que o Brasil perde com juros altos. SELIX: github.com/scoobiii/selix",
-    "Por que o BCB não adota uma regra pública? SELIX: 5 teoremas provados. github.com/scoobiii/selix",
-    "Selic atual: 14,50%. Selic ideal (SELIX): 9,48%. Diferença: R$ 270 bi/ano. github.com/scoobiii/selix",
-    "O Brasil é o país com maior juro real do mundo. SELIX reduz para 4,77%. github.com/scoobiii/selix",
-    "Cada 0,25 pp de corte na Selic economiza R$ 17 bi/ano. SELIX acelera o ritmo. github.com/scoobiii/selix",
-]
+def respostas_atualizadas():
+    """Monta respostas somente com a observação BCB SGS 432 validada."""
+    from src.selix.spi import fetch_current_selic
+    from src.selix.config import get_selic_ideal
+
+    observado = fetch_current_selic()
+    atual = float(observado["rate"])
+    ideal = float(get_selic_ideal())
+    data = observado["data_bcb"]
+    return [
+        f"Meta Selic BCB: {atual:.2f}% a.a. (SGS 432; observação {data}). SELIX ideal: {ideal:.2f}% a.a., valor de modelo, não decisão do COPOM. github.com/scoobiii/selix",
+        f"BCB SGS 432 informa meta Selic de {atual:.2f}% a.a. na observação de {data}. SELIX calcula ideal de {ideal:.2f}% a.a.; hipótese de modelo, não taxa oficial. github.com/scoobiii/selix",
+        f"Dados separados: Selic oficial {atual:.2f}% a.a. (BCB SGS 432, {data}); ideal SELIX {ideal:.2f}% a.a. (modelo). Sem previsão de decisão do COPOM. github.com/scoobiii/selix",
+    ]
 
 # ============================================================
 # BOT PRINCIPAL
@@ -78,7 +82,11 @@ class SelixBot(tweepy.StreamingClient):
 
         texto = tweet.text.lower()
         if any(kw in texto for kw in KEYWORDS):
-            resposta = random.choice(RESPOSTAS)
+            try:
+                resposta = random.choice(respostas_atualizadas())
+            except Exception as e:
+                print(f"Selic oficial indisponível; resposta numérica bloqueada: {e}")
+                return
             try:
                 self.api.update_status(
                     status=f"{resposta}\n\n(em resposta a @{tweet.author_id})",
