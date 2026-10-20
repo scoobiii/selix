@@ -4,10 +4,13 @@ Este diretório documenta a integração do SELIX. **Um snapshot versionado não
 
 ## Contrato de dados atuais
 
-Para consumir a Selic com estado `CURRENT`, use o endpoint dinâmico implantado:
+Para consumir a Selic com estado `CURRENT`, configure a URL real do serviço implantado em `VITE_SELIX_API_URL` e use o endpoint dinâmico:
 
 ```javascript
-const response = await fetch("https://api.selix.com/v1/selic/snapshot", {
+const API_BASE = import.meta.env.VITE_SELIX_API_URL;
+if (!API_BASE) throw new Error("Configure VITE_SELIX_API_URL com a URL implantada do SELIX");
+
+const response = await fetch(`${API_BASE.replace(/\/$/, "")}/v1/selic/snapshot`, {
   cache: "no-store",
   headers: { "Accept": "application/json" }
 });
