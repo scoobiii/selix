@@ -1,4 +1,4 @@
-name: Atualizar snapshot SELIX com dados oficiais
+name: Gerar snapshot histórico SELIX e publicar observação live
 
 on:
   schedule:
@@ -39,17 +39,17 @@ jobs:
           add-paths: |
             selix-official.json
             public/selix-official.json
-          commit-message: "chore(data): refresh verified BCB Selic snapshot"
-          title: "chore(data): refresh official SELIX snapshot"
+          commit-message: "chore(data): refresh historical BCB Selic snapshot"
+          title: "chore(data): refresh historical SELIX snapshot"
           body: |
-            Atualização automatizada do snapshot SELIX.
+            Atualização automatizada de um artefato histórico SELIX; não representa o estado CURRENT.
 
             - Fonte da Selic observada: BCB SGS 432.
-            - O snapshot é gerado e validado pelo script `scripts/build_official_snapshot.py`.
+            - O arquivo gerado é marcado `status=historical_snapshot` e `is_current=false`.
             - Esta automação abre/atualiza um PR; não grava diretamente em `main`.
-            - Se a fonte oficial falhar ou os dados forem inválidos, a geração falha e não há atualização.
+            - O artefato versionado nunca pode ser usado como fallback de taxa atual. Se a fonte oficial falhar, a geração falha.
 
-            Revise `source.observation_date`, `generated_at` e `content_sha256` antes de mesclar.
+            Revise `source.observation_date`, `snapshot_created_at` e `content_sha256` antes de mesclar.
 
       - name: Upload generated snapshot artifact
         uses: actions/upload-artifact@v4
@@ -61,7 +61,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Publish validated snapshot
+      - name: Publish live SPI-validated Selic observation
         env:
           BLUESKY_USERNAME: ${{ secrets.BLUESKY_USERNAME }}
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
