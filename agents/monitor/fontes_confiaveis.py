@@ -198,27 +198,27 @@ class FontesConfi:
             return None
     
     def selic_real(self) -> Dict:
-        cached = self._cache_get("selic")
-        if cached:
-            return cached
-        
-        selic = self.selic_fonte1()
-        fonte = "BCB"
-        
-        if selic is None:
-            selic = self.selic_fonte2()
-            fonte = "Market Data"
-        
-        if selic is None:
-            selic = self.selic_duckduckgo()
-            fonte = "DuckDuckGo Search"
-        
-        if selic is None:
-            selic = 14.5
-        
-        resultado = {"selic": round(selic, 2), "fonte": fonte, "atualizado": datetime.now().isoformat()}
-        self._cache_set("selic", resultado)
-        return resultado
+        """Selic oficial: consulta canônica SGS 432, sem cache, scrape ou fallback."""
+        from src.selix.spi import fetch_current_selic
+
+        try:
+            observation = fetch_current_selic()
+            return {
+                "selic": observation["rate"],
+                "fonte": observation["source"],
+                "serie": observation["serie"],
+                "data_bcb": observation["data_bcb"],
+                "atualizado": datetime.now().astimezone().isoformat(),
+                "status": "REAL",
+            }
+        except Exception as exc:
+            return {
+                "fonte": "BCB SGS 432",
+                "serie": 432,
+                "status": "ERRO",
+                "erro": str(exc),
+            }
+
 
 if __name__ == "__main__":
     f = FontesConfi()
