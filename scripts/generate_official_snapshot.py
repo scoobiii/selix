@@ -6,10 +6,10 @@ import json
 import sys
 from pathlib import Path
 
-from scripts.build_official_snapshot import build_snapshot, write_snapshot
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from scripts.build_official_snapshot import build_snapshot, write_snapshot
 
 
 def main() -> int:
