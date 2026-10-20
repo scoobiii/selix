@@ -1,12 +1,14 @@
 {
-  "selic_ideal": 8.25,
-  "diferencial": 5.75,
-  "selic_atual": 14.0,
-  "selic_atual_fonte": "BCB SGS 432",
-  "selic_atual_serie": 432,
-  "selic_atual_data_bcb": "15/08/2026",
-  "fonte": "src.selix.config + BCB SGS",
-  "versao": "v7.2.3",
-  "updated_at": "2026-08-15T16:06:27.881360Z",
-  "disclaimer": "Ferramenta de apoio à decisão — não substitui o COPOM."
+  "status": "historical_snapshot",
+  "is_current": false,
+  "warning": "Arquivo estático de 2026-08-15. Não usar como taxa atual nem como fallback de API.",
+  "snapshot_created_at": "2026-08-15T16:06:27.881360Z",
+  "selic_observada_snapshot": 14.0,
+  "selic_snapshot_fonte": "BCB SGS 432",
+  "selic_snapshot_serie": 432,
+  "selic_snapshot_data_bcb": "15/08/2026",
+  "selic_ideal_snapshot": 8.25,
+  "diferencial_snapshot": 5.75,
+  "modelo_versao": "v7.2.3",
+  "disclaimer": "Registro histórico de snapshot, não é cotação atual nem recomendação de investimento."
 }
