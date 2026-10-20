@@ -111,42 +111,28 @@ class APIsReais:
     # 3. SELIC - BCB Olinda API (REAL)
     # ============================================================
     def selic_real(self) -> Dict:
-        cached = self._cache_get("selic")
-        if cached:
-            return cached
-        
+        """Selic oficial: consulta canônica SGS 432, sem cache nem fallback."""
+        from src.selix.spi import fetch_current_selic
+
         try:
-            # BCB - Expectativas de mercado
-            url = "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativasMercadoTop5Anos"
-            params = {
-                "$top": 1,
-                "$filter": "Indicador eq 'Selic' and Data referencial eq '2026'"
+            observation = fetch_current_selic()
+            result = {
+                "selic": observation["rate"],
+                "fonte": observation["source"],
+                "serie": observation["serie"],
+                "data_bcb": observation["data_bcb"],
+                "atualizado": datetime.now().astimezone().isoformat(),
+                "status": "REAL",
             }
-            headers = {"User-Agent": "Mozilla/5.0"}
-            response = requests.get(url, headers=headers, params=params, timeout=10)
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('value'):
-                    selic = data['value'][0].get('Mediana', 14.5)
-                else:
-                    selic = 14.5
-            else:
-                selic = 14.5
-            
-            resultado = {
-                "selic": selic,
-                "meta_inflacao": 3.0,
-                "ipca_anual": 4.5,
-                "fonte": "BCB - Expectativas de Mercado",
-                "atualizado": datetime.now().isoformat(),
-                "status": "REAL"
+            return result
+        except Exception as exc:
+            return {
+                "fonte": "BCB SGS 432",
+                "serie": 432,
+                "status": "ERRO",
+                "erro": str(exc),
             }
-            self._cache_set("selic", resultado)
-            return resultado
-        except Exception as e:
-            return {"selic": 14.5, "fonte": "FALLBACK", "status": "FALLBACK", "erro": str(e)}
-    
+
     # ============================================================
     # 4. CÂMBIO USD/BRL - AwesomeAPI (REAL)
     # ============================================================

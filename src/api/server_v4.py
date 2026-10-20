@@ -99,7 +99,6 @@ HISTORICO = {
     2023: {"selic": 11.75, "selix": 9.80},
     2024: {"selic": 12.25, "selix": 9.90},
     2025: {"selic": 13.75, "selix": 10.10},
-    2026: {"selic": 14.50, "selix": 9.48},
 }
 
 @app.route('/')
@@ -121,36 +120,38 @@ def home():
 
 @app.route('/current', methods=['GET'])
 def get_current():
-    selix = SELIX()
-    return jsonify({
-        "timestamp": datetime.now().isoformat(),
-        "version": "4.0",
-        "parameters": {
-            "ipca_12m": 4.48,
-            "roe_ibovespa": 31.23,
-            "selic_bcb": 14.50,
-            "r_star_global": 3.50,
-            "cds_5y": 145,
-            "phi": 1.39
-        },
-        "result": {
-            "selix_optimal": 9.48,
-            "confidence_interval": [8.90, 10.06],
-            "active_constraint": "R3_juro_real",
-            "diferential_bps": 502,
-            "investment_grade": True,
-            "fiscal_cost_annual_brl": 341000000000,
-            "convergence_meetings": 11,
-            "convergence_months_50bps": 16.5,
-            "convergence_months_75bps": 10.5
-        },
-        "score": {
-            "adherence_score": 0.0,
-            "rating": "EMERGENCIA",
-            "max_score": 10.0,
-            "percentile_historical": 8
-        }
-    })
+    """Estado operacional atual; taxa oficial vem exclusivamente do SPI."""
+    try:
+        from src.selix.spi import build_current_snapshot
+
+        current = build_current_snapshot()
+        response = jsonify({
+            "status": current["status"],
+            "timestamp": current["fetched_at"],
+            "version": "4.0",
+            "parameters": {
+                "selic_bcb": current["selic_atual"],
+                "selic_source": current["selic_atual_fonte"],
+                "selic_series": current["selic_atual_serie"],
+                "selic_observation_date": current["selic_atual_data_bcb"],
+            },
+            "result": {
+                "selix_optimal": current["selic_ideal"],
+                "differential_pp": current["diferencial"],
+                "provenance": current["provenance"],
+            },
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response, 200
+    except Exception:
+        response = jsonify({
+            "status": "unavailable",
+            "error": "official_bcb_data_unavailable",
+            "source": "BCB SGS 432",
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response, 503
+
 
 @app.route('/history', methods=['GET'])
 def get_history():
@@ -183,15 +184,45 @@ def get_sensitivity():
 
 @app.route('/score', methods=['GET'])
 def get_score():
-    selix = SELIX()
-    score, rating = selix.get_score()
-    return jsonify({
-        "adherence_score": score,
-        "rating": rating,
-        "max_score": 10.0,
-        "selic_atual": 14.50,
-        "selix_ideal": 9.48
-    })
+    """Score comparativo calculado com taxa BCB validada e ideal do modelo."""
+    try:
+        from src.selix.spi import build_current_snapshot
+
+        current = build_current_snapshot()
+        gap = max(0.0, current["selic_atual"] - current["selic_ideal"])
+        score = round(max(0.0, 10.0 - 2.0 * gap), 1)
+        if score >= 9:
+            rating = "OTIMO"
+        elif score >= 7:
+            rating = "BOM"
+        elif score >= 5:
+            rating = "ATENCAO"
+        elif score >= 3:
+            rating = "CRITICO"
+        else:
+            rating = "EMERGENCIA"
+        response = jsonify({
+            "status": "current",
+            "adherence_score": score,
+            "rating": rating,
+            "max_score": 10.0,
+            "selic_atual": current["selic_atual"],
+            "selix_ideal": current["selic_ideal"],
+            "selic_atual_fonte": current["selic_atual_fonte"],
+            "selic_atual_serie": current["selic_atual_serie"],
+            "selic_atual_data_bcb": current["selic_atual_data_bcb"],
+            "provenance": current["provenance"],
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response
+    except Exception:
+        response = jsonify({
+            "status": "unavailable",
+            "error": "official_bcb_data_unavailable",
+            "source": "BCB SGS 432",
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response, 503
 
 @app.route('/z3/verify', methods=['GET'])
 def verify_z3():
@@ -224,14 +255,44 @@ def verify_z3():
 
 @app.route('/simulate', methods=['POST'])
 def simulate():
-    data = request.json
-    selix_sim = SELIX(
-        inflacao=data.get('ipca', 4.48),
-        roe=data.get('roe', 31.23),
-        selic_bacen=data.get('selic_bcb', 14.50)
-    )
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"status": "error", "error": "JSON object required"}), 400
+
+    # A supplied selic_bcb is an explicit hypothetical input. Without it,
+    # use the official current observation and fail closed if unavailable.
+    if "selic_bcb" in data:
+        try:
+            selic_input = float(data["selic_bcb"])
+        except (TypeError, ValueError):
+            return jsonify({"status": "error", "error": "selic_bcb must be numeric"}), 400
+        if not 0.0 < selic_input < 100.0:
+            return jsonify({"status": "error", "error": "selic_bcb out of range"}), 400
+        input_source = "caller_scenario"
+    else:
+        try:
+            from src.selix.spi import fetch_current_selic
+            selic_input = float(fetch_current_selic()["rate"])
+            input_source = "runtime:BCB SGS 432"
+        except Exception:
+            return jsonify({
+                "status": "unavailable",
+                "error": "official_bcb_data_unavailable",
+                "source": "BCB SGS 432",
+            }), 503
+
+    try:
+        selix_sim = SELIX(
+            inflacao=float(data.get('ipca', 4.48)),
+            roe=float(data.get('roe', 31.23)),
+            selic_bacen=selic_input
+        )
+    except (TypeError, ValueError):
+        return jsonify({"status": "error", "error": "invalid simulation parameters"}), 400
+
     return jsonify({
-        "input_params": data,
+        "status": "simulation",
+        "input_params": {**data, "selic_bcb": selic_input, "selic_input_source": input_source},
         "selix_optimal": round(selix_sim.calcular_selix(sem_arredondamento=True), 2),
         "juro_real": round(selix_sim.calcular_selix(sem_arredondamento=True) - selix_sim.inflacao, 2)
     })

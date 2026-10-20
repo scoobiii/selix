@@ -13,10 +13,11 @@
 - B3 Market Cap: **US$ 10 trilhões** (6x atual)
 - Investment Grade: **A-** (hoje BB)
 
-## API para integração
+## API para integração\n\nA URL de produção precisa ser confirmada no ambiente de deploy; não presuma que um domínio personalizado esteja ativo.
 
 ```bash
-curl https://api.selix.com/v1/empresas/rj
-curl https://api.selix.com/v1/selic
+# Configure a URL real do serviço implantado antes de executar:
+export SELIX_API_BASE_URL="https://<URL-real-do-servico>"
+curl "$SELIX_API_BASE_URL/v1/selic/snapshot"
 ```
 

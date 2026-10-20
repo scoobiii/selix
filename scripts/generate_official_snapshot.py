@@ -1,47 +1,28 @@
 #!/usr/bin/env python3
-"""Snapshot oficial: ideal do modelo + selic_atual do BCB. Sem hardcode de mercado."""
+"""Compatibility wrapper for the historical-only snapshot generator."""
+from __future__ import annotations
+
 import json
-import os
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
-sys.path.insert(0, os.getcwd())
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from scripts.build_official_snapshot import build_snapshot, write_snapshot
 
 
-def main():
-    from src.selix.config import SELIC_IDEAL, get_selic_atual_from_bcb, get_diferencial
-
-    bcb = get_selic_atual_from_bcb()
-    if not bcb.get("success"):
-        print("ERRO FATAL: BCB não retornou Selic — snapshot NÃO gerado com número inventado.")
-        print(bcb)
-        sys.exit(1)
-
-    selic_atual = round(float(bcb["rate"]), 2)
-    diferencial = get_diferencial(selic_atual)
-
-    snapshot = {
-        "selic_ideal": float(SELIC_IDEAL),
-        "diferencial": diferencial,
-        "selic_atual": selic_atual,
-        "selic_atual_fonte": bcb.get("source"),
-        "selic_atual_serie": bcb.get("serie"),
-        "selic_atual_data_bcb": bcb.get("data_bcb"),
-        "fonte": "src.selix.config + BCB SGS",
-        "versao": "v7.2.3",
-        "updated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "disclaimer": "Ferramenta de apoio à decisão — não substitui o COPOM.",
-    }
-
-    out = Path("public")
-    out.mkdir(exist_ok=True)
-    path = out / "selix-official.json"
-    path.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print("✅ Snapshot oficial gerado:")
-    print(json.dumps(snapshot, indent=2, ensure_ascii=False))
-    print(f"Arquivo: {path}")
+def main() -> int:
+    snapshot = build_snapshot()
+    write_snapshot(snapshot)
+    print(json.dumps({
+        "status": snapshot["status"],
+        "is_current": snapshot["is_current"],
+        "source": snapshot["source"],
+        "content_sha256": snapshot["content_sha256"],
+    }, ensure_ascii=False))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

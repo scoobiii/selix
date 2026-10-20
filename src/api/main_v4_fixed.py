@@ -358,38 +358,33 @@ def get_gatilhos():
 @app.route('/v1/selic', methods=['GET'])
 @require_api_key
 def get_selic():
-    """Retorna a observação oficial mais recente da meta Selic (BCB SGS 432)."""
+    """Compatibilidade legada sobre a consulta canônica do SPI."""
     try:
-        from src.providers.bcb_provider import BCBProvider
+        from src.selix.spi import fetch_current_selic
 
-        result = BCBProvider().get_selic_meta()
-        if (
-            not result.get("success")
-            or result.get("serie") != 432
-            or not result.get("data_bcb")
-        ):
-            logger.warning("BCB SGS 432 indisponível; bloqueando resposta CURRENT")
-            return jsonify({
-                "status": "unavailable",
-                "error": "official_bcb_data_unavailable",
-                "source": "BCB SGS 432",
-            }), 503
-
-        return jsonify({
+        data = fetch_current_selic()
+        response = jsonify({
             "status": "current",
-            "rate": float(result["rate"]),
-            "observation_date": result["data_bcb"],
+            "rate": data["rate"],
+            "observation_date": data["data_bcb"],
             "series": 432,
             "source": "BCB SGS 432",
+            "provenance": "runtime:BCB SGS 432",
             "retrieved_at": datetime.now(timezone.utc).isoformat(),
         })
+        response.headers["Cache-Control"] = "no-store"
+        return response
     except Exception:
         logger.exception("Falha ao consultar BCB SGS 432")
-        return jsonify({
+        response = jsonify({
             "status": "unavailable",
             "error": "official_bcb_data_unavailable",
             "source": "BCB SGS 432",
-        }), 503
+            "provenance": "runtime:BCB SGS 432",
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response, 503
+
 
 @app.route('/v1/commodities', methods=['GET'])
 @require_api_key
@@ -721,117 +716,23 @@ def demo_static(filename):
 @app.route("/v1/selic/snapshot", methods=["GET"])
 @require_api_key
 def selic_snapshot():
-    """Baseline canônica do sistema + cálculo core. Front só exibe."""
+    """Compatibilidade legada: delega ao SPI e nunca publica snapshot estático."""
     try:
-        # 1) baseline: config do projeto
-        try:
-            from src.selix import config as cfg
-            inflacao = float(getattr(cfg, "INFLACAO", getattr(cfg, "inflacao", 4.48)))
-            premio = float(getattr(cfg, "PREMIO_RISCO", getattr(cfg, "premio_risco", 1.16)))
-            cred = float(getattr(cfg, "CREDIBILIDADE", getattr(cfg, "credibilidade", 0.35)))
-            gap = float(getattr(cfg, "GAP_PRODUTO", getattr(cfg, "gap_produto", -0.5)))
-            tau = float(getattr(cfg, "TAU", getattr(cfg, "tau", 0.7786)))
-            divida_tri = float(getattr(cfg, "DIVIDA_BRUTA_TRI", 6.9))
-        except Exception:
-            logger.exception("snapshot: parâmetros do modelo indisponíveis")
-            return jsonify({
-                "status": "unavailable",
-                "error": "model_parameters_unavailable",
-            }), 503
+        from src.selix.spi import build_current_snapshot
 
-        # 2) Selic observada: somente fonte oficial SGS 432; sem DB/fallback.
-        from src.providers.bcb_provider import BCBProvider
-        result = BCBProvider().get_selic_meta()
-        if (
-            not result.get("success")
-            or result.get("serie") != 432
-            or not result.get("data_bcb")
-        ):
-            logger.warning("BCB SGS 432 indisponível; bloqueando snapshot CURRENT")
-            return jsonify({
-                "status": "unavailable",
-                "error": "official_bcb_data_unavailable",
-                "source": "BCB SGS 432",
-            }), 503
-        selic_atual = float(result["rate"])
-        selic_atual_data_bcb = result["data_bcb"]
-
-        # 3) core
-        ideal_q = None
-        ideal_c = None
-        juro = None
-        try:
-            from src.selix.core import SelixInputs, calcular_selix
-            inputs = SelixInputs(
-                inflacao=inflacao,
-                premio_risco=premio,
-                credibilidade=cred,
-                gap_produto=gap,
-            )
-            # Chamada com a assinatura correta (selic_atual)
-            out = calcular_selix(inputs, selic_atual=selic_atual)
-            
-            if isinstance(out, dict):
-                ideal_q = out.get("selic_ideal_quantizada") or out.get("selic_ideal")
-                ideal_c = out.get("selic_ideal_continua") or out.get("juro_real_necessario")
-                juro = out.get("juro_real_necessario")
-            else:
-                ideal_q = float(out)
-        except Exception:
-            logger.exception("snapshot: cálculo do modelo indisponível")
-            return jsonify({
-                "status": "unavailable",
-                "error": "selix_model_calculation_failed",
-            }), 503
-
-        ideal_q = float(ideal_q)
-        diferencial = round(selic_atual - ideal_q, 2)
-        economia_bi = round(divida_tri * 1e12 * (diferencial / 100.0) / 1e9)
-
-        # 4) brent real do banco (se houver)
-        brent = None
-        try:
-            with get_db() as conn:
-                row = conn.execute(
-                    "SELECT preco_usd FROM commodities WHERE tipo LIKE '%brent%' OR tipo LIKE '%Brent%' OR tipo='BZ=F' ORDER BY criado_em DESC LIMIT 1"
-                ).fetchone()
-                if row is None:
-                    row = conn.execute(
-                        "SELECT preco_usd FROM commodities ORDER BY criado_em DESC LIMIT 1"
-                    ).fetchone()
-                if row is not None:
-                    brent = float(row[0])
-        except Exception as e:
-            logger.warning(f"snapshot: brent: {e}")
-
-        return jsonify({
-            "status": "ok",
-            "selic_atual": selic_atual,
-            "selic_ideal_quantizada": ideal_q,
-            "selic_ideal_continua": ideal_c,
-            "juro_real_necessario": juro,
-            "diferencial_pp": diferencial,
-            "economia_anual_bi": economia_bi,
-            "brent_usd": brent,
-            "inputs": {
-                "inflacao": inflacao,
-                "premio_risco": premio,
-                "credibilidade": cred,
-                "gap_produto": gap,
-                "tau": tau,
-                "divida_bruta_tri": divida_tri,
-            },
-            "fonte": "BCB SGS 432 + src.selix.config + core",
-            "selic_atual_serie": 432,
-            "selic_atual_fonte": "BCB SGS 432",
-            "selic_atual_data_bcb": selic_atual_data_bcb,
+        response = jsonify(build_current_snapshot())
+        response.headers["Cache-Control"] = "no-store"
+        return response
+    except Exception:
+        logger.exception("snapshot CURRENT indisponível")
+        response = jsonify({
+            "status": "unavailable",
+            "error": "official_bcb_data_unavailable",
+            "source": "BCB SGS 432",
             "provenance": "runtime:BCB SGS 432",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
-    except Exception as e:
-        logger.error(f"snapshot fatal: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500
-
+        response.headers["Cache-Control"] = "no-store"
+        return response, 503
 
 
 

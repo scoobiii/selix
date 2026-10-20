@@ -169,37 +169,51 @@ def get_empresas_rj():
 @app.route('/v1/selic', methods=['GET'])
 @require_api_key
 def get_selic():
-    """Retorna somente a observação oficial atual da meta Selic (BCB SGS 432)."""
+    """Compatibilidade legada: mesma fonte e validação canônica do snapshot."""
     try:
-        from src.providers.bcb_provider import BCBProvider
+        from src.selix.spi import fetch_current_selic
 
-        result = BCBProvider().get_selic_meta()
-        if (
-            not result.get("success")
-            or result.get("serie") != 432
-            or not result.get("data_bcb")
-        ):
-            return jsonify({
-                "status": "unavailable",
-                "error": "official_bcb_data_unavailable",
-                "source": "BCB SGS 432",
-            }), 503
-
-        return jsonify({
+        result = fetch_current_selic()
+        response = jsonify({
             "status": "current",
-            "rate": float(result["rate"]),
+            "rate": result["rate"],
             "observation_date": result["data_bcb"],
             "series": 432,
             "source": "BCB SGS 432",
             "retrieved_at": datetime.now(timezone.utc).isoformat(),
         })
+        response.headers["Cache-Control"] = "no-store"
+        return response
     except Exception:
         app.logger.exception("Falha ao consultar BCB SGS 432")
-        return jsonify({
+        response = jsonify({
             "status": "unavailable",
             "error": "official_bcb_data_unavailable",
             "source": "BCB SGS 432",
-        }), 503
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response, 503
+
+
+@app.route('/v1/selic/snapshot', methods=['GET'])
+def get_selic_snapshot():
+    """Snapshot CURRENT público: exclusivamente SPI + BCB SGS 432 em runtime."""
+    try:
+        from src.selix.spi import build_current_snapshot
+
+        response = jsonify(build_current_snapshot())
+        response.headers["Cache-Control"] = "no-store"
+        return response
+    except Exception:
+        app.logger.exception("Falha ao montar snapshot CURRENT da Selic")
+        response = jsonify({
+            "status": "unavailable",
+            "error": "official_bcb_data_unavailable",
+            "source": "BCB SGS 432",
+            "provenance": "runtime:BCB SGS 432",
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response, 503
 
 
 @app.route('/v1/selic/historico', methods=['GET'])
@@ -246,27 +260,16 @@ def get_sentimento():
 @require_api_key
 def alertas_geral():
     try:
-        from src.providers.bcb_provider import BCBProvider
+        from src.selix.spi import fetch_current_selic
         from src.selix.config import SELIC_IDEAL
 
-        result = BCBProvider().get_selic_meta()
-        if (
-            not result.get("success")
-            or result.get("serie") != 432
-            or not result.get("data_bcb")
-        ):
-            return jsonify({
-                "status": "unavailable",
-                "error": "official_bcb_data_unavailable",
-                "source": "BCB SGS 432",
-            }), 503
-
+        result = fetch_current_selic()
         conn = get_db()
         cur = conn.execute('SELECT produto, preco_usd FROM precos_energeticos ORDER BY criado_em DESC')
         precos = {row['produto']: row['preco_usd'] for row in cur.fetchall()}
         conn.close()
 
-        selic_atual = float(result["rate"])
+        selic_atual = result["rate"]
         alertas = []
         if precos.get('Gasolina', 0) > 7.0:
             alertas.append("Gasolina acima do limite configurado")

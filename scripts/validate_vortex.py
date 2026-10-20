@@ -25,7 +25,10 @@ def main() -> int:
     # Run inside the checked-out VUC repository. The SELIX result is passed
     # through VUC's governed execution pipeline and its proof is verified.
     js = r'''
-import { executeVortexPipeline } from "./src/vortex/gateway.ts";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { executeVortexPipeline, CURRENT_IDENTITY } from "./src/vortex/gateway.ts";
 import { verifyExecutionProof } from "./src/vortex/verifier.ts";
 
 const selix = JSON.parse(process.env.SELIX_RESULT_JSON);
@@ -39,6 +42,27 @@ const response = await executeVortexPipeline(
   async () => ({ selix, source: "scoobiii/selix" })
 );
 const proof = response.execution_proof;
+
+// The gateway creates an ephemeral Ed25519 identity for this isolated CI run.
+// Pin that exact public key into a verifier-owned temporary trust store before
+// verification. This does not bypass signature checking: a missing/incorrect
+// key or modified proof still fails verification. The temp trust store is not
+// a production trust registry and is deleted automatically with the runner.
+const trustDir = fs.mkdtempSync(path.join(os.tmpdir(), "selix-vuc-trust-"));
+const trustPath = path.join(trustDir, "keys.json");
+fs.writeFileSync(
+  trustPath,
+  JSON.stringify({
+    [CURRENT_IDENTITY.key_id]: {
+      public_key: CURRENT_IDENTITY.public_key,
+      algorithm: "Ed25519",
+      principal_id: CURRENT_IDENTITY.principal_id,
+      agent_id: CURRENT_IDENTITY.agent_id
+    }
+  }),
+  { mode: 0o600 }
+);
+process.env.VUC_TRUST_STORE = trustPath;
 const verification = proof ? verifyExecutionProof(proof) : { valid: false, reasons: ["missing proof"] };
 console.log(JSON.stringify({
   status: response.status,

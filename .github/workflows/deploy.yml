@@ -13,29 +13,40 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # Deployment requires the repository secret. Never attempt an unauthenticated
-    # Google auth step: missing credentials must be an explicit, non-failing skip.
-    if: ${{ secrets.GCLOUD_SA_KEY != '' }}
+    # GitHub does not permit the secrets context directly in job-level if.
+    # Expose the secret to this job and gate each deployment step via env.
+    env:
+      GCLOUD_SA_KEY: ${{ secrets.GCLOUD_SA_KEY }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Skip deploy when credentials are not configured
+        if: ${{ env.GCLOUD_SA_KEY == '' }}
+        run: echo "::notice::Deployment skipped; GCLOUD_SA_KEY repository secret is not configured."
+
+      - name: Checkout
+        if: ${{ env.GCLOUD_SA_KEY != '' }}
+        uses: actions/checkout@v4
         with:
           submodules: false
 
       - name: Auth GCloud
+        if: ${{ env.GCLOUD_SA_KEY != '' }}
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCLOUD_SA_KEY }}
 
       - name: Setup GCloud
+        if: ${{ env.GCLOUD_SA_KEY != '' }}
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Build and Push
+        if: ${{ env.GCLOUD_SA_KEY != '' }}
         run: |
           gcloud auth configure-docker
           docker build -t ${{ env.IMAGE }}:${{ github.sha }} .
           docker push ${{ env.IMAGE }}:${{ github.sha }}
 
       - name: Deploy to Cloud Run
+        if: ${{ env.GCLOUD_SA_KEY != '' }}
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: ${{ env.SERVICE }}
@@ -44,6 +55,7 @@ jobs:
           flags: --allow-unauthenticated --memory=512Mi --cpu=1 --max-instances=3
 
       - name: Smoke test
+        if: ${{ env.GCLOUD_SA_KEY != '' }}
         run: |
           URL=$(gcloud run services describe ${{ env.SERVICE }} --region ${{ env.REGION }} --format 'value(status.url)')
           curl -f "$URL/v1/health"
