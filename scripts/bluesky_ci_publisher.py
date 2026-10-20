@@ -1,39 +1,26 @@
-"""Publish only a validated CI-generated SELIX official snapshot to Bluesky."""
+"""Publish a live SPI-validated Selic observation; never read a committed snapshot as CURRENT."""
 import hashlib
 import json
 import os
 from datetime import datetime, timezone
-from pathlib import Path
 import requests
 
-ROOT = Path(__file__).resolve().parents[1]
-SNAPSHOT_PATH = ROOT / "public" / "selix-official.json"
 API_BASE = "https://bsky.social/xrpc"
 
 
-def load_snapshot():
-    data = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
-    if data.get("status") != "verified" or data.get("source", {}).get("series") != 432:
-        raise ValueError("snapshot must be verified and sourced from BCB SGS 432")
-    market, model = data["market"], data["model"]
-    current, ideal = float(market["selic_atual"]), float(model["selic_ideal"])
-    differential = round(current - ideal, 2)
-    if abs(differential - float(market["diferencial_pp"])) > 0.001:
-        raise ValueError("snapshot differential does not reconcile")
-    if not data.get("content_sha256") or not data["source"].get("observation_date"):
-        raise ValueError("snapshot provenance/hash missing")
+def load_live_snapshot() -> dict:
+    from src.selix.spi import build_current_snapshot, assert_current_provenance
 
-    # Recompute the digest from the canonical payload; merely having a hash
-    # field is not proof that the published values match that hash.
-    payload = dict(data)
-    supplied_hash = payload.pop("content_sha256")
-    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
-    expected_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-    if supplied_hash != expected_hash:
-        raise ValueError("snapshot content_sha256 mismatch")
-
-    if not 0.0 < current < 100.0 or not 0.0 < ideal < 100.0:
-        raise ValueError("snapshot rates outside valid range")
+    data = build_current_snapshot()
+    assert_current_provenance(data)
+    current = float(data["selic_atual"])
+    ideal = float(data["selic_ideal"])
+    if not (0.0 < current < 100.0 and 0.0 < ideal < 100.0):
+        raise ValueError("Selic rates outside valid range")
+    if abs(round(current - ideal, 2) - float(data["diferencial"])) > 0.001:
+        raise ValueError("live snapshot differential does not reconcile")
+    canonical = json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    data["content_sha256"] = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
     return data
 
 
@@ -41,20 +28,31 @@ def main():
     handle, password = os.getenv("BLUESKY_USERNAME"), os.getenv("BLUESKY_APP_PASSWORD")
     if not handle or not password:
         raise SystemExit("Missing Bluesky credentials; publication blocked")
+
     try:
-        data = load_snapshot()
+        data = load_live_snapshot()
     except Exception as exc:
-        raise SystemExit(f"Invalid official snapshot; publication blocked: {exc}")
-    market, model = data["market"], data["model"]
+        raise SystemExit(f"Invalid or unavailable live BCB observation; publication blocked: {exc}")
+
     post_text = (
-        "SELIX — snapshot oficial\n\n"
-        f"Selic observada: {market['selic_atual']:.2f}%\n"
-        f"Selic ideal do modelo: {model['selic_ideal']:.2f}%\n"
-        f"Diferencial calculado: {market['diferencial_pp']:.2f} p.p.\n"
-        f"Observação BCB: {data['source']['observation_date']}\n"
-        f"Snapshot SHA-256: {data['content_sha256']}\n\n"
-        "Fonte: Banco Central do Brasil, SGS 432. Ferramenta de apoio à decisão; não substitui o COPOM."
+        "SELIX — observação oficial consultada em runtime\n\n"
+        f"Meta Selic BCB SGS 432: {data['selic_atual']:.2f}% a.a.\n"
+        f"Data da observação BCB: {data['selic_atual_data_bcb']}\n"
+        f"Consulta: {data['fetched_at']}\n"
+        f"Selic ideal do modelo: {data['selic_ideal']:.2f}% a.a. (não é taxa oficial)\n"
+        f"Diferencial do modelo: {data['diferencial']:.2f} p.p.\n"
+        f"Proveniência: {data['provenance']}\n"
+        f"SHA-256 do payload: {data['content_sha256']}\n"
+        "Apoio à decisão; não substitui o COPOM."
     )
+    if len(post_text) > 300:
+        post_text = (
+            f"SELIX | Selic BCB SGS 432: {data['selic_atual']:.2f}% a.a.; "
+            f"observação {data['selic_atual_data_bcb']}. "
+            f"Ideal do modelo: {data['selic_ideal']:.2f}% a.a. (não oficial). "
+            "Dados consultados em runtime; não substitui o COPOM."
+        )
+
     session_resp = requests.post(
         f"{API_BASE}/com.atproto.server.createSession",
         json={"identifier": handle, "password": password},
@@ -77,7 +75,7 @@ def main():
         timeout=20,
     )
     post_resp.raise_for_status()
-    print("Validated snapshot published successfully.")
+    print("Live SPI-validated observation published successfully.")
 
 
 if __name__ == "__main__":
