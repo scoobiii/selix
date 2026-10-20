@@ -358,38 +358,33 @@ def get_gatilhos():
 @app.route('/v1/selic', methods=['GET'])
 @require_api_key
 def get_selic():
-    """Retorna a observação oficial mais recente da meta Selic (BCB SGS 432)."""
+    """Compatibilidade legada sobre a consulta canônica do SPI."""
     try:
-        from src.providers.bcb_provider import BCBProvider
+        from src.selix.spi import fetch_current_selic
 
-        result = BCBProvider().get_selic_meta()
-        if (
-            not result.get("success")
-            or result.get("serie") != 432
-            or not result.get("data_bcb")
-        ):
-            logger.warning("BCB SGS 432 indisponível; bloqueando resposta CURRENT")
-            return jsonify({
-                "status": "unavailable",
-                "error": "official_bcb_data_unavailable",
-                "source": "BCB SGS 432",
-            }), 503
-
-        return jsonify({
+        data = fetch_current_selic()
+        response = jsonify({
             "status": "current",
-            "rate": float(result["rate"]),
-            "observation_date": result["data_bcb"],
+            "rate": data["rate"],
+            "observation_date": data["data_bcb"],
             "series": 432,
             "source": "BCB SGS 432",
+            "provenance": "runtime:BCB SGS 432",
             "retrieved_at": datetime.now(timezone.utc).isoformat(),
         })
+        response.headers["Cache-Control"] = "no-store"
+        return response
     except Exception:
         logger.exception("Falha ao consultar BCB SGS 432")
-        return jsonify({
+        response = jsonify({
             "status": "unavailable",
             "error": "official_bcb_data_unavailable",
             "source": "BCB SGS 432",
-        }), 503
+            "provenance": "runtime:BCB SGS 432",
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response, 503
+
 
 @app.route('/v1/commodities', methods=['GET'])
 @require_api_key
