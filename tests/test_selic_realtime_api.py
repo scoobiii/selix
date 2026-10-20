@@ -48,7 +48,7 @@ def test_selic_real_fails_closed_without_using_cached_or_static_rate():
     get_rate.assert_called_once_with()
     assert result["status"] == "ERRO"
     assert "selic" not in result
-    assert result["erro"] == "offline"
+    assert "BCB SGS 432 indisponível" in result["erro"]
     assert result["serie"] == 432
 
 
