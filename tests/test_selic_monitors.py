@@ -45,4 +45,4 @@ def test_monitor_labels_ideal_as_model_not_copom_decision():
 
     assert "14.25% a.a." in alert
     assert "8.25% a.a." in alert
-    assert "não é uma previsão ou decisão do COPOM" in alert
+    assert "não uma previsão ou decisão do COPOM" in alert
