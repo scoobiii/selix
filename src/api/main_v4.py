@@ -169,37 +169,30 @@ def get_empresas_rj():
 @app.route('/v1/selic', methods=['GET'])
 @require_api_key
 def get_selic():
-    """Retorna somente a observação oficial atual da meta Selic (BCB SGS 432)."""
+    """Compatibilidade legada: mesma fonte e validação canônica do snapshot."""
     try:
-        from src.providers.bcb_provider import BCBProvider
+        from src.selix.spi import fetch_current_selic
 
-        result = BCBProvider().get_selic_meta()
-        if (
-            not result.get("success")
-            or result.get("serie") != 432
-            or not result.get("data_bcb")
-        ):
-            return jsonify({
-                "status": "unavailable",
-                "error": "official_bcb_data_unavailable",
-                "source": "BCB SGS 432",
-            }), 503
-
-        return jsonify({
+        result = fetch_current_selic()
+        response = jsonify({
             "status": "current",
-            "rate": float(result["rate"]),
+            "rate": result["rate"],
             "observation_date": result["data_bcb"],
             "series": 432,
             "source": "BCB SGS 432",
             "retrieved_at": datetime.now(timezone.utc).isoformat(),
         })
+        response.headers["Cache-Control"] = "no-store"
+        return response
     except Exception:
         app.logger.exception("Falha ao consultar BCB SGS 432")
-        return jsonify({
+        response = jsonify({
             "status": "unavailable",
             "error": "official_bcb_data_unavailable",
             "source": "BCB SGS 432",
-        }), 503
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response, 503
 
 
 @app.route('/v1/selic/snapshot', methods=['GET'])
