@@ -78,7 +78,7 @@ jobs:
           SELIX_API_KEYS: test_api_key_123
           PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/src
         run: |
-          nohup python src/api/main_v4_fixed.py > /tmp/selix_logs/api.log 2>&1 &
+          nohup python src/api/main_v4.py > /tmp/selix_logs/api.log 2>&1 &
           for i in $(seq 1 30); do
             if curl -sf http://127.0.0.1:5000/v1/health >/dev/null; then
               echo "API UP em ${i}s"
