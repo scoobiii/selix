@@ -94,36 +94,17 @@ class APIsReais:
     # 3. SELIC - BCB SGS 432 (runtime, sem fallback/cache)
     # ============================================================
     def selic_real(self) -> Dict:
-        """Consulta a meta oficial Selic no BCB SGS 432 a cada chamada."""
-        from src.providers.bcb_provider import BCBProvider
+        """Consulta a meta oficial Selic pelo SPI, sem fallback/cache."""
+        from src.selix.spi import fetch_current_selic
 
         fetched_at = datetime.now().astimezone().isoformat()
         try:
-            result = BCBProvider().get_selic_meta()
-            if (
-                not result.get("success")
-                or result.get("serie") != 432
-                or result.get("rate") is None
-                or not result.get("data_bcb")
-            ):
-                return {
-                    "status": "ERRO",
-                    "fonte": result.get("source", "BCB SGS 432"),
-                    "serie": 432,
-                    "unidade": "% a.a.",
-                    "fetched_at": fetched_at,
-                    "erro": result.get("error", "BCB SGS 432 indisponível"),
-                }
-
+            result = fetch_current_selic()
             observed_on = datetime.strptime(
                 result["data_bcb"], "%d/%m/%Y"
             ).date().isoformat()
-            rate = float(result["rate"])
-            if not (0.0 < rate < 100.0):
-                raise ValueError("BCB SGS 432 retornou taxa fora do intervalo válido")
-
             return {
-                "selic": rate,
+                "selic": result["rate"],
                 "tipo": "selic_meta_bcb",
                 "fonte": "BCB SGS 432",
                 "serie": 432,
@@ -134,7 +115,7 @@ class APIsReais:
                 "status": "REAL",
             }
         except Exception as e:
-            # Sem cache, fallback de série diária ou taxa hardcoded.
+            # Sem cache, série alternativa ou taxa hardcoded.
             return {
                 "status": "ERRO",
                 "fonte": "BCB SGS 432",
