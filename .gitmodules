@@ -1,0 +1,30 @@
+[submodule "llama.cpp"]
+	path = llama.cpp
+	url = https://github.com/ggml-org/llama.cpp.git
+[submodule "lean_proof/.lake/packages/Cli"]
+	path = lean_proof/.lake/packages/Cli
+	url = https://github.com/leanprover/lean4-cli
+[submodule "lean_proof/.lake/packages/LeanSearchClient"]
+	path = lean_proof/.lake/packages/LeanSearchClient
+	url = https://github.com/leanprover-community/LeanSearchClient
+[submodule "lean_proof/.lake/packages/Qq"]
+	path = lean_proof/.lake/packages/Qq
+	url = https://github.com/leanprover-community/quote4
+[submodule "lean_proof/.lake/packages/aesop"]
+	path = lean_proof/.lake/packages/aesop
+	url = https://github.com/leanprover-community/aesop
+[submodule "lean_proof/.lake/packages/batteries"]
+	path = lean_proof/.lake/packages/batteries
+	url = https://github.com/leanprover-community/batteries
+[submodule "lean_proof/.lake/packages/importGraph"]
+	path = lean_proof/.lake/packages/importGraph
+	url = https://github.com/leanprover-community/import-graph
+[submodule "lean_proof/.lake/packages/mathlib"]
+	path = lean_proof/.lake/packages/mathlib
+	url = https://github.com/leanprover-community/mathlib4.git
+[submodule "lean_proof/.lake/packages/plausible"]
+	path = lean_proof/.lake/packages/plausible
+	url = https://github.com/leanprover-community/plausible
+[submodule "lean_proof/.lake/packages/proofwidgets"]
+	path = lean_proof/.lake/packages/proofwidgets
+	url = https://github.com/leanprover-community/ProofWidgets4
