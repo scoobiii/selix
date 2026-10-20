@@ -202,6 +202,27 @@ def get_selic():
         }), 503
 
 
+@app.route('/v1/selic/snapshot', methods=['GET'])
+def get_selic_snapshot():
+    """Snapshot CURRENT público: exclusivamente SPI + BCB SGS 432 em runtime."""
+    try:
+        from src.selix.spi import build_current_snapshot
+
+        response = jsonify(build_current_snapshot())
+        response.headers["Cache-Control"] = "no-store"
+        return response
+    except Exception:
+        app.logger.exception("Falha ao montar snapshot CURRENT da Selic")
+        response = jsonify({
+            "status": "unavailable",
+            "error": "official_bcb_data_unavailable",
+            "source": "BCB SGS 432",
+            "provenance": "runtime:BCB SGS 432",
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response, 503
+
+
 @app.route('/v1/selic/historico', methods=['GET'])
 @require_api_key
 def get_selic_historico():
