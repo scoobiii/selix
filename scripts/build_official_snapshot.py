@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""Build the canonical SELIX public snapshot from live official data.
-
-No market-rate fallback is permitted. Output files are deterministic except for
-observation/build timestamps and are written only after all inputs validate.
-"""
+"""Build an explicitly historical artifact; never label a committed JSON as CURRENT."""
 from __future__ import annotations
 
 import hashlib
@@ -19,57 +15,54 @@ OUTPUTS = (ROOT / "selix-official.json", ROOT / "public" / "selix-official.json"
 
 
 def _iso_now() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def _validate_rate(value: Any, field: str) -> float:
+    import math
+
     rate = float(value)
-    if not (0.0 < rate < 100.0):
+    if not math.isfinite(rate) or not 0.0 < rate < 100.0:
         raise ValueError(f"{field} outside valid percentage range")
     return round(rate, 4)
 
 
 def build_snapshot() -> dict[str, Any]:
-    from src.selix.config import SELIC_IDEAL, TAU, CREDIBILIDADE
-    from src.providers.bcb_provider import BCBProvider
+    from src.selix.spi import build_current_snapshot, assert_current_provenance
 
-    result = BCBProvider().get_selic_meta()
-    if not result.get("success"):
-        raise RuntimeError(f"Official BCB SGS 432 observation unavailable: {result!r}")
-    if result.get("serie") != 432:
-        raise ValueError("Selic meta must come from BCB SGS 432 only")
-    if not result.get("data_bcb"):
-        raise ValueError("BCB observation date missing")
+    current = build_current_snapshot()
+    assert_current_provenance(current)
 
-    selic_atual = _validate_rate(result.get("rate"), "selic_atual")
-    selic_ideal = _validate_rate(SELIC_IDEAL, "selic_ideal")
-    diferencial = round(selic_atual - selic_ideal, 2)
-    tau = float(TAU)
-    credibilidade = float(CREDIBILIDADE)
-    if not 0.0 <= tau <= 1.0:
-        raise ValueError("tau outside valid range")
-    if not 0.0 <= credibilidade <= 1.0:
-        raise ValueError("credibilidade outside valid range")
+    observed = _validate_rate(current["selic_atual"], "selic_observada_snapshot")
+    ideal = _validate_rate(current["selic_ideal"], "selic_ideal_snapshot")
+    differential = round(observed - ideal, 2)
+    if abs(differential - float(current["diferencial"])) > 0.001:
+        raise ValueError("SELIX differential does not reconcile")
 
     payload: dict[str, Any] = {
-        "schema_version": "1",
-        "status": "verified",
+        "schema_version": "2",
+        "status": "historical_snapshot",
+        "is_current": False,
+        "warning": (
+            "Versioned artifact for archival/distribution only. It is not a live API "
+            "response and MUST NOT be used as a CURRENT fallback."
+        ),
         "source": {
             "provider": "Banco Central do Brasil",
             "series": 432,
             "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados",
-            "observation_date": result["data_bcb"],
+            "observation_date": current["selic_atual_data_bcb"],
         },
-        "generated_at": _iso_now(),
+        "snapshot_created_at": _iso_now(),
+        "fetched_at": current["fetched_at"],
         "model": {
-            "selic_ideal": selic_ideal,
-            "tau": round(tau, 6),
-            "credibilidade": round(credibilidade, 6),
+            "selic_ideal_snapshot": ideal,
         },
         "market": {
-            "selic_atual": selic_atual,
-            "diferencial_pp": diferencial,
+            "selic_observada_snapshot": observed,
+            "diferencial_snapshot_pp": differential,
         },
+        "provenance": current["provenance"],
     }
     canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
     payload["content_sha256"] = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
@@ -77,6 +70,8 @@ def build_snapshot() -> dict[str, Any]:
 
 
 def write_snapshot(snapshot: dict[str, Any]) -> None:
+    if snapshot.get("status") != "historical_snapshot" or snapshot.get("is_current") is not False:
+        raise ValueError("refusing to write artifact without historical-only marker")
     encoded = json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n"
     for target in OUTPUTS:
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -100,6 +95,7 @@ def main() -> None:
     write_snapshot(snapshot)
     print(json.dumps({
         "status": snapshot["status"],
+        "is_current": snapshot["is_current"],
         "source": snapshot["source"],
         "content_sha256": snapshot["content_sha256"],
         "outputs": [str(path.relative_to(ROOT)) for path in OUTPUTS],
