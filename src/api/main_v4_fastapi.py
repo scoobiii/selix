@@ -1,9 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from scripts.dsge_kalman import estimate_rstar
-
-app = FastAPI(title="SELIX FastAPI", version="7.2.4")
+app = FastAPI(title="SELIX FastAPI", version="7.2.5")
 
 
 @app.get("/v1/health")
@@ -34,8 +32,30 @@ async def snapshot():
 
 @app.get("/v1/dsge/rstar")
 async def dsge_rstar():
-    # estimate_rstar() retorna um dicionário; FastAPI serializa automaticamente.
-    return estimate_rstar()
+    """O módulo DSGE é opcional; sua ausência não deve derrubar a API."""
+    try:
+        from scripts.dsge_kalman import estimate_rstar
+    except ImportError:
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "unavailable",
+                "error": "dsge_model_unavailable",
+            },
+            headers={"Cache-Control": "no-store"},
+        )
+
+    try:
+        return estimate_rstar()
+    except Exception:
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "unavailable",
+                "error": "dsge_model_execution_failed",
+            },
+            headers={"Cache-Control": "no-store"},
+        )
 
 
 if __name__ == "__main__":
