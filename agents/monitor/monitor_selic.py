@@ -1,80 +1,67 @@
 #!/usr/bin/env python3
-"""
-Monitor da Política Monetária (Selic)
-Fonte: BCB, COPOM, CMN, Focus
-"""
+"""Monitor de Selic baseado na meta oficial do BCB SGS 432, sem valores fixos."""
+from __future__ import annotations
 
-import requests
-from datetime import datetime
-from typing import Dict
+from datetime import datetime, timezone
+from typing import Dict, Any
+
+from src.selix.spi import fetch_current_selic
+from src.selix.config import get_selic_ideal
+
 
 class MonitorSelic:
     def __init__(self):
         self.stakeholders = {
             "decisores": [
-                {"handle": "@bancocentral.bsky.social", "nome": "BCB/COPOM", "papel": "Define Selic"},
-                {"handle": "@fazenda.bsky.social", "nome": "Ministério da Fazenda", "papel": "Coordena política econômica"},
-                {"handle": "@febraban.bsky.social", "nome": "Febraban", "papel": "Representa bancos"},
-                {"handle": "@fiesp.bsky.social", "nome": "FIESP", "papel": "Representa indústria"}
+                {"handle": "@bancocentral.bsky.social", "nome": "BCB/COPOM", "papel": "Define a meta Selic"},
+                {"handle": "@fazenda.bsky.social", "nome": "Ministério da Fazenda", "papel": "Política econômica"},
+                {"handle": "@febraban.bsky.social", "nome": "Febraban", "papel": "Representação bancária"},
+                {"handle": "@fiesp.bsky.social", "nome": "FIESP", "papel": "Representação industrial"},
             ]
         }
-        
-        # Dados atuais
-        self.selic_atual = 14.5
-        self.selic_selix = 9.48
-        self.meta_inflacao = 3.0
-        self.ipca_acumulado = 4.5
-        
-        # Próximas reuniões COPOM
-        self.proximas_reunioes = [
-            {"data": "2026-06-17", "tipo": "COPOM", "expectativa": "Corte de 0,5%"},
-            {"data": "2026-07-29", "tipo": "COPOM", "expectativa": "Corte de 0,5%"},
-            {"data": "2026-09-16", "tipo": "COPOM", "expectativa": "Corte de 0,5%"}
-        ]
-    
-    def buscar_selic_real(self) -> Dict:
-        """Busca Selic real via API BCB"""
-        try:
-            # BCB API - Expectativas de mercado
-            url = "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/documentacao"
-            # Em produção: chamada real
-            return {"selic": 14.5, "fonte": "BCB", "atualizado": datetime.now().isoformat()}
-        except:
-            return {"selic": 14.5, "fonte": "fallback", "atualizado": datetime.now().isoformat()}
-    
-    def calcular_impacto_selic(self) -> Dict:
-        """Calcula impacto da redução da Selic para 9.48%"""
+
+    def buscar_selic_real(self) -> Dict[str, Any]:
+        """Retorna a observação oficial validada; propaga erro em vez de inventar fallback."""
+        result = fetch_current_selic()
         return {
-            "reducao": self.selic_atual - self.selic_selix,
-            "economia_anual": 270,  # R$ bilhões
-            "investment_grade": "BBB+",
-            "juro_real_atual": self.selic_atual - self.ipca_acumulado,
-            "juro_real_selix": self.selic_selix - self.meta_inflacao
+            "selic": result["rate"],
+            "fonte": result["source"],
+            "serie": result["serie"],
+            "observed_at": result["data_bcb"],
+            "fetched_at": datetime.now(timezone.utc).isoformat(),
+            "status": "REAL",
         }
-    
+
+    def calcular_impacto_selic(self) -> Dict[str, Any]:
+        """Calcula apenas diferenciais verificáveis; não inventa economia ou rating."""
+        atual = self.buscar_selic_real()
+        ideal = float(get_selic_ideal())
+        return {
+            "selic_atual": atual["selic"],
+            "selic_ideal": ideal,
+            "reducao_pp": round(atual["selic"] - ideal, 2),
+            "fonte": atual["fonte"],
+            "serie": atual["serie"],
+            "observed_at": atual["observed_at"],
+            "fetched_at": atual["fetched_at"],
+            "status": "REAL",
+        }
+
     def gerar_alerta_copom(self) -> str:
-        """Gera alerta sobre próxima reunião do COPOM"""
-        prox = self.proximas_reunioes[0]
-        
-        texto = f"""🏦 PRÓXIMA REUNIÃO COPOM:
-
-📅 Data: {prox['data']}
-📊 Expectativa: {prox['expectativa']}
-💰 Selic atual: {self.selic_atual}%
-
-🎯 SELIX (ideal): {self.selic_selix}%
-📉 Redução necessária: {(self.selic_atual - self.selic_selix):.1f} p.p.
-
-💰 Economia anual: R$ 270 bi/ano
-
-🔗 github.com/scoobiii/selix
-#SELIX #COPOM #Selic
-
-⚠️ Projeção baseada em modelo matemático SELIX. Não é recomendação de investimento."""
+        """Gera alerta sem inventar data ou expectativa para reunião futura."""
+        dados = self.calcular_impacto_selic()
+        texto = (
+            "META SELIC — DADO OFICIAL\n"
+            f"Meta atual: {dados['selic_atual']:.2f}% a.a.\n"
+            f"SELIX ideal (modelo): {dados['selic_ideal']:.2f}% a.a.\n"
+            f"Diferencial do modelo: {dados['reducao_pp']:.2f} p.p.\n"
+            f"Fonte: {dados['fonte']} (série {dados['serie']})\n"
+            f"Observação BCB: {dados['observed_at']}\n"
+            "O diferencial é uma saída de modelo, não uma previsão ou decisão do COPOM."
+        )
         return texto[:300]
+
 
 if __name__ == "__main__":
     monitor = MonitorSelic()
-    print("📊 Monitor Selic carregado")
-    print(f"\n📈 Stakeholders: {len(monitor.stakeholders['decisores'])}")
-    print(f"\n📱 Alerta COPOM:\n{monitor.gerar_alerta_copom()}")
+    print(monitor.gerar_alerta_copom())
