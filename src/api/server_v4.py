@@ -125,7 +125,7 @@ def get_current():
         from src.selix.spi import build_current_snapshot
 
         current = build_current_snapshot()
-        return jsonify({
+        response = jsonify({
             "status": current["status"],
             "timestamp": current["fetched_at"],
             "version": "4.0",
@@ -140,13 +140,18 @@ def get_current():
                 "differential_pp": current["diferencial"],
                 "provenance": current["provenance"],
             },
-        }), 200
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response, 200
     except Exception:
-        return jsonify({
+        response = jsonify({
             "status": "unavailable",
             "error": "official_bcb_data_unavailable",
             "source": "BCB SGS 432",
-        }), 503
+        })
+        response.headers["Cache-Control"] = "no-store"
+        return response, 503
+
 
 @app.route('/history', methods=['GET'])
 def get_history():
