@@ -10,11 +10,13 @@ from __future__ import annotations
 import math
 from datetime import date, datetime, timezone
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from src.providers.bcb_provider import BCBProvider, SGS_META
 from src.selix.config import SELIC_IDEAL
 
 CANONICAL_SOURCE = f"BCB SGS {SGS_META}"
+SP_TZ = ZoneInfo("America/Sao_Paulo")
 
 
 class CurrentDataError(RuntimeError):
@@ -37,7 +39,7 @@ def fetch_current_selic() -> dict[str, Any]:
 
     if not math.isfinite(rate) or not 0.0 < rate < 100.0:
         raise CurrentDataError("BCB SGS 432 retornou taxa inválida")
-    if observed > date.today():
+    if observed > datetime.now(SP_TZ).date():
         raise CurrentDataError("BCB SGS 432 retornou observação futura")
 
     # Normaliza os campos depois da validação; não confia no formato do adapter.
