@@ -190,3 +190,24 @@ def test_opening_missing_is_none(data_dir):
     r = extract_company(data_dir, "009512", "2026-03-31")
     assert r["opening_gross_debt"] is None
     assert r["opening_equity"] is None
+
+
+def test_dfp_march_fiscal_year(tmp_path):
+    files = {
+        "DRE": (HEAD_DRE, [
+            dre("2025-03-31", ULT, "2024-04-01", "2025-03-31", "3.05", -1093066),
+        ]),
+        "BPA": (HEAD_BP, [bp("2025-03-31", ULT, "2025-03-31", "1.01.01", 100)]),
+        "BPP": (HEAD_BP, [
+            bp("2025-03-31", ULT, "2025-03-31", "2.03", 15124031),
+            bp("2025-03-31", PEN, "2024-03-31", "2.03", 14000000),
+        ]),
+    }
+    for kind, (head, lines) in files.items():
+        (tmp_path / f"dfp_cia_aberta_{kind}_con_2025.csv").write_text(
+            "\n".join([head, *lines]) + "\n", encoding="latin-1"
+        )
+    r = extract_company(tmp_path, "009512", "2025-03-31", src="dfp")
+    assert r["ebit"] == -1_093_066_000.0
+    assert r["equity"] == 15_124_031_000.0
+    assert r["opening_equity"] == 14_000_000_000.0

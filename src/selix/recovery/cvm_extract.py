@@ -90,13 +90,19 @@ def balance(rows, cd_cvm, dt_refer, codes, ordem=ULTIMO, dt_fim=None) -> dict:
     return {k: by.get(c) for k, c in codes.items()}
 
 
-def extract_company(data_dir, cd_cvm, dt_refer: str) -> dict:
+def _opening_date(rows, cd_cvm, dt_refer):
+    sel = _select(rows, cd_cvm, dt_refer, PENULTIMO)
+    dates = {r["DT_FIM_EXERC"] for r in sel}
+    return max(dates) if dates else None
+
+
+def extract_company(data_dir, cd_cvm, dt_refer: str, src: str = "itr") -> dict:
     """dt_refer no formato AAAA-MM-DD (ex.: '2026-03-31')."""
     year = dt_refer[:4]
     d = Path(data_dir)
 
     def path(kind):
-        return d / f"itr_cia_aberta_{kind}_con_{year}.csv"
+        return d / f"{src}_cia_aberta_{kind}_con_{year}.csv"
 
     out = {"cd_cvm": str(cd_cvm).zfill(6), "dt_refer": dt_refer}
     out.update(income(_read(path("DRE")), cd_cvm, dt_refer))
@@ -114,7 +120,8 @@ def extract_company(data_dir, cd_cvm, dt_refer: str) -> dict:
     cash = [out["cash"], out["short_term_investments"]]
     out["cash_total"] = None if None in cash else sum(cash)
 
-    prev = f"{int(year) - 1}-12-31"
+    prev = (_opening_date(_read(path("BPP")), cd_cvm, dt_refer)
+            or f"{int(year) - 1}-12-31")
     op = balance(_read(path("BPA")), cd_cvm, dt_refer, ASSET_CODES, PENULTIMO, prev)
     op.update(balance(_read(path("BPP")), cd_cvm, dt_refer, LIABILITY_CODES, PENULTIMO, prev))
     od = [op["debt_current"], op["debt_noncurrent"]]
