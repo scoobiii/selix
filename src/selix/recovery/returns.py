@@ -75,3 +75,18 @@ def assess_roic(company: dict) -> dict:
             None if r is None or months is None else annualize_linear(r, months)
         ),
     }
+
+
+def equity_unexplained(opening_equity, equity, net_income) -> Optional[float]:
+    """PL final - PL inicial - lucro. Inclui dividendos, aportes e OCI."""
+    if opening_equity is None or equity is None or net_income is None:
+        return None
+    return equity - opening_equity - net_income
+
+
+def equity_flag(opening_equity, equity, net_income, threshold=0.25) -> Optional[bool]:
+    """True se o resto passa de threshold x PL inicial (perimetro/aporte?)."""
+    u = equity_unexplained(opening_equity, equity, net_income)
+    if u is None or not opening_equity:
+        return None
+    return abs(u) / abs(opening_equity) > threshold

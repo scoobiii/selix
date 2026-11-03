@@ -90,3 +90,16 @@ def test_assess_roic_falls_back_to_closing_capital():
     })
     assert r["capital_basis"] == "fechamento"
     assert r["roic_period"] == pytest.approx(0.1)
+
+
+def test_equity_unexplained_raizen_fy2022():
+    from src.selix.recovery.returns import equity_flag, equity_unexplained
+    args = (6_909_313_000.0, 13_595_854_000.0, 1_158_036_000.0)
+    assert equity_unexplained(*args) == pytest.approx(5_528_505_000.0)
+    assert equity_flag(*args) is True
+
+
+def test_equity_flag_false_and_none():
+    from src.selix.recovery.returns import equity_flag
+    assert equity_flag(7_588_177_000.0, 6_909_313_000.0, 593_948_000.0) is False
+    assert equity_flag(None, 1.0, 1.0) is None
