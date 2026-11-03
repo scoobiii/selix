@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """Coleta Selic no BCB (SGS) sem fallback de série para o caminho CURRENT."""
 from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
 import math
 import requests
 from .base_provider import DataProvider
@@ -15,14 +16,21 @@ class BCBProvider(DataProvider):
         return {"success": False, "source": "BCB"}
 
     def _fetch_sgs(self, codigo: int) -> dict:
-        # /ultimos/N evita a janela dataInicial/dataFinal, que pode ser
-        # rejeitada pelo SGS para séries diárias quando a janela excede 10 anos.
-        # Na série 432, a data é a vigência da última alteração da meta; ela
-        # pode legitimamente ser antiga enquanto a meta permanece inalterada.
-        url = f"https://api.bcb.gov.br/dados/serie/bcdata.sgs.{codigo}/dados/ultimos/10"
-        resp = requests.get(url, params={"formato": "json"}, timeout=20)
+        """Consulta o BCB em janela explícita e rejeita observações futuras."""
+        hoje = datetime.now(ZoneInfo("America/Sao_Paulo")).date()
+        inicio = hoje - timedelta(days=15)
+
+        url = f"https://api.bcb.gov.br/dados/serie/bcdata.sgs.{codigo}/dados"
+        params = {
+            "formato": "json",
+            "dataInicial": inicio.strftime("%d/%m/%Y"),
+            "dataFinal": hoje.strftime("%d/%m/%Y"),
+        }
+
+        resp = requests.get(url, params=params, timeout=20)
         resp.raise_for_status()
         rows = resp.json()
+
         if not isinstance(rows, list) or not rows:
             raise ValueError(f"BCB SGS {codigo} returned no observations")
 
@@ -30,12 +38,16 @@ class BCBProvider(DataProvider):
         for row in rows:
             if not isinstance(row, dict) or "data" not in row or "valor" not in row:
                 raise ValueError(f"BCB SGS {codigo} returned an invalid observation")
+
             observed_on = datetime.strptime(row["data"], "%d/%m/%Y").date()
             rate = float(row["valor"])
+
             if not math.isfinite(rate) or not 0.0 < rate < 100.0:
                 raise ValueError(f"BCB SGS {codigo} returned an invalid rate")
-            if observed_on > date.today() + timedelta(days=1):
+
+            if observed_on > hoje:
                 raise ValueError(f"BCB SGS {codigo} returned a future observation")
+
             parsed.append((observed_on, rate))
 
         observed_on, rate = max(parsed, key=lambda item: item[0])

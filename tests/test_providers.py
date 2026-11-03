@@ -53,7 +53,9 @@ def test_bcb_selic_success():
         assert result['serie'] == 432
         assert result['source'] == 'BCB SGS 432'
         assert result['data_bcb'] == '15/08/2026'
-        assert mock_get.call_args.args[0].endswith('/dados/ultimos/10')
+        assert mock_get.call_args.args[0].endswith('/dados')
+    assert "dataInicial" in mock_get.call_args.kwargs["params"]
+    assert "dataFinal" in mock_get.call_args.kwargs["params"]
 
 
 def test_bcb_selic_failure():

@@ -5,7 +5,7 @@ import pytest
 from src.providers.bcb_provider import BCBProvider
 
 
-def test_fetch_sgs_uses_last_observations_endpoint_and_latest_date():
+def test_fetch_sgs_uses_explicit_window_and_latest_date():
     response = Mock()
     response.raise_for_status.return_value = None
     response.json.return_value = [
@@ -20,11 +20,11 @@ def test_fetch_sgs_uses_last_observations_endpoint_and_latest_date():
     assert result["rate"] == 14.25
     assert result["data_bcb"] == "01/10/2026"
     args, kwargs = get.call_args
-    assert args[0].endswith("/dados/ultimos/10")
-    assert kwargs["params"] == {"formato": "json"}
-    assert "dataInicial" not in kwargs["params"]
-    assert "dataFinal" not in kwargs["params"]
-
+    assert args[0].endswith("/dados")
+    assert kwargs["params"]["formato"] == "json"
+    assert "dataInicial" in kwargs["params"]
+    assert "dataFinal" in kwargs["params"]
+    
 
 def test_fetch_sgs_fails_closed_on_empty_response():
     response = Mock()

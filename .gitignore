@@ -44,3 +44,5 @@ scripts/apply_*.sh
 scripts/update_docs.sh
 scripts/*_redis_service.py
 *.bak.*
+dump.rdb
+__pycache__/

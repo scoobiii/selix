@@ -25,7 +25,14 @@ class TestAPI:
 
     def test_selic(self):
         r = requests.get(f"{BASE_URL}/v1/selic", headers=HEADERS)
-        assert r.status_code in (200, 503)
+        assert r.status_code == 200, f"got {r.status_code}: {r.text[:200]}"
+        body = r.json()
+        assert body["status"] == "current"
+        assert body["source"] == "BCB SGS 432"
+        assert body["provenance"] == "runtime:BCB SGS 432"
+        assert body["series"] == 432
+        assert body["observation_date"]
+        assert isinstance(body["rate"], (int, float))
 
     def test_energia_termicas(self):
         # substitui a rota antiga /v1/precos/energeticos, que nao existe
