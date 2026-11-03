@@ -19,9 +19,16 @@ INCOME_CODES = {
     "financial_result": "3.06",
     "financial_income": "3.06.01",
     "financial_expense": "3.06.02",
+    "pretax_income": "3.07",
+    "income_tax": "3.08",
+    "net_income": "3.09",
 }
 ASSET_CODES = {"cash": "1.01.01", "short_term_investments": "1.01.02"}
-LIABILITY_CODES = {"debt_current": "2.01.04", "debt_noncurrent": "2.02.01"}
+LIABILITY_CODES = {
+    "debt_current": "2.01.04",
+    "debt_noncurrent": "2.02.01",
+    "equity": "2.03",
+}
 
 
 def _read(path) -> list[dict]:
@@ -54,12 +61,19 @@ def income(rows, cd_cvm, dt_refer) -> dict:
     """DRE: usa o período acumulado (menor DT_INI_EXERC) do DT_REFER."""
     sel = _select(rows, cd_cvm, dt_refer)
     if not sel:
-        return {"period": None, **{k: None for k in INCOME_CODES}}
+        return {"period": None, "interest_expense": None,
+                **{k: None for k in INCOME_CODES}}
     ini = min(r["DT_INI_EXERC"] for r in sel)
     sel = [r for r in sel if r["DT_INI_EXERC"] == ini]
     by = {r["CD_CONTA"]: _value(r) for r in sel}
     out = {k: by.get(c) for k, c in INCOME_CODES.items()}
     out["period"] = (ini, sel[0]["DT_FIM_EXERC"])
+    fin = [
+        r for r in sel
+        if r["CD_CONTA"] == "3.06.02.01"
+        and r["DS_CONTA"].strip().lower() == "despesas financeiras"
+    ]
+    out["interest_expense"] = abs(_value(fin[0])) if fin else None
     return out
 
 

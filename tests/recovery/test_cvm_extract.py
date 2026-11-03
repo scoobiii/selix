@@ -124,3 +124,23 @@ def test_unknown_scale_raises(tmp_path):
     )
     with pytest.raises(ValueError):
         extract_company(d, "009512", "2026-03-31")
+
+
+def _fin_line(desc):
+    return (
+        "00.000.000/0001-00;2026-03-31;1;EMPRESA TESTE;009512;"
+        "DF Consolidado - Demonstração do Resultado;REAL;MIL;ÚLTIMO;"
+        f"2026-01-01;2026-03-31;3.06.02.01;{desc};-5179000.0000000000;N"
+    )
+
+
+def test_interest_expense_matches_description(tmp_path):
+    d = make_dir(tmp_path, [_fin_line("Despesas financeiras")])
+    r = extract_company(d, "009512", "2026-03-31")
+    assert r["interest_expense"] == 5_179_000_000.0
+
+
+def test_interest_expense_none_when_description_differs(tmp_path):
+    d = make_dir(tmp_path, [_fin_line("Variações monetárias e cambiais, líquidas")])
+    r = extract_company(d, "009512", "2026-03-31")
+    assert r["interest_expense"] is None
