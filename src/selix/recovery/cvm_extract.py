@@ -28,6 +28,8 @@ LIABILITY_CODES = {
     "debt_current": "2.01.04",
     "debt_noncurrent": "2.02.01",
     "equity": "2.03",
+    "lease_current": "2.01.04.03",
+    "lease_noncurrent": "2.02.01.03",
 }
 
 
@@ -101,6 +103,12 @@ def extract_company(data_dir, cd_cvm, dt_refer: str) -> dict:
 
     debts = [out["debt_current"], out["debt_noncurrent"]]
     out["gross_debt"] = None if None in debts else sum(debts)
+    leases = [out["lease_current"], out["lease_noncurrent"]]
+    out["lease_debt"] = None if None in leases else sum(leases)
+    out["financial_debt"] = (
+        None if out["gross_debt"] is None or out["lease_debt"] is None
+        else out["gross_debt"] - out["lease_debt"]
+    )
     cash = [out["cash"], out["short_term_investments"]]
     out["cash_total"] = None if None in cash else sum(cash)
 

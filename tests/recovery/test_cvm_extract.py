@@ -144,3 +144,23 @@ def test_interest_expense_none_when_description_differs(tmp_path):
     d = make_dir(tmp_path, [_fin_line("Variações monetárias e cambiais, líquidas")])
     r = extract_company(d, "009512", "2026-03-31")
     assert r["interest_expense"] is None
+
+
+def test_lease_split(data_dir):
+    d = data_dir
+    path = d / "itr_cia_aberta_BPP_con_2026.csv"
+    extra = [
+        bp("2026-03-31", ULT, "2026-03-31", "2.01.04.03", 53477000),
+        bp("2026-03-31", ULT, "2026-03-31", "2.02.01.03", 174490000),
+    ]
+    with open(path, "a", encoding="latin-1") as f:
+        f.write("\n".join(extra) + "\n")
+    r = extract_company(d, "009512", "2026-03-31")
+    assert r["lease_debt"] == (53_477_000 + 174_490_000) * 1000
+    assert r["financial_debt"] == r["gross_debt"] - r["lease_debt"]
+
+
+def test_lease_missing_is_none(data_dir):
+    r = extract_company(data_dir, "009512", "2026-03-31")
+    assert r["lease_debt"] is None
+    assert r["financial_debt"] is None
