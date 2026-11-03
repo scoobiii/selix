@@ -12,6 +12,7 @@ from pathlib import Path
 ENCODING = "latin-1"
 ESCALAS = {"UNIDADE": 1, "MIL": 1000}
 ULTIMO = "ÚLTIMO"
+PENULTIMO = "PENÚLTIMO"
 
 INCOME_CODES = {
     "revenue": "3.01",
@@ -38,13 +39,13 @@ def _read(path) -> list[dict]:
         return list(csv.DictReader(f, delimiter=";"))
 
 
-def _select(rows, cd_cvm, dt_refer) -> list[dict]:
+def _select(rows, cd_cvm, dt_refer, ordem=ULTIMO) -> list[dict]:
     cd = str(cd_cvm).zfill(6)
     sel = [
         r for r in rows
         if r["CD_CVM"] == cd
         and r["DT_REFER"] == dt_refer
-        and r["ORDEM_EXERC"] == ULTIMO
+        and r["ORDEM_EXERC"] == ordem
     ]
     if not sel:
         return []
@@ -79,10 +80,11 @@ def income(rows, cd_cvm, dt_refer) -> dict:
     return out
 
 
-def balance(rows, cd_cvm, dt_refer, codes) -> dict:
+def balance(rows, cd_cvm, dt_refer, codes, ordem=ULTIMO, dt_fim=None) -> dict:
+    dt_fim = dt_fim or dt_refer
     sel = [
-        r for r in _select(rows, cd_cvm, dt_refer)
-        if r["DT_FIM_EXERC"] == dt_refer
+        r for r in _select(rows, cd_cvm, dt_refer, ordem)
+        if r["DT_FIM_EXERC"] == dt_fim
     ]
     by = {r["CD_CONTA"]: _value(r) for r in sel}
     return {k: by.get(c) for k, c in codes.items()}
@@ -111,6 +113,15 @@ def extract_company(data_dir, cd_cvm, dt_refer: str) -> dict:
     )
     cash = [out["cash"], out["short_term_investments"]]
     out["cash_total"] = None if None in cash else sum(cash)
+
+    prev = f"{int(year) - 1}-12-31"
+    op = balance(_read(path("BPA")), cd_cvm, dt_refer, ASSET_CODES, PENULTIMO, prev)
+    op.update(balance(_read(path("BPP")), cd_cvm, dt_refer, LIABILITY_CODES, PENULTIMO, prev))
+    od = [op["debt_current"], op["debt_noncurrent"]]
+    oc = [op["cash"], op["short_term_investments"]]
+    out["opening_gross_debt"] = None if None in od else sum(od)
+    out["opening_equity"] = op["equity"]
+    out["opening_cash_total"] = None if None in oc else sum(oc)
 
     warnings = []
     fe = out["financial_expense"]

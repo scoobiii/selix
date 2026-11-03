@@ -54,13 +54,21 @@ def assess_roic(company: dict) -> dict:
     cap = invested_capital(
         company.get("gross_debt"), company.get("equity"), company.get("cash_total")
     )
-    r = roic_period(n, cap)
+    cap_open = invested_capital(
+        company.get("opening_gross_debt"), company.get("opening_equity"),
+        company.get("opening_cash_total"),
+    )
+    cap_avg = None if cap is None or cap_open is None else (cap + cap_open) / 2
+    r = roic_period(n, cap_avg if cap_avg is not None else cap)
     months = months_in_period(company.get("period"))
     return {
         "basis": "observado_itr_v1_bruto",
         "tax_rate": rate,
         "nopat": n,
         "invested_capital": cap,
+        "invested_capital_open": cap_open,
+        "invested_capital_avg": cap_avg,
+        "capital_basis": "medio" if cap_avg is not None else "fechamento",
         "months": months,
         "roic_period": r,
         "roic_annualized_linear": (

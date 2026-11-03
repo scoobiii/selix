@@ -67,3 +67,26 @@ def test_assess_roic_missing_data_is_none():
     r = assess_roic({"ebit": 100.0, "period": None})
     assert r["roic_period"] is None
     assert r["roic_annualized_linear"] is None
+
+
+def test_assess_roic_uses_average_capital():
+    r = assess_roic({
+        "ebit": 100.0, "pretax_income": 100.0, "income_tax": -25.0,
+        "gross_debt": 500.0, "equity": 300.0, "cash_total": 50.0,
+        "opening_gross_debt": 400.0, "opening_equity": 300.0,
+        "opening_cash_total": 50.0,
+        "period": ("2026-01-01", "2026-06-30"),
+    })
+    assert r["invested_capital_avg"] == 700.0
+    assert r["capital_basis"] == "medio"
+    assert r["roic_period"] == pytest.approx(75.0 / 700.0)
+
+
+def test_assess_roic_falls_back_to_closing_capital():
+    r = assess_roic({
+        "ebit": 100.0, "pretax_income": 100.0, "income_tax": -25.0,
+        "gross_debt": 500.0, "equity": 300.0, "cash_total": 50.0,
+        "period": ("2026-01-01", "2026-06-30"),
+    })
+    assert r["capital_basis"] == "fechamento"
+    assert r["roic_period"] == pytest.approx(0.1)

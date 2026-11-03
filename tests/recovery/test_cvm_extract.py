@@ -164,3 +164,29 @@ def test_lease_missing_is_none(data_dir):
     r = extract_company(data_dir, "009512", "2026-03-31")
     assert r["lease_debt"] is None
     assert r["financial_debt"] is None
+
+
+def test_opening_balance_from_penultimo(data_dir):
+    d = data_dir
+    prev = "2025-12-31"
+    with open(d / "itr_cia_aberta_BPA_con_2026.csv", "a", encoding="latin-1") as f:
+        f.write("\n".join([
+            bp("2026-03-31", PEN, prev, "1.01.01", 35608000),
+            bp("2026-03-31", PEN, prev, "1.01.02", 15000000),
+        ]) + "\n")
+    with open(d / "itr_cia_aberta_BPP_con_2026.csv", "a", encoding="latin-1") as f:
+        f.write("\n".join([
+            bp("2026-03-31", PEN, prev, "2.01.04", 67253000),
+            bp("2026-03-31", PEN, prev, "2.02.01", 316772000),
+            bp("2026-03-31", PEN, prev, "2.03", 417587000),
+        ]) + "\n")
+    r = extract_company(d, "009512", "2026-03-31")
+    assert r["opening_gross_debt"] == (67_253_000 + 316_772_000) * 1000
+    assert r["opening_equity"] == 417_587_000_000.0
+    assert r["opening_cash_total"] == (35_608_000 + 15_000_000) * 1000
+
+
+def test_opening_missing_is_none(data_dir):
+    r = extract_company(data_dir, "009512", "2026-03-31")
+    assert r["opening_gross_debt"] is None
+    assert r["opening_equity"] is None
