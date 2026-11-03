@@ -13,6 +13,8 @@ ENCODING = "latin-1"
 ESCALAS = {"UNIDADE": 1, "MIL": 1000}
 ULTIMO = "ÚLTIMO"
 PENULTIMO = "PENÚLTIMO"
+# "financeiros" e a grafia real da CVM em DFP da Raizen (2021, 2023).
+FIN_EXPENSE_DESCRIPTIONS = {"despesas financeiras", "despesas financeiros"}
 
 INCOME_CODES = {
     "revenue": "3.01",
@@ -74,7 +76,7 @@ def income(rows, cd_cvm, dt_refer) -> dict:
     fin = [
         r for r in sel
         if r["CD_CONTA"] == "3.06.02.01"
-        and r["DS_CONTA"].strip().lower() == "despesas financeiras"
+        and r["DS_CONTA"].strip().lower() in FIN_EXPENSE_DESCRIPTIONS
     ]
     out["interest_expense"] = abs(_value(fin[0])) if fin else None
     return out
@@ -136,6 +138,12 @@ def extract_company(data_dir, cd_cvm, dt_refer: str, src: str = "itr") -> dict:
         warnings.append(
             "3.06.02 positiva: inclui variação cambial; "
             "não usar como despesa de juros."
+        )
+    fr = out["financial_result"]
+    if fe == 0 and fr not in (None, 0):
+        warnings.append(
+            "3.06.02 zerada com resultado financeiro nao nulo: "
+            "despesa nao detalhada em contas fixas."
         )
     out["warnings"] = warnings
     return out

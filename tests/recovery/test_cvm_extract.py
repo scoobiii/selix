@@ -211,3 +211,19 @@ def test_dfp_march_fiscal_year(tmp_path):
     assert r["ebit"] == -1_093_066_000.0
     assert r["equity"] == 15_124_031_000.0
     assert r["opening_equity"] == 14_000_000_000.0
+
+
+def test_interest_expense_accepts_cvm_variant(tmp_path):
+    d = make_dir(tmp_path, [_fin_line("Despesas financeiros")])
+    r = extract_company(d, "009512", "2026-03-31")
+    assert r["interest_expense"] == 5_179_000_000.0
+
+
+def test_zeroed_expense_with_net_result_warns(tmp_path):
+    lines = [
+        dre("2026-03-31", ULT, "2026-01-01", "2026-03-31", "3.06", -1321000),
+        dre("2026-03-31", ULT, "2026-01-01", "2026-03-31", "3.06.02", 0),
+    ]
+    r = extract_company(make_dir(tmp_path, lines), "009512", "2026-03-31")
+    assert r["financial_expense"] == 0.0
+    assert any("nao detalhada" in w for w in r["warnings"])
