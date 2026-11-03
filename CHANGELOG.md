@@ -1,3 +1,22 @@
+## [Unreleased] — SELIX Recovery
+
+Registro de desenvolvimento em 2026-11-03. Esta seção não representa uma
+versão publicada nem uma tag de release.
+
+### Adicionado
+- Extração de demonstrações financeiras DFP/ITR por empresa e exercício.
+- Tratamento de variações de descrição de despesas financeiras nos dados CVM.
+- Alertas para ausência de detalhamento de despesas financeiras.
+- Cálculo de cobertura de juros com respeito à disponibilidade dos dados.
+- Sensibilidade da dívida.
+- Reconciliação do patrimônio líquido e alerta para variação não explicada
+  pelo lucro líquido.
+
+### Limitações
+- Persistência transacional multiempresa e API pública Recovery ainda pendentes.
+- O pacote NPM `selix-core` não inclui o Recovery Python.
+- Resultados e alertas exigem interpretação contábil e revisão de proveniência.
+
 ## [v7.2.2] - 2026-08-11
 
 ### Adicionado

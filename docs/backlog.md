@@ -72,3 +72,48 @@ um item financeiro.
 
 O estado acima é um registro de contexto de trabalho, não uma auditoria
 executada nesta versão da documentação.
+
+## Estado Recovery — atualização 2026-11
+
+Esta seção atualiza o registro inicial abaixo com o progresso observado
+na branch `feat/selix-recovery-model`. O estado antigo permanece como
+histórico de planejamento e não deve ser interpretado como auditoria atual.
+
+### Entregas implementadas
+
+| Área | Estado atual |
+|---|---|
+| Extração DFP/ITR | Implementada em `src/selix/recovery/cvm_extract.py` |
+| Despesas financeiras CVM | Variações de descrição tratadas; ausência de detalhamento sinalizada |
+| Cobertura de juros | Implementada, condicionada à disponibilidade da conta |
+| Sensibilidade da dívida | Implementada em `debt_sensitivity.py` |
+| Retornos e reconciliação do PL | Implementados em `returns.py` |
+| Testes | Testes específicos em `tests/recovery/`; resultados aprovados reportados |
+
+### Interpretação contábil obrigatória
+
+A conta de resultado financeiro não deve ser tratada automaticamente como
+despesa de juros. Quando a abertura de juros não existe, o valor deve
+permanecer indisponível, em vez de ser imputado por proxy sem identificação.
+
+A diferença entre PL final, PL inicial e lucro líquido é um resíduo de
+reconciliação. Pode incluir dividendos, aportes, outros resultados
+abrangentes, reclassificações e mudanças de perímetro. O alerta não
+identifica sozinho qual desses eventos ocorreu.
+
+### Próximos critérios de aceite
+
+1. Persistência histórica multiempresa com migrações e integridade.
+2. Proveniência por métrica, incluindo fonte, conta, período, perímetro,
+   unidade, data de extração e método.
+3. Reconciliação de dívida, caixa e arrendamentos IFRS 16.
+4. Demonstrações normalizadas e comparáveis.
+5. API/SDK com contratos documentados para humanos e agentes.
+6. Dashboard e exportações com rastreabilidade.
+
+### Estado da persistência e da API
+
+Persistência transacional Recovery, API pública Recovery e SDK de consulta
+multiempresa permanecem pendentes de implementação e validação. Os
+snapshots JSON existentes são artefatos publicados, não substitutos de
+um banco transacional.

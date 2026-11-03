@@ -74,3 +74,18 @@ npm pack --dry-run
 ```
 
 Repository: https://github.com/scoobiii/selix
+
+## Escopo do pacote e SELIX Recovery
+
+Este pacote NPM contém somente a implementação JavaScript do núcleo
+determinístico descrito acima.
+
+Ele **não inclui** as funcionalidades Python do SELIX Recovery, como
+extração CVM/DFP/ITR, cobertura de juros, sensibilidade da dívida ou
+reconciliação do patrimônio líquido. Também não fornece persistência
+financeira multiempresa nem consulta direta à CVM.
+
+A evolução do Recovery no repositório principal não altera automaticamente
+o escopo, a versão ou o conteúdo publicado deste pacote. Uma futura
+integração exigirá API/contrato explícito, testes de paridade e validação
+do conteúdo do pacote antes de qualquer release NPM.

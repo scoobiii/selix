@@ -129,3 +129,53 @@ pelos próprios artefatos do repositório — não depende de validação de ter
 ⚠️ **Não declarar "GOS3-compliant"** até os 4 critérios acima estarem ✅.
 
 **Prazo estimado:** 16/08/2026
+
+## SELIX Recovery — estado em 2026-11
+
+Este bloco registra o estado da linha de desenvolvimento Recovery.
+Não substitui nem reclassifica as entregas históricas das versões anteriores.
+
+### Implementado na branch `feat/selix-recovery-model`
+
+| Entrega | Estado |
+|---|---|
+| Extração de dados DFP/ITR da CVM por empresa e período | Implementada |
+| Tratamento de descrições alternativas de despesas financeiras | Implementado |
+| Alerta para resultado financeiro sem despesa detalhada | Implementado |
+| Cálculo de cobertura de juros com dados disponíveis | Implementado |
+| Sensibilidade da dívida | Implementada |
+| Reconciliação PL inicial + lucro líquido versus PL final | Implementada |
+| Alerta de variação do PL não explicada pelo lucro | Implementado |
+| Testes específicos de Recovery | Resultados aprovados reportados durante o desenvolvimento |
+
+### Próximas entregas
+
+| Item | Prioridade | Critério de aceite |
+|---|---|---|
+| Persistência única para histórico multiempresa | Alta | Dados versionados, consultáveis e reproduzíveis |
+| Modelo de proveniência por métrica | Alta | Fonte, conta CVM, período, perímetro, unidade e método registrados |
+| Reconciliação de dívida, caixa e arrendamentos | Alta | Divergências explicitadas e testadas |
+| Normalização de demonstrações | Alta | DRE, BP e DFC com escalas e períodos consistentes |
+| API/SDK para consumidores humanos e agentes | Média | Contratos documentados e testes de integração |
+| Dashboard multiempresa | Média | Séries comparáveis com origem e limitações visíveis |
+| Exportação de relatórios auditáveis | Média | Resultados reproduzíveis e rastreáveis |
+
+### Arquitetura proposta — ainda não declarar como implementada
+
+CVM/DFP/ITR → ingestão e extração → normalização contábil →
+validação e proveniência → persistência Recovery → API/SDK →
+dashboard humano, agentes e relatórios.
+
+A persistência deve ser única, servindo tanto consumidores humanos quanto
+agentes. SQLite pode atender à fase local; PostgreSQL pode ser avaliado
+para implantação multiusuário. Essa arquitetura é uma proposta de evolução,
+não uma declaração de que esses serviços já estão disponíveis.
+
+### Critério de promoção para release
+
+- Testes de unidade e integração aprovados.
+- Casos de referência contábil revisados.
+- Proveniência e limitações documentadas.
+- Compatibilidade e contratos públicos definidos.
+- Documentação e changelog revisados.
+- Nenhuma alteração acidental nos snapshots oficiais.
