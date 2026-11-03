@@ -78,7 +78,12 @@ def test_operational_context_does_not_define_numeric_current_default():
 
 def test_api_current_selic_paths_are_runtime_bcb_and_fail_closed():
     api_source = (ROOT / "src" / "api" / "main_v4_fixed.py").read_text(encoding="utf-8")
-    assert api_source.count("BCBProvider().get_selic_meta()") >= 3
+    # A camada canônica é o SPI (fetch_current_selic / build_current_snapshot),
+    # que internamente chama BCBProvider().get_selic_meta(). A API deve delegar
+    # ao SPI, não importar o provider direto. /v1/selic/cenario ainda usa
+    # provider direto por design (what-if ancorado na série 432).
+    assert api_source.count("fetch_current_selic") >= 2
+    assert "BCBProvider().get_selic_meta()" in api_source
     assert "official_bcb_data_unavailable" in api_source
     assert "caller_owned_current_selic_not_allowed" in api_source
     assert '"rate": 14.25' not in api_source
@@ -89,7 +94,10 @@ def test_api_current_selic_paths_are_runtime_bcb_and_fail_closed():
 
 def test_deployed_api_entrypoint_uses_runtime_bcb_for_current_selic():
     api_source = (ROOT / "src" / "api" / "main_v4.py").read_text(encoding="utf-8")
-    assert api_source.count("BCBProvider().get_selic_meta()") >= 2
+    # main_v4.py delega ao SPI (fetch_current_selic / build_current_snapshot),
+    # que por sua vez chama BCBProvider().get_selic_meta(). O contrato é
+    # "fonte = BCB em runtime", não "provider importado aqui".
+    assert api_source.count("fetch_current_selic") >= 2
     assert "official_bcb_data_unavailable" in api_source
     assert "selic_atual_data_bcb" in api_source
     assert "INSERT INTO selic_historico (tipo, valor, fonte) VALUES ('efetiva', 14.25, 'bcb')" not in api_source
