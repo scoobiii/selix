@@ -9,6 +9,12 @@
 - **Desenvolvedores e agentes de software/IA:** use entradas explícitas e uma saída JSON reproduzível. Não invente uma Selic atual nem forneça uma taxa atual sem validar fonte, série e data.
 
 ## O que há neste repositório
+O snapshot histórico é gerado pelo [workflow de publicação](.github/workflows/bluesky_ci.yml) e validado pelo [workflow de testes](.github/workflows/tests.yml), com o resultado versionado no [snapshot oficial](public/selix-official.json). O snapshot inclui a série de origem, data da observação, instante de geração, parâmetros do modelo, diferencial calculado e hash de integridade.
+
+- [Snapshot histórico em JSON](public/selix-official.json)
+- [API pública do Banco Central — SGS](https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados?dataInicial=03/11/2016)
+- [Workflow de validação](.github/workflows/tests.yml)
+- [Workflow de publicação](.github/workflows/bluesky_ci.yml)
 
 | Componente | Local | O que faz | O que não faz |
 | --- | --- | --- | --- |

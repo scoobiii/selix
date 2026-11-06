@@ -107,8 +107,8 @@ class TestContratoDeSchema:
     def test_todas_colunas_referenciadas_existem_no_schema(self, tmp_db):
         import confidence.calculator as calc_module
 
-        source = open(calc_module.__file__, encoding="utf-8").read()
-
+        with open(calc_module.__file__, encoding="utf-8") as f:
+            source = f.read()
         select_pattern = re.compile(
             r"SELECT\s+([\w,\s]+?)\s+FROM\s+(\w+)", re.IGNORECASE
         )

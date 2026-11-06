@@ -1,14 +1,23 @@
 {
+  "schema_version": "2",
   "status": "historical_snapshot",
   "is_current": false,
-  "warning": "Arquivo estático de 2026-08-15. Não usar como taxa atual nem como fallback de API.",
-  "snapshot_created_at": "2026-08-15T16:06:27.881360Z",
-  "selic_observada_snapshot": 14.0,
-  "selic_snapshot_fonte": "BCB SGS 432",
-  "selic_snapshot_serie": 432,
-  "selic_snapshot_data_bcb": "15/08/2026",
-  "selic_ideal_snapshot": 8.25,
-  "diferencial_snapshot": 5.75,
-  "modelo_versao": "v7.2.3",
-  "disclaimer": "Registro histórico de snapshot, não é cotação atual nem recomendação de investimento."
+  "warning": "Versioned artifact for archival/distribution only. It is not a live API response and MUST NOT be used as a CURRENT fallback.",
+  "source": {
+    "provider": "Banco Central do Brasil",
+    "series": 432,
+    "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados",
+    "observation_date": "03/11/2026"
+  },
+  "snapshot_created_at": "2026-11-03T03:19:06Z",
+  "fetched_at": "2026-11-03T03:19:06.910513Z",
+  "model": {
+    "selic_ideal_snapshot": 8.25
+  },
+  "market": {
+    "selic_observada_snapshot": 13.75,
+    "diferencial_snapshot_pp": 5.5
+  },
+  "provenance": "runtime:BCB SGS 432",
+  "content_sha256": "173b47ba42332ae6441a5396c4d766f97c54a314cf71201615467b7d42a1710d"
 }

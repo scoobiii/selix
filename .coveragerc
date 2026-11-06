@@ -1,24 +1,40 @@
 [run]
-source = src/selix
-omit = 
+branch = True
+relative_files = True
+omit =
     */tests/*
     */venv/*
+    */.venv/*
     */__pycache__/*
     */site-packages/*
+    src/selix/worker*.py
+    src/selix/sentiment*.py
+    src/selix/rag_*.py
+    src/selix/z3_*.py
+    src/selix/dados_reais.py
+    src/selix/database.py
+    src/selix/sync_selic.py
+    src/selix/commodities.py
+    src/selix/embi_api.py
+    src/selix/focus_api.py
+    src/selix/rj.py
+    src/selix/setores.py
+    src/selix/roic_real.py
+    src/selix/credibilidade.py
+    src/selix/credibilidade_real.py
+    src/selix/worker_real.py
+    src/providers/eia_provider.py
 
 [report]
+show_missing = True
+skip_empty = True
 exclude_lines =
     pragma: no cover
     def __repr__
-    if self\.debug
     if __name__ == .__main__.
     raise AssertionError
     raise NotImplementedError
-    if 0:
-    if False:
     if TYPE_CHECKING:
-    @abstractmethod
-    @overload
 
 [html]
-directory = htmlcov
+directory = /tmp/selix-coverage-contract

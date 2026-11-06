@@ -33,6 +33,7 @@ def get_campaign_day():
 
 def mark_post_result(success: bool):
     """Atualiza last_post_success na tabela de métricas."""
+    conn = None
     try:
         conn = sqlite3.connect(DB_PATH)
         conn.execute("""
@@ -41,9 +42,11 @@ def mark_post_result(success: bool):
             WHERE id = (SELECT MAX(id) FROM metrics_history)
         """, (1 if success else 0,))
         conn.commit()
-        conn.close()
     except Exception:
         pass
+    finally:
+        if conn is not None:
+            conn.close()
 
 def run_campaign(modo="thread"):
     dia = get_campaign_day()

@@ -8,7 +8,11 @@ class TestGeoEnergyRisk:
 
     @pytest.fixture
     def calc(self):
-        return GeoEnergyRiskCalculator()
+        c = GeoEnergyRiskCalculator()
+        try:
+            yield c
+        finally:
+            c.close()
 
     def test_ttf_price(self, calc):
         price = calc.get_ttf_price()

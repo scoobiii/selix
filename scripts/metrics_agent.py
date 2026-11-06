@@ -185,13 +185,16 @@ def get_load():
 def check_brent(db_path=None):
     """Verifica se há dados de Brent no banco."""
     import sqlite3
+    conn = None
     try:
         conn = sqlite3.connect(db_path or "/root/selix/selix.db")
         row = conn.execute("SELECT price FROM brent ORDER BY timestamp DESC LIMIT 1").fetchone()
-        conn.close()
         return 1 if row else 0
     except Exception:
         return 0
+    finally:
+        if conn is not None:
+            conn.close()
 
 def check_selic(db_path=None):
     """Verifica se há dados de Selic no banco."""
