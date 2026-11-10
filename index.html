@@ -170,7 +170,7 @@
         <span class="badge">🔬 Z3 + Lean4 provado</span>
         <span class="badge">🤖 Bluesky Bot ativo</span>
         <span class="badge">⚙️ Self‑healing watchdog</span>
-        <span class="badge">📊 63 testes ✓</span>
+        <span class="badge">📊 214 testes ✓</span>
         <a href="https://github.com/scoobiii/selix" class="badge">🐙 GitHub</a>
         <a href="https://bsky.app/profile/zeh-sobrinho.bsky.social" class="badge">🦋 Bluesky @zeh-sobrinho</a>
     </div>
@@ -211,11 +211,11 @@
     <div class="section">
         <h2>🎯 Para quem?</h2>
         <div class="grid-3">
-            <div class="pilar"><strong>👷 Trabalhadores</strong><br/>PLR travada? Selic 14,25% > ROI. Com 8,25% → PLR liberada e +1M empregos.</div>
+            <div class="pilar"><strong>👷 Trabalhadores</strong><br/>PLR travada? Selic 13,75% > ROI. Com 8,25% → PLR liberada e +1M empregos.</div>
             <div class="pilar"><strong>📈 Investidores</strong><br/>GPA +68%, Raízen +76%, B3 → US$10 tri, WACC cai para ~11%.</div>
             <div class="pilar"><strong>🌱 Ambientalistas</strong><br/>Selic 8,25% viabiliza +100 GW solares, mix E30/B15 hoje, E35/B20 se Brent >120.</div>
             <div class="pilar"><strong>🏛️ Governo</strong><br/>Economia de R$270‑362 bi/ano, dívida/PIB estabiliza, investment grade A-.</div>
-            <div class="pilar"><strong>🤖 Desenvolvedores</strong><br/>API REST, testes 63/63, código aberto, fácil de auto‑hospedar.</div>
+            <div class="pilar"><strong>🤖 Desenvolvedores</strong><br/>API REST, testes 214/215, código aberto, fácil de auto‑hospedar.</div>
         </div>
     </div>
 
@@ -236,14 +236,14 @@ python -m pytest tests/ -v
 
     <footer>
         © 2026 – Selix (Flex‑AI) | MIT License | Desenvolvido por Zeh Sobrinho · GOS3 · MEX Energia<br/>
-        Dados atualizados via API local – <span id="lastUpdate">--</span>
+        Snapshot BCB SGS 432 · observação <span id="lastUpdate">--</span>
     </footer>
 </div>
 
 
 
 <script>
-    const API_BASE = window.location.origin;
+    const API_BASE = '.';
     const API_KEY = "test_api_key_123";
 
     let stats = { selic: null, selicIdeal: null, economia: null, brent: null };
@@ -252,7 +252,7 @@ python -m pytest tests/ -v
     const warningDiv = el("warningMessage");
 
     async function fetchSnapshot() {
-        const response = await fetch(`${API_BASE}/v1/selic/snapshot`, {
+        const response = await fetch(`${API_BASE}/public/selix-official.json`, {
             headers: { "X-API-Key": API_KEY }
         });
         if (!response.ok) throw new Error("HTTP " + response.status);
@@ -264,10 +264,10 @@ python -m pytest tests/ -v
             const d = await fetchSnapshot();
             if (warningDiv) warningDiv.style.display = "none";
 
-            if (d.selic_atual != null && el("selicAtual"))
-                el("selicAtual").textContent = Number(d.selic_atual).toFixed(2);
-            if (d.selic_ideal_quantizada != null && el("selicIdeal"))
-                el("selicIdeal").textContent = Number(d.selic_ideal_quantizada)
+            if ((d.market?.selic_observada_snapshot ?? d.selic_atual) != null && el("selicAtual"))
+                el("selicAtual").textContent = Number((d.market?.selic_observada_snapshot ?? d.selic_atual)).toFixed(2).replace(".", ",");
+            if ((d.model?.selic_ideal_snapshot ?? d.selic_ideal_quantizada) != null && el("selicIdeal"))
+                el("selicIdeal").textContent = Number((d.model?.selic_ideal_snapshot ?? d.selic_ideal_quantizada))
                     .toFixed(2).replace(".", ",");
             if (d.economia_anual_bi != null && el("economiaAnual"))
                 el("economiaAnual").textContent = d.economia_anual_bi;
@@ -278,7 +278,7 @@ python -m pytest tests/ -v
                     el("brent").textContent = "n/d";
             }
             if (el("lastUpdate"))
-                el("lastUpdate").textContent = new Date().toLocaleString();
+                el("lastUpdate").textContent = (d.source?.observation_date || "?");
         } catch (err) {
             console.warn("snapshot:", err);
             if (warningDiv) {
