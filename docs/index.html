@@ -1,146 +1,53 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SELIX Pro - Inteligência de Mercado Antecipada</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3a 100%);
-            color: #fff;
-            line-height: 1.6;
-        }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        header { text-align: center; padding: 60px 20px; }
-        h1 { font-size: 3rem; margin-bottom: 20px; }
-        .badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50px;
-            padding: 8px 16px;
-            margin: 5px;
-            font-size: 14px;
-        }
-        .price {
-            font-size: 48px;
-            font-weight: bold;
-            color: #00ff88;
-            margin: 20px 0;
-        }
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin: 60px 0;
-        }
-        .card {
-            background: rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-        }
-        .card h3 { margin-bottom: 15px; color: #00ff88; }
-        .btn {
-            display: inline-block;
-            background: #00ff88;
-            color: #0a0a2a;
-            padding: 15px 40px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 20px;
-            transition: transform 0.3s;
-        }
-        .btn:hover { transform: scale(1.05); }
-        .form-group { margin: 20px 0; }
-        input {
-            width: 100%;
-            padding: 15px;
-            border-radius: 8px;
-            border: none;
-            font-size: 16px;
-        }
-        footer {
-            text-align: center;
-            padding: 40px;
-            background: rgba(0,0,0,0.3);
-            margin-top: 60px;
-        }
-        .disclaimer {
-            font-size: 12px;
-            color: #888;
-            margin-top: 20px;
-        }
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            .price { font-size: 36px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SELIX - Dados com Proveniencia</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#0a0a2a,#1a1a3a);color:#fff;line-height:1.6;}.c{max-width:1100px;margin:0 auto;padding:20px}header{text-align:center;padding:60px 20px}h1{font-size:2.5rem;margin-bottom:20px}.b{display:inline-block;background:rgba(255,255,255,.1);border-radius:50px;padding:8px 16px;margin:5px;font-size:13px}.s{display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin:40px 0;padding:30px;background:rgba(255,255,255,.05);border-radius:16px}.st{text-align:center;min-width:180px}.n{font-size:42px;font-weight:700;color:#00ff88}.l{font-size:12px;color:#8899aa;text-transform:uppercase;letter-spacing:1px;margin-top:4px}.src{font-size:11px;color:#556;margin-top:6px}.f{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin:60px 0}.card{background:rgba(255,255,255,.08);border-radius:16px;padding:28px}.card h3{margin-bottom:12px;color:#00ff88;font-size:1.05rem}footer{text-align:center;padding:40px;background:rgba(0,0,0,.3);margin-top:60px;font-size:13px}.dis{font-size:11px;color:#888;margin-top:16px;max-width:600px;margin-left:auto;margin-right:auto}@media(max-width:768px){h1{font-size:1.8rem}.n{font-size:32px}}</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div>
-                <span class="badge">📊 SELIX | Selic Energy Real Time</span>
-                <span class="badge">🔬 Provada com Z3 + Lean 4</span>
-                <span class="badge">💰 9,48% | Economia de R$ 270 bi/ano</span>
-                <span class="badge">✅ Investment Grade BBB+</span>
-            </div>
-            <h1>Inteligência de Mercado<br>2 Horas Antes do Público</h1>
-            <p>Alertas de risco energético, projeções de valuation e análise macro<br>
-            baseada no modelo matemático SELIX (Z3 + Lean 4)</p>
-            <div class="price">R$ 29<span style="font-size: 18px;">/mês</span></div>
-        </header>
-
-        <div class="features">
-            <div class="card">
-                <h3>🚨 Alertas Antecipados</h3>
-                <p>Receba análises de Brent, Selic e risco geopolítico 2 horas antes da publicação pública no Bluesky.</p>
-            </div>
-            <div class="card">
-                <h3>📈 Projeções de Valuation</h3>
-                <p>Preço justo de ativos com cenário Selic 1 dígito (9.48%). GPA: R$1,96 → R$17,60 (+798%).</p>
-            </div>
-            <div class="card">
-                <h3>⚖️ TrampoForte</h3>
-                <p>Análise de impacto da prioridade do PLR sobre credores em recuperação judicial.</p>
-            </div>
-            <div class="card">
-                <h3>🔬 Modelo Matemático</h3>
-                <p>5 teoremas provados com Z3 (Microsoft Research) e Lean 4. Investment Grade BBB+.</p>
-            </div>
-            <div class="card">
-                <h3>📊 Dados em Tempo Real</h3>
-                <p>Brent (Yahoo Finance), Dólar (AwesomeAPI), Selic (BCB), Ações (B3).</p>
-            </div>
-            <div class="card">
-                <h3>🏛️ Pressão Institucional</h3>
-                <p>Tags automáticas para B3, BCB, MME, ANP, Senado, MPT e mais de 20 stakeholders.</p>
-            </div>
-        </div>
-
-        <div style="text-align: center; background: rgba(0,255,136,0.1); border-radius: 16px; padding: 40px;">
-            <h2>📧 Receba a Newsletter Gratuitamente</h2>
-            <p>Teste por 30 dias. Cancele quando quiser.</p>
-            <form action="https://formsubmit.co/seu-email@dominio.com" method="POST" style="max-width: 400px; margin: 20px auto;">
-                <input type="hidden" name="_subject" value="Novo assinante SELIX Pro!">
-                <div class="form-group">
-                    <input type="email" name="email" placeholder="Seu melhor e-mail" required>
-                </div>
-                <button type="submit" class="btn">Assinar Agora</button>
-            </form>
-        </div>
-
-        <footer>
-            <p>🔗 github.com/scoobiii/selix</p>
-            <p>🐦 Bluesky: @selixbr.bsky.social</p>
-            <div class="disclaimer">
-                ⚠️ Não é recomendação de investimento. Projeções baseadas em modelo matemático SELIX (Selic 9.48% + TrampoForte).
-                Os resultados passados não garantem retornos futuros. Consulte um profissional qualificado antes de investir.
-            </div>
-        </footer>
-    </div>
+<div class="c">
+<header>
+<div>
+<span class="b">📊 BCB SGS 432</span>
+<span class="b">🔬 Z3 + Lean 4</span>
+<span class="b" id="prov">⏳  carregando</span>
+</div>
+<h1>Inteligência de Mercado<br>com Proveni\&encia Verificável</h1>
+<p>Selic observada (BCB) vs. Selic ideal (modelo SELIX),<br>com fonte e data em cada número.</p>
+</header>
+<div class="s">
+<div class="st">
+<div class="n" id="obs">--</div>
+<div class="l">Selic observada</div>
+<div class="src" id="obsSrc">BCB SGS 432</div>
+</div>
+<div class="st">
+<div class="n" id="ideal">--</div>
+<div class="l">Selic ideal (SELIX)</div>
+<div class="src" id="idealSrc">modelo canànico</div>
+</div>
+<div class="st">
+<div class="n" id="dif">--</div>
+<div class="l">Diferencial (pp)</div>
+<div class="src">atual - ideal</div>
+</div>
+</div>
+<div class="f">
+<div class="card"><h3>🚀 Alertas Antecipados</h3><p>Análises de Brent, Selic e risco geopolítico no Bluesky.</p></div>
+<div class="card"><h3>🔬 Modelo Matemático</h3><p>Provas formais em Z3 e Lean 4 - ver <code>lean_proof/</code>.</p></div>
+<div class="card"><h3>📊 Proveni\&encia em Cada Número</h3><p>Fonte, série, data e hash. Ver <a href="https://github.com/scoobiii/selix/blob/main/docs/GOS3-AGENT-ONBOARDING.md" style="color:#00ff88">GOS3-AGENT-ONBOARDING.md</a>.</p></div>
+<div class="card"><h3>🏛️ Stakeholders</h3><p>Tags automáticas para B3, BCB, MME, ANP, Senado, MPT.</p></div>
+</div>
+<footer>
+<p>🔗 github.com/scoobiii/selix · 🦻 @selixbr.bsky.social</p>
+<div class="dis">⚠️ Não é recomendação de investimento. Selic observada: BCB SGS 432. Selic ideal: estimativa do modelo SELIX - não previsão de política monetária. Snapshot atualizado por CI 2/×dia.</div>
+</footer>
+</div>
+<script>
+async function load(){try{const r=await fetch('./data/selix-official.json?_='+Date.now());if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();const obs=d.market?.selic_observada_snapshot??d>selic_atual;const ideal=d.model?.selic_ideal_snapshot??d>selic_ideal;const obsDate=d.source?.observation_date||'?';const fetched=(d.fetched_at||'').slice(0,10)||'?';if(obs!=null){document.getElementById('obs').textContent=Number(obs).toFixed(2).replace('.',',')+'%';document.getElementById('obsSrc').textContent='BCB SGS 432 - obs. '+obsDate}if(ideal!=null){document.getElementById('ideal').textContent=Number(ideal).toFixed(2).replace('.',',')+'%';document.getElementById('idealSrc').textContent='modelo SELIX - '+fetched}if(obs!=null&&ideal!=null)document.getElementById('dif').textContent=(Number(obs)-Number(ideal)).toFixed(2).replace('.',',');document.getElementById('prov').textContent='🅠 '+(d.provenance||'snapshot')+' - '+obsDate}catch(e){console.warn('snapshot:',e);const p=document.getElementById('prov');p.textContent='⚠️ snapshot indisponível - sem números inventados';p.style.color='#ff9999'}}
+load();setInterval(load,60000);
+</script>
 </body>
 </html>
