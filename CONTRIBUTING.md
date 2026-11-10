@@ -7,7 +7,7 @@
 4. Push e abra um Pull Request.
 
 ## Diretrizes
-- Código em Python (3.10+).
+- Código em Python 3.11 (versão usada no CI).
 - Use type hints.
 - Adicione testes quando possível.
 - Documente novas funções.
@@ -18,3 +18,6 @@
 
 ## Comunicação
 - Discord (link) ou Issues do GitHub.
+
+## Time e regras
+Papéis, regras e Definition of Done: veja AGENTS.md.
