@@ -13,7 +13,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-OUTPUTS = (ROOT / "selix-official.json", ROOT / "public" / "selix-official.json")
+OUTPUTS = (ROOT / "selix-official.json", ROOT / "public" / "selix-official.json", ROOT / "docs" / "data" / "selix-official.json")
 
 
 def _iso_now() -> str:
