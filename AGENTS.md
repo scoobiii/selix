@@ -23,7 +23,7 @@ Versão de cada modelo: registrar na primeira resposta de cada sprint.
 |---|---|
 | src/selix/spi.py, src/api/main_v4.py | DeepSeek (contrato de dados) |
 | packages/selix-core/ | Pendente (ninguém provou ler o pacote) |
-| docs/index.html, .github/workflows/ | Pendente |
+| docs/index.html, index.html, .github/workflows/ | DeepSeek (frontend AJAX real-time) |
 
 ## Regras
 1. **Evidência primeiro.** Afirmação sobre estado (CI verde, PR mergeável, cobertura) exige saída colada ou link de run. Sem isso, vale "não verificado".

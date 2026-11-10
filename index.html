@@ -266,8 +266,8 @@ python -m pytest tests/ -v
 
             if (d.selic_atual != null && el("selicAtual"))
                 el("selicAtual").textContent = Number(d.selic_atual).toFixed(2);
-            if (d.selic_ideal_quantizada != null && el("selicIdeal"))
-                el("selicIdeal").textContent = Number(d.selic_ideal_quantizada)
+            if (d.selic_ideal != null && el("selicIdeal"))
+                el("selicIdeal").textContent = Number(d.selic_ideal)
                     .toFixed(2).replace(".", ",");
             if (d.economia_anual_bi != null && el("economiaAnual"))
                 el("economiaAnual").textContent = d.economia_anual_bi;
