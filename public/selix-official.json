@@ -7,10 +7,10 @@
     "provider": "Banco Central do Brasil",
     "series": 432,
     "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados",
-    "observation_date": "03/11/2026"
+    "observation_date": "14/11/2026"
   },
-  "snapshot_created_at": "2026-11-03T03:19:06Z",
-  "fetched_at": "2026-11-03T03:19:06.910513Z",
+  "snapshot_created_at": "2026-11-14T17:45:04Z",
+  "fetched_at": "2026-11-14T17:45:04.337868Z",
   "model": {
     "selic_ideal_snapshot": 8.25
   },
@@ -19,5 +19,5 @@
     "diferencial_snapshot_pp": 5.5
   },
   "provenance": "runtime:BCB SGS 432",
-  "content_sha256": "173b47ba42332ae6441a5396c4d766f97c54a314cf71201615467b7d42a1710d"
+  "content_sha256": "267bf011e7aabc1d1e00ea6be45b4c3947202413470168f0c538735ac03fb81b"
 }
